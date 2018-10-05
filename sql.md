@@ -82,6 +82,17 @@ WHERE <COLUMN> LIKE '%b%'
 ## Database Management/Creation
 
 
+## SSMS (SQL Server Management Studio)
+
+* Using a `TOP` clause (synonymous to `LIMIT` in PostgreSQL) allows you to not overload the system
+* use `NOLOCK`
+  * Ensures your queries have as little impact on other processes as possible.
+  * The risk of running your query with `NOLOCK` is that you might get "dirty/phantom" reads (observations that are not yet *committed* to the database, but is in an indeterminate state of being inserted, updated or deleted)
+  * Should be used primarily for ad-hoc queries, but not in development (NEVER use when updating or deleting observations from a table).
+* Check the estimated query plan before executing your query
+* Knowing the indexes a table has can be helpful in determining what columns to efficiently filter and sort on
+* `ORDER BY` clauses restrict the performance of queries
+
 ## Resources
 
 [PostgreSQL Practice](https://pgexercises.com/)
