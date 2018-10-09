@@ -93,6 +93,11 @@ WHERE <COLUMN> LIKE '%b%'
 * Knowing the indexes a table has can be helpful in determining what columns to efficiently filter and sort on
 * `ORDER BY` clauses restrict the performance of queries
 
+### Query (Execution) Plans
+
+* Highlight a query and press CTRL + L (Windows) to view the execution plan.
+
+
 ## Resources
 
 [PostgreSQL Practice](https://pgexercises.com/)
