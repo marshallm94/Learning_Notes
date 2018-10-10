@@ -10,6 +10,12 @@ ER diagrams allows one to visualize how a concept might map into a  RDBMS layout
 
 **SQL is case and whitespace insensitive**
 
+* DML = Data manipulation Language
+    * Examples: `INSERT, UPDATE, DELETE` (sometimes SELECT)
+* DDL = Data Definition Language
+    * Examples: `CREATE, DROP, ALTER`
+* When referencing an object in SQL, proper convention is to **explicitly** call the entire object (i.e. database_name.schema_name.table_name, etc)
+
 ## Querying
 
 Basic structure:
@@ -50,7 +56,7 @@ WHERE <COLUMN> LIKE '%b'
 ```
 ```SQL
 WHERE <COLUMN> LIKE 'b%'
-# return all observations that start with a 'b' (can have any
+# return all o0bservations that start with a 'b' (can have any
 # characters following the 'b')
 ```
 ```SQL
@@ -81,6 +87,31 @@ WHERE <COLUMN> LIKE '%b%'
 
 ## Database Management/Creation
 
+## Stored Procedures
+
+At its most basic, stored procedures are chunks of code that are saved (hence "stored") as objects in a SQL database. They allow a user to execute that code without having to retype it every time they want to use it. (analogous to writing functions in Python vs writing a script that can't be generalized to other tasks).
+
+Stored procedures can be used to `INSERT, UPDATE, DELETE, SELECT` and are called with the `EXEC` statement (short for execute):
+
+```SQL
+EXEC <stored_procedure_name>
+```
+
+To create a stored procedure:
+```SQL
+CREATE PROC <procedure_name>
+AS
+    <T-SQL code>
+GO
+```
+
+To alter a stored procedure:
+```SQL
+ALTER PROC <procedure_name>
+AS
+    <T-SQL code>
+GO
+```
 
 ## SSMS (SQL Server Management Studio)
 
@@ -93,9 +124,14 @@ WHERE <COLUMN> LIKE '%b%'
 * Knowing the indexes a table has can be helpful in determining what columns to efficiently filter and sort on
 * `ORDER BY` clauses restrict the performance of queries
 
-### Query (Execution) Plans
+### Execution Plans
 
-* Highlight a query and press CTRL + L (Windows) to view the execution plan.
+**Execution Plan**: The result of the query optimizer's attempt to calculate the most efficient way to implement the request represented by the T-SQL query you submitted. Execution plans are the **primary** means of troubleshooting an inefficient query.
+
+* The Query Optimizer parses your query and generates an execution plan (in binary) that is sent to the storage engine.
+* Highlight a query and press CTRL + L (Windows) to view the execution plan
+* The Query Optimizer determines the best exectution plan based on required CPU usage and I/)
+
 
 
 ## Resources
