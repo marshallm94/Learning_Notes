@@ -115,6 +115,7 @@ GO
 
 ## SSMS (SQL Server Management Studio)
 
+* Many table will start with 'dbo' - this is the default schema in SSMS
 * Using a `TOP` clause (synonymous to `LIMIT` in PostgreSQL) allows you to not overload the system
 * use `NOLOCK`
   * Ensures your queries have as little impact on other processes as possible.
