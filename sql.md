@@ -125,6 +125,16 @@ GO
 * Knowing the indexes a table has can be helpful in determining what columns to efficiently filter and sort on
 * `ORDER BY` clauses restrict the performance of queries
 
+
+**To connect to SSMS from the commmand line:**
+
+    `Z: \> SQLCMD -S <server_instance>`
+
+if you are connected the command prompt will change to:
+
+    `1>`
+
+
 ### Execution Plans
 
 **Execution Plan**: The result of the query optimizer's attempt to calculate the most efficient way to implement the request represented by the T-SQL query you submitted. Execution plans are the **primary** means of troubleshooting an inefficient query.
