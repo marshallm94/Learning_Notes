@@ -1,8 +1,6 @@
-## Parametric Models
+# GLMS (General Linear Models)
 
-### GLMS
-
-#### Linear Regression
+## Linear Regression
 
 * With linear regression, each coefficient can be interpreted as the the change in the response for a one unit change in the predictor, holding all else constant.
 
@@ -29,7 +27,70 @@ y_hat = lin_reg_pipe.predict(x_test)
 rmse = np.sqrt(mean_squared_error(y_test, y_hat))
 ```
 
-#### Logistic Regression
+## Logistic Regression
+
+Logistic regression is used in a classification setting, namely when the response is dichotomous (binary). When this is the case, one seeks to model the probability of an observation being a "success" (or "of interest", encoded as a 1) or a failure (encoded as a 0).
+
+Logistic regression is similar to linear regression in that it still assumes the relationship between the attributes **X** and the response **y** is linear, however with one small caveat; logistic regression assumes that the log odds of a success are linear in **X**.
+
+### Reasoning
+
+Since the response in logistic regression is dichotomous, and one would like to model the probability of an observation being a success, a good place to start would be:
+
+$$
+P(Y=1|X=x) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \cdots + \beta_px_p
+$$
+
+$$
+P(Y=1|X=x) = \beta_0 + \sum_{j=1}^P \beta_jx_j
+$$
+
+However, this opens up the possibility of the output $P(Y=1|X=x)$ taking on a value greater than 1 or less than 0, which violates probabilities. To remedy this, one makes use of the *logistic function* (hence the name), which restricts all output to be within the bounds of 0 and 1, and therefore a valid probability (note that there are two ways to write the logistic function, but they are equivalent and will lead to the same result):
+
+$$
+\frac{1} {1 + \epsilon^{-x}} = f(x) =  \frac{\epsilon^x}{\epsilon^x + 1}
+$$
+
+So, knowing that one would like the output to be a valid probability, we simply substitute $P(Y=1|X=x)$ into the above equation in place of $f(x)$, where $x$ is equal to the linear model $\beta_0 + \sum_{j=1}^P \beta_jx_j$:
+
+$$
+\frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} = P(Y=1|X=x) =  \frac{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j}}{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j} + 1}
+$$
+
+#### Quick Aside on Probability and Odds
+
+In order to illustrate how everything comes together, it is important to note the relationship between the *probability* of an event occurring and the *odds* of an event occurring, given below:
+
+$$
+Odds = \frac{P}{1 - P} ~~~ and ~~~ P = \frac{Odds}{Odds + 1}
+$$
+
+### Reasoning (continued)
+
+#### Method 1
+
+Now knowing the relationship between probabilities and odds, is clear how the right hand side of the two equations above are related, reproduced below:
+
+$$
+\frac{Odds}{Odds + 1} = P(Y=1|X=x) =  \frac{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j}}{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j} + 1}
+$$
+
+Therefore, we can express the odds of a success as:
+
+$$
+Odds = \epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j}
+$$
+
+Using the natural logarithm on both sides of the equation, it is evident that **the log odds of a succes are linear in the attributes X**.
+
+$$
+log(Odds) = log(\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j})
+$$
+
+$$
+log(Odds) = \beta_0 + \sum_{j=1}^P \beta_jx_j
+$$
+
 
 * Each coefficient of logistic regression is interpreted as the change in the **log of the odds** of a success for a one unit change in the predictor, holding all else constant. To translate this to a probability of a success:
 
