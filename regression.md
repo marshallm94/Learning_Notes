@@ -152,6 +152,17 @@ $$
 Log(Odds) = \beta_0 + \sum_{j=1}^P \beta_jx_j
 $$
 
+### Loss Function
+
+The loss function (or cost function) for logistic regression, called the log loss, is given below:
+
+$$
+Log~Loss = \frac{\sum_{i=1}^N \left(y_ilog(\hat{y_i}) + (1 - y_i)log(1 - \hat{y_i}) \right)}{N}
+$$
+
+
+### Interpretation
+
 * Each coefficient of logistic regression is interpreted as the change in the **log of the odds** of a success for a one unit change in the predictor, holding all else constant. To translate this to a probability of a success:
 
     1.  Plug each predictor value of a test observation into the linear equation, using the respective coefficients and the intercept; this returns the **log odds** of a success for that test observation.$$log(Odds) = \beta_0 + \beta_1X_1 + \beta_2X_2...$$
