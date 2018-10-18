@@ -33,7 +33,7 @@ Logistic regression is used in a classification setting, namely when the respons
 
 Logistic regression is similar to linear regression in that it still assumes the relationship between the attributes **X** and the response **y** is linear, however with one small caveat; logistic regression assumes that the log odds of a success are linear in **X**.
 
-### Reasoning
+### Reasoning/Proof
 
 Since the response in logistic regression is dichotomous, and one would like to model the probability of an observation being a success, a good place to start would be:
 
@@ -65,7 +65,7 @@ $$
 Odds = \frac{P}{1 - P} ~~~ and ~~~ P = \frac{Odds}{Odds + 1}
 $$
 
-### Reasoning (continued)
+### Reasoning/Proof (continued)
 
 #### Method 1
 
@@ -91,6 +91,66 @@ $$
 log(Odds) = \beta_0 + \sum_{j=1}^P \beta_jx_j
 $$
 
+#### Method 2
+
+The other way to reconcile logistic regression is to look at the other expression of logistic regression, reproduced below:
+
+$$
+P(Y=1|X=x) = \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
+$$
+
+Know the above, one can substitute the right side of the equation into the odds ratio and solve for $\beta_0 + \sum_{j=1}^P \beta_jx_j$:
+
+$$
+P(Y=1|X=x) = \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
+$$
+
+$$
+Odds = \frac{P}{1 - P}
+$$
+
+$$
+Odds = \frac{\frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{1 - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
+$$
+
+$$
+Odds = \frac{\frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{\frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
+$$
+
+Multiply every term by $1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}$:
+
+$$
+Odds = \frac{\frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{\frac{\left( 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \right)^2}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
+$$
+
+Simplify each term:
+
+$$
+Odds = \frac{1}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1}
+$$
+
+Get rid of the 1's:
+
+$$
+Odds = \frac{1}{\epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
+$$
+
+By the equivalency of $\frac{1}{\epsilon^{-x}} = \epsilon^x$:
+
+$$
+Odds = \epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)}
+$$
+
+Take the natural log of both sides:
+
+$$
+Log(Odds) = Log(\epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)})
+$$
+
+And, once again, the conclusion is made that **the log odds of a succes are linear in the attributes X**.
+$$
+Log(Odds) = \beta_0 + \sum_{j=1}^P \beta_jx_j
+$$
 
 * Each coefficient of logistic regression is interpreted as the change in the **log of the odds** of a success for a one unit change in the predictor, holding all else constant. To translate this to a probability of a success:
 
