@@ -116,55 +116,29 @@ $$
 P(Y=1|X=x) = \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
 $$
 
-Know the above, one can substitute the right side of the equation into the odds ratio and solve for $\beta_0 + \sum_{j=1}^P \beta_jx_j$:
+Knowing the above, one can substitute the right side of the equation into the odds ratio and solve for $\beta_0 + \sum_{j=1}^P \beta_jx_j$:
 
 $$
-P(Y=1|X=x) = \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
+Given ~~~ Odds = \frac{P}{1 - P} ~~~ and ~~~ P(Y=1|X=x) = \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \\
 $$
+Then:
 
 $$
-Odds = \frac{P}{1 - P}
+\begin{aligned}
+Odds & = \frac{ \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}{1 - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
+& = \frac{ \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}{\left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right) - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
+& = \frac{ \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right) }{\frac{\left( 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \right)^2}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
+& = \frac{1}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1} \\
+& = \frac{1}{\epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \\
+& = \epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \\
+Log(Odds) & = Log(\epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)})
+\end{aligned}
 $$
 
-$$
-Odds = \frac{\frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{1 - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
-$$
+\pagebreak
 
-$$
-Odds = \frac{\frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{\frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
-$$
+**And, once again, the conclusion is made that the log odds of a succes are linear in the attributes X**.
 
-Multiply every term by $1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}$:
-
-$$
-Odds = \frac{\frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}}{\frac{\left( 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \right)^2}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}
-$$
-
-Simplify each term:
-
-$$
-Odds = \frac{1}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1}
-$$
-
-Get rid of the 1's:
-
-$$
-Odds = \frac{1}{\epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}
-$$
-
-By the equivalency of $\frac{1}{\epsilon^{-x}} = \epsilon^x$:
-
-$$
-Odds = \epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)}
-$$
-
-Take the natural log of both sides:
-
-$$
-Log(Odds) = Log(\epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)})
-$$
-
-And, once again, the conclusion is made that **the log odds of a succes are linear in the attributes X**.
 $$
 Log(Odds) = \beta_0 + \sum_{j=1}^P \beta_jx_j
 $$
@@ -182,15 +156,32 @@ $$
 The key to understanding the loss function is to look at each term in the numerator, reproduced below:
 
 $$
-y_ilog(\hat{y_i}) + (1 - y_i)log(1 - \hat{y_i})
+Log~loss = y_i log(\hat{y_i}) + (1 - y_i)log(1 - \hat{y_i})
 $$
 
-Since logistic regression is used in a *binary* setting, the response **y** will be a vector of 1's and 0's. Therefore, $y_i$ will be either a 1 or a 0. With that in mind, it is clear that the first part of the above equation, $y_i$ and $(1 - y_i)$, serves the same functionality of an indicator function; if $y_i$ is a 1, the second term in the equation will zero out:
+Since logistic regression is used in a *binary* setting, the response **y** will be a vector of 1's and 0's. Therefore, $y_i$ will be either a 1 or a 0. With that in mind, it is clear that the first part of both terms in the above equation, $y_i$ and $(1 - y_i)$, serve the same functionality that an indicator function serves; if $y_i$ is a 1, the second term in the equation will zero out, and conversely, if $y_i$ is a 0, the first term in the equation will zero out:
+
 
 $$
-(1 - y_i)log(1 - \hat{y_i})
+If ~~~ y_i = 1, ~~~ Log~loss
+\begin{cases}
+    = (1)log(\hat{y_i}) +  (1 - 1)log(1 - \hat{y_i}) \\
+    = (1)log(\hat{y_i}) \\
+    = log(\hat{y_i})
+\end{cases}
+$$
+$$
+If ~~~ y_i = 0, ~~~ Log~loss
+\begin{cases}
+    = (0)log(\hat{y_i}) +  (1 - 0)log(1 - \hat{y_i}) \\
+    = (1)log(1 - \hat{y_i}) \\
+    = log(1 - \hat{y_i})
+\end{cases}    
 $$
 
+Now, the output of logistic regression is a **probability**, which is to say $\hat{y_i}$ will be the probability that observation $i$ is a 1. Therefore, the loss function will always be taking the log of a probability. Referencing the formulas above, if $y_i = 1$, $Log~loss = log(\hat{y_i})$ and if $y_i = 0$, $Log~loss = log(1 - \hat{y_i})$.
+
+Since all models seek to **minimize the loss**, ideally the log loss is as close to 0 as possible. As it turns out, $log(1) = 0$. So, when $y_i = 1$, $Log~loss = log(1)$ will minimize the loss, and if $y_i = 0$, $Log~loss = log(1 - 0)$ will minimize the loss. **It is clear that this setup minimizes the error when $\hat{y_i}$ is as close to $y_i$ as possible, averaged over all observations**.
 
 ### Interpretation
 
