@@ -8,7 +8,7 @@ This repo will intentionally have a very flat structure, which is to say notes w
 
 [Regression](regression.pdf)
 
-[Neural Networks](neural_nets.pdf)
+[Neural Networks](neural_networks.pdf)
 
 [SQL](sql.pdf)
 
