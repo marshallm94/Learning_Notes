@@ -1,21 +1,13 @@
 ---
 output: 
-  pdf_document: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
     latex_engine: xelatex
 urlcolor: blue
 ---
 
 # GLMS (General Linear Models)
-
-###### Contents
-
-1. [Linear Regression](#linear-regression)
-2. [Logistic Regression](#logistic-regression)
-    + [Reasoning](#reasoning)
-        + [Method 1](#method-1)
-        + [Method 2](#method-2)
-    + [Loss Function](#loss-function)
-        + [Walkthrough](#walkthrough)
 
 ## Linear Regression
 
@@ -225,7 +217,7 @@ def log_odds_to_prob(log_odds):
     return prob
 ```
 
-#### Regularized Regression
+## Regularized Regression
 
 * Both Ridge Regression and Lasso Regression both model the relationship between a set **X** of *p* predictors and a quantitative response **y** as a linear model (same as linear regression).
 
@@ -264,3 +256,5 @@ ridge.fit(x_train, y_train)
 y_hat = ridge.predict(x_test)
 print(np.sqrt(accuracy_score(y_test, y_hat)))
 ```
+
+## Multicollinearity
