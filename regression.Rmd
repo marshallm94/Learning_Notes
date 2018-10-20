@@ -258,3 +258,35 @@ print(np.sqrt(accuracy_score(y_test, y_hat)))
 ```
 
 ## Multicollinearity
+
+### Variance Inflation Factor (VIF)
+
+[Penn State VIF](https://onlinecourses.science.psu.edu/stat501/node/347/)
+
+The VIF is a statistic that can help one determine whether multicollinearity exists in multivariate regression. By regressing each of the $k$ predictors on the remaining predictors, one can obtain an estimate of *how well the $k_{th}$ predictor can be estimated with the other predictors*:
+
+$$
+\begin{aligned}
+Instead~of~...~\mathbf{y} & = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \cdots + \beta_px_p \\
+Build~a~model~...~\mathbf{x_j} & = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_3 + \cdots + \beta_{p-1}x_{p-1}
+\end{aligned}
+$$
+
+In the same manner that the $R^2$ value for a "normal" regression ($y = \beta_0 + \sum_{j=1}^P \beta_jx_j$) illustrates the percentage of the total variance in the response explained by the model, regressing the $k_{th}$ variable on the other predictors can determine if the $k_{th}$ predictor could be (somewhat accurately) predicted by the other predictors.
+
+The VIF for the $k_{th}$ predictor, $VIF_k$, is a measure of how much the variance of the  coefficient for the $k_{th}$ predictor is inflated due to the existence of multicollinearity. Looking at the equation below, it is clear that if $R^2_k = 0$, which is to say there is zero multicollinearity between the $k_{th}$ predictor and the other predictors, the $VIF_k$ would be equal to 1. Alternatively, $VIF's$ exceeding 4 - 5 warrant further investigation, since that indcates there is some multicollinearity.
+
+$$
+VIF_k = \frac{1}{1 - R^2_k}
+$$
+
+
+
+
+
+
+
+
+
+
+
