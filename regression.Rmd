@@ -1,4 +1,6 @@
 ---
+title: "General Linear Models (GLMS)"
+author: "Marshall McQuillen"
 output: 
   pdf_document:
     toc: true
@@ -6,8 +8,6 @@ output:
     latex_engine: xelatex
 urlcolor: blue
 ---
-
-# GLMS (General Linear Models)
 
 ## Linear Regression
 
