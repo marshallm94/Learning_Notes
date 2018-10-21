@@ -1,6 +1,10 @@
 ---
+title: "Finance"
+author: "Marshall McQuillen"
 output: 
-  pdf_document: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
     latex_engine: xelatex
 urlcolor: blue
 ---
@@ -54,3 +58,7 @@ $$APY (EAR) = \left( 1 + \frac{r_s}{m} \right)^m - 1$$
 If compounding is continuous:
 
 $$APY (EAR) = e^{r_s} - 1$$
+
+## Resources
+
+[Market Data Processing](https://www.codeproject.com/Articles/553206/An-Introduction-to-Real-Time-Stock-Market-Data-Pro)
