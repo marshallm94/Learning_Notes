@@ -9,11 +9,46 @@ output:
 urlcolor: blue
 ---
 
-## Linear Regression
+# Linear Regression
 
-* With linear regression, each coefficient can be interpreted as the the change in the response for a one unit change in the predictor, holding all else constant.
+Basic Form:
 
-* When there are interaction terms in the equation, such as $$y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2$$ you can rewrite the equation to be $$y = \beta_0 + \tilde{\beta_1}X_1 + \beta_2X_2~~where~~\tilde{\beta_1} = \beta_1 + \beta_3X_2$$ where $\beta_3$ can be interpreted as the change in the **effectiveness of $X_1$ on y for a one unit change in $X_2$.**
+$$
+\hat{y} = \beta_0 + \sum_{j=1}^p \beta_j X_j
+$$
+
+Each coefficient can be interpreted as the expected average change in the response $Y$ for a one unit change in the predictor $X_j$, holding all other predictors $X_{j'}$ constant.
+
+## Assumptions
+
+1. **$f(x)$ is linear in nature** - The true function $f(x)$ (or $\mathbf{E(Y|X)}$, which can be read as, "The expected value of the response $Y$ given the input array $X$.") is **linear in nature** (or that the linear assumption is a reasonable one). This means that, *regardless of the value of an attribute $X_j$*, a one unit increase in the value of $X_j$ results in a $\beta_j$ increase in $Y$ (holding all other attributes constant).
+
+\setlength{\leftskip}{1cm}
+
+An example of this assumption being removed would be if there was a "leveling off" affect - where at a certain value of $X_j$, the expected absolute change in $Y$ is *less* than what it was at a different level of $X_j$. Alternatively, there could be an "exponentiation" affect - where at a certain value of $X_j$, the expected absolute change in $Y$ is *greater* than what it was at a different level of $X_j$.
+
+Either way, the the linear assumption states that $\beta_j$ is the expected change in $Y$ for **any value of $X_j$**.
+
+\setlength{\leftskip}{0cm}
+
+2. **$f(x)$ is additive** - The additive assumption states that there aren't any interaction effects between the attributes. Another way of saying this is: "$\beta_j$, the expected change in $Y$ for a one unit change in $X_j$, is independent of changes in any other attributes $X_{j'}$."
+
+\setlength{\leftskip}{1cm}
+
+Removing this assumption opens up the possibility for interaction terms, which is to say that changing the value of $X_j$ could change $\beta_{j'}$, the effect of a different attribute $X_{j'}$ on the response $Y$.
+
+Adding an interation term takes the form of changing the traditional form (show above) to:
+
+\begin{align}
+y & = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 \\
+& = \beta_0 + \beta_1X_1 + \beta_3X_1X_2 + \beta_2X_2 \\
+& = \beta_0 + X_1(\beta_1 + \beta_3X_2) + \beta_2X_2 \\
+& = \beta_0 + \tilde{\beta_1}X_1 + \beta_2X_2~~where~~\tilde{\beta_1} = \beta_1 + \beta_3X_2
+\end{align}
+
+Thus, $\beta_3$ can be interpreted as the change in the **effectiveness of $X_1$ on y for a one unit change in $X_2$.**
+
+\setlength{\leftskip}{0cm}
 
 ```python
 import numpy as np
