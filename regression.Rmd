@@ -156,7 +156,7 @@ $$
 \begin{aligned}
 Odds & = \frac{ \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}{1 - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
 Odds & = \frac{ \frac{1}{a} }{1 - \frac{1}{a}} && \text{set } a = 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \text{ to clean up this proof} \\
-& = \frac{ \frac{1}{a} }{\frac{a}{a} - \frac{1}{a}} && \text{change the 1 to } \frac{a}{a} \text{ to combine like terms} \\
+& = \frac{ \frac{1}{a} }{\frac{a}{a} - \frac{1}{a}} && \text{change the 1 to } \frac{a}{a} \text{ to create like terms} \\
 & = \frac{ \frac{a}{a} }{\frac{a^2}{a} - \frac{a}{a}} && \text{multiply each term by } a \\
 & = \frac{ 1 }{a - 1} && \text{simplify} \\
 & = \frac{ 1 }{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1} && \text{substitute } 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \text{ in for } a \\
