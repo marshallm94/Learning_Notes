@@ -37,16 +37,18 @@ Either way, the the linear assumption states that $\beta_j$ is the expected chan
 
 Removing this assumption opens up the possibility for interaction terms, which is to say that changing the value of $X_j$ could change $\beta_{j'}$, the effect of a different attribute $X_{j'}$ on the response $Y$.
 
-Adding an interation term takes the form of changing the traditional form (show above) to:
+Adding an interaction term takes the form of:
 
-\begin{align}
+$$
+\begin{aligned}
 y & = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 \\
-& = \beta_0 + \beta_1X_1 + \beta_3X_1X_2 + \beta_2X_2 \\
-& = \beta_0 + X_1(\beta_1 + \beta_3X_2) + \beta_2X_2 \\
-& = \beta_0 + \tilde{\beta_1}X_1 + \beta_2X_2~~where~~\tilde{\beta_1} = \beta_1 + \beta_3X_2
-\end{align}
+& = \beta_0 + \beta_1X_1 + \beta_3X_1X_2 + \beta_2X_2 && \text{putting like terms near each other} \\
+& = \beta_0 + X_1(\beta_1 + \beta_3X_2) + \beta_2X_2 && \text{combining like terms} \\
+& = \beta_0 + \tilde{\beta_1}X_1 + \beta_2X_2~~where~~\tilde{\beta_1} = \beta_1 + \beta_3X_2 && \text{substitution} \\
+\end{aligned}
+$$
 
-Thus, $\beta_3$ can be interpreted as the change in the **effectiveness of $X_1$ on y for a one unit change in $X_2$.**
+Thus, $\beta_3$ can be interpretted as the effect that a one unit change in $X_2$ has on the **effectiveness** of $X_1$ in changing $Y$.
 
 \setlength{\leftskip}{0cm}
 
@@ -153,12 +155,15 @@ Then:
 $$
 \begin{aligned}
 Odds & = \frac{ \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}{1 - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
-& = \frac{ \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)}{\left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right) - \left( \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
-& = \frac{ \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right) }{\frac{\left( 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \right)^2}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} - \left( \frac{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \right)} \\
-& = \frac{1}{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1} \\
-& = \frac{1}{\epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} \\
-& = \epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \\
-Log(Odds) & = Log(\epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)})
+Odds & = \frac{ \frac{1}{a} }{1 - \frac{1}{a}} && \text{set } a = 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \text{ to clean up this proof} \\
+& = \frac{ \frac{1}{a} }{\frac{a}{a} - \frac{1}{a}} && \text{change the 1 to } \frac{a}{a} \text{ to combine like terms} \\
+& = \frac{ \frac{a}{a} }{\frac{a^2}{a} - \frac{a}{a}} && \text{multiply each term by } a \\
+& = \frac{ 1 }{a - 1} && \text{simplify} \\
+& = \frac{ 1 }{1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} - 1} && \text{substitute } 1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)} \text{ in for } a \\
+& = \frac{1}{\epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} && \text{1's in denominator cancel} \\
+& = \epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)} && \text{bring the negative exponent up} \\
+Log(Odds) & = Log(\epsilon^{(\beta_0 + \sum_{j=1}^P \beta_jx_j)}) && \text{take the log of both sides} \\
+Log(Odds) & = \beta_0 + \sum_{j=1}^P \beta_jx_j && \text{the log odds are linear in } \mathbf{X} \\
 \end{aligned}
 $$
 
