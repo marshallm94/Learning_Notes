@@ -48,13 +48,23 @@ y & = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_3X_1X_2 \\
 \end{aligned}
 $$
 
-Thus, $\beta_3$ can be interpretted as the effect that a one unit change in $X_2$ has on the **effectiveness** of $X_1$ in changing $Y$. This could obviously be scaled to more than one interaction term
+Thus, $\beta_3$ can be interpretted as the effect that a one unit change in $X_2$ has on the **effectiveness** of $X_1$ in changing $Y$. This could obviously be abstracted to more than one interaction term.
 
 \setlength{\leftskip}{0cm}
 
+## Loss Function
+
+The loss function for linear regression is the *Residual Sum of Squares*:
+
+$$
+RSS = \sum_{i=n}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_jX_j \right)^2
+$$
+
+This can be read as, "Minimize the sum of the squared distances between the predicted values and the observed values."
+
 # Logistic Regression
 
-Logistic regression is used in a classification setting, namely when the response is dichotomous (binary). When this is the case, one seeks to model the probability of an observation being a "success" (or "of interest", encoded as a 1) or a failure (encoded as a 0).
+Logistic regression is used in a classification setting, namely when the response is dichotomous (binary). When this is the case, one seeks to model the probability of an observation being a "success" (or "of interest", encoded as a 1) or a failure (encoded as a 0). The same assumptions that apply for linear regression apply to logistic regression.
 
 Logistic regression is similar to linear regression in that it still assumes the relationship between the attributes **X** and the response **y** is linear, however with one small caveat; logistic regression assumes that the log odds of a success are linear in **X**.
 
@@ -82,15 +92,13 @@ $$
 \frac{1} {1 + \epsilon^{-(\beta_0 + \sum_{j=1}^P \beta_jx_j)}} = P(Y=1|X=x) =  \frac{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j}}{\epsilon^{\beta_0 + \sum_{j=1}^P \beta_jx_j} + 1}
 $$
 
-###### Quick Aside on Probability and Odds
+##### Quick Aside on Probability and Odds
 
 In order to illustrate how everything comes together, it is important to note the relationship between the *probability* of an event occurring and the *odds* of an event occurring, given below:
 
 $$
 Odds = \frac{P}{1 - P} ~~~ and ~~~ P = \frac{Odds}{Odds + 1}
 $$
-
-## Reasoning/Intuition (continued)
 
 ### Method 1
 
@@ -168,7 +176,7 @@ $$Prob(y_i = 1) = \frac{Odds}{1 + Odds}$$
 
 ### Software Implemenation Notes
 
-X must be scaled before being used by sklearn's LogisticRegression() class (it utilizes Lasso, which must have scaled data).
+X must be scaled before being used by `sklearn`'s LogisticRegression() class (it utilizes Lasso, which must have scaled data).
 
 ## Loss Function
 
@@ -212,23 +220,90 @@ Since all models seek to **minimize the loss**, ideally the log loss is as close
 
 # Regularized Regression
 
-* Both Ridge Regression and Lasso Regression both model the relationship between a set **X** of *p* predictors and a quantitative response **y** as a linear model (same as linear regression).
+By appending an additional "penalty" term onto the loss function of linear regression (RSS), regularization techniques penalize the model for overfitting to the current sample. Holisticly, this takes the form of:
 
-* However, both Ridge and Lasso have an additional term appended onto the loss function of a linear model, the RSS:
+$$
+Loss = RSS + Penalty~Term
+$$
 
-    * Ridge: **$\lambda$** multiplied by the summation of the *squares* of all coefficients. ($l2$ penalty)
-        * So, the loss function becomes $$RSS + \lambda\sum_{j=1}^p\beta_i^2$$
+## Ridge Regression
 
-    * Lasso: **$\lambda$** multiplied by the summation of the *absolute values* of all the  coefficients. ($l1$ penalty)
-        * So, the loss function becomes $$RSS + \lambda\sum_{j=1}^p|\beta_i|$$
+In the case of Ridge regression, the penalty term is the product of a hyperparameter $\lambda$ and the sum of the squares of the coefficient:
 
-The tuning parameter **$\lambda$** is best selected using cross validation. The practical difference between Lasso and Ridge regression is that Lasso will set some of the coefficients equal to *exactly zero* while ridge regression shrinks the coefficients *towards zero*.
+$$
+\begin{aligned}
+Loss & = RSS + Penalty~Term \\
+& =  \sum_{i=n}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_jX_j \right)^2 + \lambda\sum_{j=1}^p \beta_j^2 \\
+\end{aligned}
+$$
+
+This penatly term is sometime referred to as the the product of $\lambda$ and the $l_2 ~ norm$ (despite the fact that $l_2~norm = \sqrt{\sum_{j=1}^p \beta_j^2} = ||\beta||_2$ - i.e. the square root isn't accounted for in Ridge Regression).
+
+The tuning parameters $\lambda$ can be interpretted as the weight to apply to the penalty term:
+
+* A lower value of $\lambda$ leads to the model being **less** constrained by the penalty term.
+* A higher value of $\lambda$ leads to the model being **more** constrained by the penatly term.
+
+$\lambda$ is best selected using cross validation.
 
 ## Lasso Regression
 
-## Multicollinearity
+Lasso Regression is similar to Ridge Regression, the slight difference being that the penalty term is the sum of the *absolute values of the $\beta$'s*, as opposed to the sum of their squares.
 
-### Variance Inflation Factor (VIF)
+$$
+\begin{aligned}
+Loss & = RSS + Penalty~Term \\
+& =  \sum_{i=n}^n \left( y_i - \beta_0 - \sum_{j=1}^p \beta_jX_j \right)^2 + \lambda\sum_{j=1}^p | \beta_j | \\
+\end{aligned}
+$$
+
+The practical difference between Lasso and Ridge regression is that Lasso will set some of the coefficients equal to *exactly zero* while ridge regression shrinks the coefficients *towards zero*.
+
+# Basis Expansion Approaches
+
+There are multiple ways to extend "linear" models, a few examples being:
+
+* Interaction Terms (mentioned in the linear regression assumptions section)
+* Polynomial Regression
+* Step Functions
+* Regression Splines
+* Smoothing Splines
+* Piecewise Polynomials
+* Local Regression
+
+... explanations for which can be found in chapter 7 of ISL or chapter 5 of ESL. However, it is worth noting that *most* of these methods come from applying a fucntion/transformation or a family of function/transformations to the matrix $X$, whose shape is *n* x *p*, resulting in a new matrix $f(X)$ whose shape is *n* by *anything*.
+
+If one has some family of functions $\left\{f(x)_1,~f(x)_2,~f(x)_3,~\cdots~,f(x)_m \right\}$ that can be applied to **each** attribute $X_j$, these transformation take the below form, moving from the original matrix $X$ (left) the the transformed matrix $f(X)$ (right).
+
+$$
+    \begin{bmatrix}
+    X_{1,1} & X_{1,2} & X_{1,2} & \cdots & X_{1,p} \\
+    X_{2,1} & X_{2,2} & X_{2,3} & \cdots & X_{2,p} \\
+    X_{3,1} & X_{3,2} & X_{3,3} & \cdots & X_{3,p} \\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\
+    X_{n,1} & X_{n,2} & X_{n,3} & \cdots & X_{n,p} \\
+    \end{bmatrix}
+    \implies
+    \begin{bmatrix}
+    X_{1,1} & X_{1,2} & \cdots & X_{1,p} & f(X_{1,1})_1 & f(X_{1,2})_1 & \cdots & f(X_{1,p})_m \\
+    X_{2,1} & X_{2,2} & \cdots & X_{2,p} & f(X_{2,1})_1 & f(X_{2,2})_1 & \cdots & f(X_{2,p})_m \\
+    X_{3,1} & X_{3,2} & \cdots & X_{3,p} & f(X_{3,1})_1 & f(X_{3,2})_1 & \cdots & f(X_{3,p})_m \\
+    \vdots  & \vdots  & \cdots & \vdots  &    \vdots    &    \vdots    & \ddots &    \vdots    \\
+    X_{n,1} & X_{n,2} & \cdots & X_{n,p} & f(X_{n,1})_1 & f(X_{n,2})_1 & \cdots & f(X_{n,p})_m \\
+    \end{bmatrix}
+$$
+
+Once this new matrix $f(X)$ is created, the traditional linear model is fit to this new matrix. Expanded out (to some degree), this formula takes the form:
+
+$$
+\hat{y} = \beta_0 + \beta_1X_1 + \beta_2X_2 ~\cdots~ \beta_{f(x)_1}f(X_1)_1 + \beta_{f(x)_2}f(X_1)_2 ~\cdots~ \beta_{f(x)_m}f(X_p)_m
+$$
+
+Regularization techniques (such as the Lasso) can be employed to keep this equation "in check" and prevent overfitting.
+
+# Multicollinearity
+
+## Variance Inflation Factor (VIF)
 
 [Penn State VIF](https://onlinecourses.science.psu.edu/stat501/node/347/)
 
