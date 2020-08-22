@@ -6,14 +6,14 @@ This repo will intentionally have a very flat structure, which is to say notes w
 
 **PDF Reports:**
 
-[Regression](regression.pdf)
+[Regression](regression.md)
 
-[Neural Networks](neural_networks.pdf)
+[Neural Networks](neural_networks.md)
 
-[SQL](sql.pdf)
+[SQL](sql.md)
 
-[Finance](finance.pdf)
+[Finance](finance.md)
 
-[Overall Notes](my_notes.pdf)
+[Overall Notes](my_notes.md)
 
-[Command Line](command_line.pdf)
+[Command Line](command_line.md)
