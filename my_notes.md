@@ -1,10 +1,3 @@
----
-output: 
-  pdf_document: 
-    latex_engine: xelatex
-urlcolor: blue
----
-
 # Unix and Git
 
 ## Unix
