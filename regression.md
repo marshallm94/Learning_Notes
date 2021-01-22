@@ -1,3 +1,5 @@
+# General Linear Models 
+
 [TOC]
 
 # Linear Regression
@@ -325,3 +327,4 @@ $$
 
 
 
+​      
