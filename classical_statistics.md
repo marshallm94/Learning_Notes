@@ -21,3 +21,4 @@ E[\bar{X}] & = \mu
 
 \end{align}
 $$
+
