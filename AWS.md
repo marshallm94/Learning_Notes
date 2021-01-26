@@ -1,4 +1,8 @@
-# Cloud Academy: AWS Cloud Practicioner Certification Preparation Notes
+The below notes were taken while going through the AWS Cloud Practitioner Certification Preparation on Cloud Academy
+
+[TOC]
+
+# What is Cloud Computing? 
 
 Cloud computing is a remote virtual pool of on-demand shared resources offering Compute, Storage, Database and Network
 services that can be rapidly deployed at scale.
@@ -104,4 +108,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Storage (NAS/SAN/Block Storage/Backup)
 	* In the cloud, storage is effectively unlimited and highly scalable.
 
+# Compute Fundamentals for AWS
+
+###
 
