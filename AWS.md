@@ -11,10 +11,11 @@ services that can be rapidly deployed at scale.
 * Benefits include reduced costs due to the ability for multiple VM's to run on one physical machine, which
   allows the business (or cloud infrastructure provider), to save electricty, storage (of the physical machines), etc.
 
-Compute 
-Storage
-Database
-Network
+The 4 main services offered by a cloud infrastructure provider are:
+* Compute 
+* Storage
+* Database
+* Network
 
 **It makes sense to host your cloud as close to the users of the cloud as possible, to cut down on latency**
 
@@ -50,7 +51,7 @@ Network
 	* Choose the exact architecture you need (number of instances, OS', etc.)
 * Growth
 	* Global datacenters allow the user to reach their end users on a global scale, not having to worry about
-	  latency since the cloud infracture provider usually has resources around the world.
+	  latency since the cloud infrastructure provider usually has resources around the world.
 * Utility Based Metering
 	* Only pay for what you use (or leave on...)
 * Shared Infracture
@@ -61,4 +62,46 @@ Network
 	  own.
 * Security
 	* Cloud providers are usually more secure since they have to comply with worldwide regulations.
+
+## Cloud Service Models
+
+1. Software as a Service (SaaS)
+	* (Most applications fit this model) - allows some customization, however that customization is within the
+	  context of the application.
+2. Platform as a Service (PaaS)
+	* Allows customization from the OS level and up (network, host hardware etc. managed by provider).
+3. Infrasture as a Service (IaaS)
+	* Allows customization at the OS level and up (including virtual clouds). The hardware is typically managed by the provider.
+
+## Common Use Cases of Cloud Computing 
+
+* Migration of production services to the cloud (as opposed to on premises services)
+* Peak season might but a strain on standard infrastructure; being based in the cloud would allow seasonal scaling
+  ("Traffic Bursting")
+* Backup & DR (Disaster Recovery)
+* Web hosting of applications
+* Test & Dev environments
+* Low cost Proof of Concept
+* Big Data & Data manipulation
+
+## Data Center Architecture in the Cloud
+
+* Location
+	* public cloud providers will have regions worldwide, each region with multiple data centers
+* Physical Security
+	* Vendor is responsible for the physical security of their data center
+* Mechanical & Electrical Infrastructure (CRAC (Computer Room Air Conditioning))
+	* Generators, Fire Suppression, etc. are all on premise at the data center, and is therefore the responsibility
+	  of the data center.
+* Network Infrastructure (Switches/Routers/Firewalls)
+	* The public cloud user is able to create configurations that simulate the logical effet of switches, routers
+	  and firewalls.
+	* In AWS, virtual clouds are called Virtual Private Networks (VPCs) and are configured by the end user. This
+	  therefore means that the security & infrastructure *of the VPC* is the responsibility of the end user.
+* Servers (Application/Directory/Database)
+	* "instances" or "VMs" 
+	* Providers offer services that are specific to hosting databases, or specific to high compute power
+* Storage (NAS/SAN/Block Storage/Backup)
+	* In the cloud, storage is effectively unlimited and highly scalable.
+
 
