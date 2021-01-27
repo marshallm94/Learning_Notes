@@ -44,7 +44,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 
 ## Key Cloud Concepts
 
-* On-Deman Reourcing
+* On-Demand Resourcing
 	* When you want a resource (larger EC2 instance, another DB, etc.) it is *almost* always available.
 * Scalability
 	* 'Up' and 'down' scalability - alters the power and performance of an instance.
@@ -58,7 +58,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 	  latency since the cloud infrastructure provider usually has resources around the world.
 * Utility Based Metering
 	* Only pay for what you use (or leave on...)
-* Shared Infracture
+* Shared Infrastructure
 	* Virtualization allows multiple services to run on one machine, thus allowing multiple users to use the same
 	  physical machine (allows for economies of scale for the cloud provider)
 * Highly Available
@@ -241,4 +241,55 @@ Two types:
 * It is the user's responsibility to maintain and install latest OS updates & security patches released by the OS vendor
   - this is part of the shared responsibility model
 
+## ECS - EC2 Container Service
+
+ECS allows the user to run Docker-enabled applications packaged as containers across a cluster of EC2 instances,
+**without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate**
+manages this system for you.
+
+Two different ECS Cluster deployement models:
+1. Fargate Launch
+	* the user is only required to specify CPU, memory and networking policies (in addition to having your
+	  applications packaged in containers)
+	* This is the option that trades lower customization for lower management overhead.
+2. EC2 Launch
+	* This is the option that trades higher management overhead for higher customization.
+	* The user is responsible for patching and scaling instances, specifying instance types and how many
+	  applications should be in a cluster.
+
+* Monitoring of your ECS cluster and containers is provided by AWS CloudWatch
+* An ECS Cluster is comprimised of multiple EC2 instances
+* Security Groups, Elastic Load and Autoscaling can be applied.
+* The cluster can be comprised of different EC2 instance types.
+* **Clusters can only scale in a single region** (this is different from availability zones; clusters can span multiple
+  zones).
+* Containers can be scheduled to be deployed across the cluster.
+
+
+## ECR - Elastic Container Registry
+
+ECR provides a secure location to store and manage your docker images. This service allows developers to push, pull and
+manage their library of docker images in a central and secure location
+
+There are a few components used in ECR:
+
+1. Registry
+	* The component that hosts/stores docker images as well as create image repo's	
+	* The default URL for the registry is:
+	`https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com`
+2. Autorization Token 
+	* **Before your docker client can access the registry (push & pull), it needs to be authenticated with an
+	  Autorization token
+	* To start the authorization process, run the following command using the AWS CLI (might need to be installed):
+	`$ aws ecr get-login --region <region> --no-include-email`
+	* The above command's output will be a docker login command:
+	`docker login -u AWS -p <password>`
+	* Authorization tokens last for 12 hours before the above process need to be performed again.
+3. Repo 
+	* Standard repo concept - allows grouping of docker images in whatever manner the user would like.
+4. Repo Policy 
+	* Repo policy's can be set up by the principal of the repo - who can then setup which actions different users
+	  can perform on various repo's.
+5. Image 
+	* Once all the above has been completed, you/the user can push/pull docker images from your ECR.
 
