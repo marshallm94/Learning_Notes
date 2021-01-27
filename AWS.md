@@ -110,5 +110,135 @@ The 4 main services offered by a cloud infrastructure provider are:
 
 # Compute Fundamentals for AWS
 
-###
+* There are different types of compute resources on AWS - not only EC2
+
+## EC2 - Elastic Cloud Compute
+
+* EC2 is the "meat and potatoes" of AWS' compute infrastructure.
+
+### AMIs - Amazon Machine Images
+
+* An AMI is a template for a VM; this can include the OS, specific applications for your use case, custom configurations, etc.
+* To create your own custom AMI:
+	* Choose a basic AMI the first time you launch an EC2 instance (only specifying the OS you want for example),
+	  and then once the instance is launched, you can install any applications related to your solution, configure
+	  anything you like, install any applications that will need to be on all VM's of this type for your solution,
+	  and save this entire setup as your own custom AMI.
+	* This custom AMI can then be launched with all the configurations & installations already setup.
+* AMI's are also available through the "Community AMIs" page and the "AWS Marketplace"
+
+### Instance Types 
+
+The key parameters of an instance type to pay attention to when launching are:
+* vCPUs
+* Memory (GB)
+* Instance Storage
+* Network Performance
+
+* There are other parameters of lesser importance, all of which can be seen in the instance parameters table when
+  launching your instance
+
+* Instance types are grouped into families:
+	* micro instances
+		* very low cost - useful for low throughput purposes
+	* general purpose
+		* balanced mix of compute, memory and network capabilities
+	* compute optimized
+		* good for high performance front end servers, etc.
+	* GPU
+	* FPGA - ( Field Programmable Gate Arrays )
+		* used to create application specific hardware accelerations
+		* High CPU performance, large memory and high network performance make these the go to for solutions
+		  that require massive parallel processing; data science/genomics/financial computing being some examples.
+	* Memory optimized
+		* lowest cost per GB of RAM than other instances
+		* recommended for database applications/database components of a solution
+	* Storage optimized
+		* Use SSD backed instance storage, which offers high I/O thoughput.
+
+### Instance Purchasing Options 
+
+Different payment plans available:
+
+* On-Demand Instances
+	* launched at any time
+	* flat rate per instance type
+	* typically used for short term uses
+* Reserved Instances
+	* best applied to long term, predictable workloads (applications that you know need to be running for a set
+	  period of time)
+	* purchases for a set period of time for reduced cost (up to 75% reduced cost). Three options:
+		1. All Upfront
+			* complete payment for 1 or 3 year timeframe - highest discount.
+		2. Partial Upfront
+			* smaller upfront - smaller discount than All Upfront option.
+		3. No Upfront
+			* very small discount applied
+* Scheduled Instances
+	* pay for instances on a daily/weekly/monthly schedule 
+	* **even if you don't use the instance, you will be charged**
+	* less expensive than the On-Demand Instance, so good for recurring but predictably recurring use cases
+* Spot Instances
+	* Bid for unused EC2 resources.
+	* Con: **Not guaranteed for a fixed period of time**
+	* Pro: Can purchase large (expensive) EC2 instance types at a lower price
+	* The "Spot Price" determines the price of an instance and bidding above that "gets" you the instance. If a
+	  higher bid comes along while you are using the instance, **your instance will shut down**.
+	  * Should only be used for tasks that can be interrupted/stopped - otherwise be prepared to continuously ensure
+	    your bid price is above the spot price (either computationally or manually).
+* On-Demand Capacity Reservations
+	* allows you to reserve capacity (whether that is compute, memory, storage or network) within a particular
+	  availability zone for any period of time.
+
+### Tenancy 
+
+"Tenancy" refers to the actual physical computer your VM is hosted on in the AWS data center.
+
+* Shared Tenancy
+	* your instance will be launched on any available host, most likely one that is shared with other AWS users.
+	* AWS provides the security to ensure different users can't access each other's instances
+	* this model is what allows "economies of scale" and makes cloud computing inexpensive.
+* Dedicated Tenancy
+	* Dedicated instances
+		* hosted on hardware that no other AWS user can access
+		* may be required by problem domain compliance requirements
+		* more expensive
+	* Dedicated Hosts
+		* more visibility/control of the physical host than even the "Dedicated Instances" option.
+		* again - may be required by problem domain compliance requirements
+
+### User Data 
+
+* commands that will run during the first boot cycle of the instance
+* used to update software or OS'
+
+### Storage Options
+
+Two types:
+1. Persistent Storage
+	* attaching EPS (Elastic Block Storage) volumes
+	* attached via AWS network - physically separated
+	* can be detached from EC2 instances and maintain data 
+	* data saved on EBS volumes are automatically copied to other volumes within the same availability zone for
+	  backup purposes 
+	* data can be encrypted and scheduled backup snapshots are possible
+2. Ephemeral Storage
+	* **deleted and gone forever when EC2 instance is stopped/terminated**
+	* if instance is rebooted (think "continue instance use") - data is maintained
+	* non-detachable
+
+### Security
+
+* Security group = "instance level firewall"
+	* allows you to specify what traffic communicate with your instance (can be specified via IP range, protocol,
+	  port range, inbound/outbound, etc.)
+* Key-Pairs
+	* Allows encrypted access to EC2 instances
+	* Public Key = AWS keeps this to match to your private key
+	* Private Key = your responsibility for safe keeping
+	* **You can use the same key-pair for multiple instances** - this does mean that if your private key becomes
+	  comprimised, whoever has the key would have access to all the instances associated with that key-pair.
+* It is the user's responsibility to maintain and install latest OS updates & security patches released by the OS vendor
+  - this is part of the shared responsibility model
+
 
