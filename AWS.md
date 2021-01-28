@@ -247,6 +247,9 @@ ECS allows the user to run Docker-enabled applications packaged as containers ac
 **without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate**
 manages this system for you.
 
+Docker is software that allows everything an application needs to run to be put into a logical container, and that
+container can then be run on any operating system.
+
 Two different ECS Cluster deployement models:
 1. Fargate Launch
 	* the user is only required to specify CPU, memory and networking policies (in addition to having your
@@ -264,7 +267,6 @@ Two different ECS Cluster deployement models:
 * **Clusters can only scale in a single region** (this is different from availability zones; clusters can span multiple
   zones).
 * Containers can be scheduled to be deployed across the cluster.
-
 
 ## ECR - Elastic Container Registry
 
@@ -292,4 +294,40 @@ There are a few components used in ECR:
 	  can perform on various repo's.
 5. Image 
 	* Once all the above has been completed, you/the user can push/pull docker images from your ECR.
+
+## EKS - Elastic Container Service for Kubernetes
+
+Kubernetes is an open source container orchestration tool designed to automate deploying, scaling and operating
+containerized applications.
+
+EKS allows the user to run Kubernetes across their infrastructure without having to interact with the Kubernetes
+management system, known as the control plane. The AWS account owner only need to provision and maintain the worker
+nodes if using EKS.
+
+Kubernetes:
+	* The control plane contains API's, the kubelet processes and the Kubernetes Master.
+	* The control plane allocates containers onto nodes (according to CPU needs)
+	* The control plane tracks the state of all Kubernetes objects, continually monitoring them.
+EKS takes care of all the above processes for the AWS users
+
+Worker nodes:
+	* Kubernetes clusters are composed of nodes (worker machine - One-Demand EC2 instance on AWS)
+	* Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
+	* Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
+
+### Setting up EKS
+
+1. Create an EKS Service Role
+	* Create an IAM (Identity & Access Management) service role that allows EKS to provision and configure specific
+	  resources. The EKS role needs the following permission policies:
+		* AmazonEKSServicePolicy
+		* AmazonEKSClusterPolicy
+2. Create an EKS Cluster VPC
+3. Install kubectl and AWS-IAM-Authenticator
+	* kubectl = Kubernetes command line utility
+4. Create your EKS Cluster (using above information)
+5. Configure kubectl for EKS
+	* run `$ update-kubeconfig` via AWS CLI to create a kubeconfig file for your EKS cluster
+6. Provision and configure worker nodes
+7. Configure worker nodes to join EKS Cluster
 
