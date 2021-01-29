@@ -331,3 +331,75 @@ Worker nodes:
 6. Provision and configure worker nodes
 7. Configure worker nodes to join EKS Cluster
 
+## Elastic Beanstalk Service 
+
+**Elastic Beanstalk Service is free to use. However, any resources that Beanstalk sets up for your application (Compute,
+Storage, Database or Network) are charged using the standard pricing of those resources.**
+
+Elastick Beanstalk is a service that takes your uploaded code and automatically provisions and deployes the resources
+needed to make the application operational.
+	* This service is likely the most useful for engineers who may not have the familiarity, skills or desire to
+	  manage the deployment, provisioning and monitoring of developed applications.
+
+* Able to operate with a variety of platforms and programming languages, some examples being:
+	* Single Container Docker
+	* Multicontainer Docker
+	* Preconfigured Docker
+	* Python
+
+Key Components:
+* Application Version
+	* reference to a specific version of the code/application that typically resides in S3
+* Environment 
+	* The Environment refers to the entire system of your deployed application (EC2 and S3 for example)
+	* At this stage, the application has been deployed as a solution and is operational within the environment 
+* Environment Configurations 
+	* Parameters that dictate how the environment will have its resources provisioned by Beanstalk.
+* Environment Tier
+	* Applications that are communicating with other servers (usually via HTTP requests using port 80) are run in a
+	  *web server environment*. AWS infrastructure usually used includes:
+	  	* Route 53
+		* Elastic Load Balancer
+		* Auto Scaling
+		* EC2
+		* Security Groups
+	* Applications that are doing backend jobs/processing of some kind are run in a *worker environment*. AWS
+	  infrastructure usually used includes:
+		* SQS Queue
+		* IAM Service Role
+		* Auto Scaling
+		* EC2
+* Configuration Template 
+	* A template that provides the framework for creating a new, unique, environment.
+* Platform
+	* The set of components that can build your application when using Elastic Beanstalk (OS, server type,
+	  programming language)
+
+The typical Elastic Beanstalk workflow looks like the following:
+
+![](images/elastic_beanstalk_workflow.png)
+
+## Lambda 
+
+"AWS Lambda is a serverless compute service that allows you to run your application code without having to manage EC2
+instances."
+
+[1 Hour video on AWS Lambda and serverless apps](https://www.youtube.com/watch?v=EBSdyoO3goc)
+
+* "Serverless" doesn't actually mean "without servers" - it just means that the cloud infrastructure provider handles
+  **all** the management of Compute resources for you (EC2 provisioning, scaling, etc). Because of this, the user doesn't
+  have to worry about the Computer resources, and thus it is a "Serverless architecture" from the vantage point of the
+  engineer.
+* **Going serverless allows the user to spend  more time on writing code related to the business problem and less time
+  on DevOps**
+* The user only pays for Compute resources when Lambda is in use via Lambda Functions
+* AWS Lambda charges Compute power per 100 milliseconds of use only when your code is running, in addition to the number
+  of times your code runs.
+
+All of the above makes **AWS Lambda highly scalable**; pay for what you use, and don't worry managing all the Compute
+resources you need for you solution to run.
+
+1. Upload code to Lambda (make sure Lambda supports the language your code is written in).
+2. Configure Lambda Functions to execute upon specific triggers from supported event sources.
+3. Once the trigger is initiated, Lambda will run your using only the required resources.
+
