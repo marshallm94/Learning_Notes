@@ -145,11 +145,13 @@ The key parameters of an instance type to pay attention to when launching are:
 		* balanced mix of compute, memory and network capabilities
 	* compute optimized
 		* good for high performance front end servers, etc.
-	* GPU
-	* FPGA - ( Field Programmable Gate Arrays )
-		* used to create application specific hardware accelerations
-		* High CPU performance, large memory and high network performance make these the go to for solutions
-		  that require massive parallel processing; data science/genomics/financial computing being some examples.
+	* accelerated computing
+		* GPU
+		* FPGA - ( Field Programmable Gate Arrays )
+			* used to create application specific hardware accelerations
+			* High CPU performance, large memory and high network performance make these the go to for
+			  solutions that require massive parallel processing; data science/genomics/financial computing
+			  being some examples.
 	* Memory optimized
 		* lowest cost per GB of RAM than other instances
 		* recommended for database applications/database components of a solution
@@ -402,4 +404,69 @@ resources you need for you solution to run.
 1. Upload code to Lambda (make sure Lambda supports the language your code is written in).
 2. Configure Lambda Functions to execute upon specific triggers from supported event sources.
 3. Once the trigger is initiated, Lambda will run your using only the required resources.
+
+## AWS Batch
+
+Used to manage and run batch computing workloads in AWS (mostly used for high specificity cases that require large
+amounts of compute power). 
+
+Components:
+
+1. Jobs 
+	* A "job" is a class of work to be done by AWS Batch.
+	* Could be an executable program, a script, or an application within an ECS Cluster.
+	* Jobs can have different states such as 'Submitted','Pending','Running','Failed',etc.
+2.
+3. Queues
+	* jobs are placed into queues (multiple queues can have different priorities)
+	* AWS Batch can bid on Spot instances on your behalf.
+4. Scheduling
+	* The scheduler takes care of ensuring the high priority items are run first (assuming dependencies are met).
+5. Compute Environments 
+	* Managed (*i.e. managed by Batch*)
+		* Handles the provisioning, scaling and termination of compute resources based on need.
+		* This environment is created as an ECS Cluster
+	* Unmmanaged (*i.e. managed by the user*)
+		* Greater customization = greater administration (by the user)
+		* The user must create the ECS cluster.
+
+As one would expect, this service lends itself to solutions that require/depend on parallel processing (in the Data
+Science world, this could take the form of bagged models (GLM's, random forests, etc.))
+
+## Lightsail
+
+Similar to EC2, Lightsail is an VPS (Virtual Private Server), similar to EC2, however there are fewer configurable steps
+during its creation.
+
+* Designed to be simple compute resources that a small business or single user could use on an ongoing basis, or just as
+  a "one-off" resource.
+
+Lightsail can be accessed via the AWS Console under the Compute category and has a one-page setup.
+
+Choose:
+1. Region/availability zone
+2. Instance image (OS) 
+3. Blueprint (whether you want any apps pre-installed)
+4. Launch Script (if you want)
+5. Key-Pair (by default one is provided, however you can choose your own)
+6. Instance plan (how much you pay)
+	* Although the price is calculated as 31.25 days * 24 hours per day (aka monthly rate) - 
+	* Instances are charged as On-Demand (only pay for it when using it).
+7. Name for Lightsail instance
+	* Also prompted to add 'tags' to help organize your Lightsail instances 
+
+* Use the "Connect" tab to view IP to connect to via SSH.
+* Use the "Snapshots" tab to backup the information on your instance.
+
+* **Deleting your instance and shutting down are different.**
+
+
+
+
+
+
+
+
+
+
 
