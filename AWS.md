@@ -62,3 +62,6 @@ Network
 * Security
 	* Cloud providers are usually more secure since they have to comply with worldwide regulations.
 
+## EBS - Elastic Block Storage
+
+Provides storage to EC2 instances via 'EBS Volume'
