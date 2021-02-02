@@ -460,13 +460,8 @@ Choose:
 
 * **Deleting your instance and shutting down are different.**
 
+# Storage Fundamentals for AWS
 
+## EBS - Elastic Block Storage
 
-
-
-
-
-
-
-
-
+Provides storage to EC2 instances via 'EBS Volume'
