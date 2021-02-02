@@ -465,3 +465,49 @@ Choose:
 ## EBS - Elastic Block Storage
 
 Provides storage to EC2 instances via 'EBS Volume'
+
+* Persistent, block level storage connect to EC2 instances via AWS network.
+* An EBS volume can be attached/accessed to/by **only one** EC2 instance, however multiple EBS volumes can be attached
+  to a single instance.
+* 'Snapshots' (aka backups) can be performed manually or setup to run on a scheduled basis.
+	* Theses backups are stored in an S3 bucket.
+	* EBS volumes can be recreated from snapshots
+	* Snapshots can be copied from one availability region to another
+
+**Reliability**
+* Every write to an EBS volume is repeated multiple times to protect against a complete loss of data.
+* **Volumes can only be attached to an EC2 instance in the same availability zone**
+
+### Volume Types
+
+* Having two volume options (below) allow the user to trade performance for cost in the best manner for their solution.
+* Different volume types have different IOPS (Input/Output per Second) thresholds
+
+1. SSD (Solid State Drive)
+	* Best for smaller blocks of data.
+	* There are two sub-types of SSD's:
+		* 1.1 General Purpose SSD
+		* 1.2 Provisioned IOPS SSD
+			* Highest performance EBS volume (best for low-latency requirements)
+2. HDD (Hard Disk Drive)
+	* Best for larger blocks of data.
+	* Designed for workloads that require a higher rate of throughput.
+	* There are two sub-types of HDD's:
+		* 2.1 Throughput optimized HDD
+			* Best for large blocks of data that are still throughput intensive
+			* **These volumes can NOT be used as boot volumes for instances**
+		* 2.2 Cold HDD
+			* Best for large blocks of data that don't need to be accessed frequently.
+			* **These volumes can NOT be used as boot volumes for instances**
+
+There are a few ways to create an EBS volume
+
+1. During the launch of an EC2 instance
+2. As a standalone EBS volume that can be atttached to an EC2 instance when required
+
+During the creation of the volume, the user can choose:
+* Whether to create the volume from a snapshot (of a previous volume) OR start a blank volume
+* Size
+* Volume type 
+* **What happens to the volume when the EC2 instance terminates**
+* To encrypt or not to encrypt
