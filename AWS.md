@@ -511,3 +511,68 @@ During the creation of the volume, the user can choose:
 * Volume type 
 * **What happens to the volume when the EC2 instance terminates**
 * To encrypt or not to encrypt
+
+# Elastic Load Balancing (ELB) & EC2 Auto Scaling
+
+## ELB - Elastic Load Balancer
+
+The main function of an ELB is to help manage and control the flow of inboud requests destined to a group of targets by
+distributing these requests evenly across the targeted resource group
+* Targets could be EC2 instances, Lambda functions, different Docker containers, etc.
+* Targets can be in a single Availability Zone (AZ) or across multiple AZs
+
+* The "Elastic" in the name means that an ELB will automatically scale up or down as incoming traffic
+  increases/decreases *without any management on the part of the user*.
+	* Dynamic scaling can be setup simply.
+
+**ELB Types**
+1. Application Load Balancer
+	* Flexible feature set for applications using HTTP/HTTPS protocols.
+	* **Operates at the request level.**
+	* Advanced routing, TLS termination and visibility features targeted at application architectures.
+2. Network Load Balancer
+	* Ultra-high performance while maintaining very low latency.
+	* **Operates at the connection level.**
+	* Can handle millions of requests per second.
+3. Classic Load Balancer
+	* Used for applications that were built in the existing EC2 Classic Environment.
+	* **Operates at both the connection and request level.**
+
+**ELB Components**
+
+1. Listeners
+	* Defines how inbound connections are routed to target groups based on ports and protocols set as **conditions**
+	  (think `if else` statements).
+2. Target Groups
+	* A group of resources to which the ELB will route requests.
+	* One ELB can have multiple different target groups, each associated with different listener configurations and
+	  associated rules.
+3. Rules
+	* Rules (think `if else` statements) define how an incoming requests gets routed to which target group.
+4. Health Checks
+	* The ELB can (and does) contact each target within a target group using a specific protocol to receive a
+	  response. If that response doesn't come back, the ELB marks that target as 'unhealthy' and stop sending
+	  traffic to that target.
+5. ELB Schemes
+	* 5.1 Internet-Facing ELB
+		* As the name suggests, this ELB scheme handles connections/requests coming from other
+		  applications/servers through the internet. Due to this, this ELB scheme has a public DNS and
+		  associated Public IP.
+	* 5.2 Internal ELB
+		* This scheme is only used for communication within an applciation/system/solution. Therefore, this ELB
+		  only has a internal IP address and can therefore only communicate with requests that come from within
+		  the users VPC.
+6. ELB Nodes
+	* Each AZ you intend to work in needs to have its own ELB node
+7. Cross-Zone Load Balancing
+	* Allows the ELB to send requests to targets that aren't in its AZ.
+
+* An ELB can contain 1 or more listeners, each listener can contain 1 or more rules, each rule can contain 1 or more
+  conditions. **All conditions result in a single action.**
+
+## SSL Server Certificates 
+
+
+
+
+
