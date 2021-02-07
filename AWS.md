@@ -526,17 +526,27 @@ distributing these requests evenly across the targeted resource group
 	* Dynamic scaling can be setup simply.
 
 **ELB Types**
-1. Application Load Balancer
+
+* See [this table](https://aws.amazon.com/elasticloadbalancing/features/#compare) for a comparison of the different ELB
+  types
+
+1. Application Load Balancer (ALB)
+	* ALBs operate at level 7 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
 	* Flexible feature set for applications using HTTP/HTTPS protocols.
 	* **Operates at the request level.**
 	* Advanced routing, TLS termination and visibility features targeted at application architectures.
-2. Network Load Balancer
+	* Target groups can be setup so all requests of a specific protocol are routed to that group, through a specific
+	  port.
+2. Network Load Balancer (NLB)
+	* NLBs operate at level 4 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
 	* Ultra-high performance while maintaining very low latency.
 	* **Operates at the connection level.**
 	* Can handle millions of requests per second.
 3. Classic Load Balancer
 	* Used for applications that were built in the existing EC2 Classic Environment.
 	* **Operates at both the connection and request level.**
+	* This should only be used for an existing application running in the EC2-Classic network (legacy AWS
+	  infrastructure)
 
 **ELB Components**
 
@@ -572,7 +582,19 @@ distributing these requests evenly across the targeted resource group
 
 ## SSL Server Certificates 
 
+SSL = Secure Sockets Layer
+	* SSL is a cryptographic protocol, similar to TLS (Transport Layer Security)
 
+* HTTPS requests will sometimes need to be used in lieu of HTTPS requests to ensure an encrypted connection between a
+  client sending a request and your ALB.
+	* In order set this up, you will an SSL certificate.
+* The server certificate that the user will need to set up is an *X.509 certificate* (digital ID provisioned by a
+  Certificate Authority and managed by AWS Certificate Manager ( ACM ))
+	* This certificate is used to terminate the connection between the client and your application/solution, and
+	  only then is the request decrypted and sent to the resources in the ELB target group.
 
+* ACM allows you to provision and configure any SSL certifcates that will be used inside your AWS solution (most AZ's
+  are supported). If the AZ you are in isn't supported, you will have to configure a certificate using IAM.
 
+## EC2 Auto Scaling 
 
