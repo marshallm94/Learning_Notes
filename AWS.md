@@ -598,3 +598,45 @@ SSL = Secure Sockets Layer
 
 ## EC2 Auto Scaling 
 
+As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
+demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
+spending money on resources they aren't using.
+
+**Components**
+
+1. Create a Launch Configuration or Launch Template
+	* **This must be setup prior to setting up the Auto Scaling Group** - otherwise the group wouldn't know what
+	  instance type and specifications to use when launching a new instance.
+	* Launch Configuration and Launch Templates are very similar, the only real difference being that a Template
+	  allows the user to specify a few advanced options, and has the entire setup process on one webpage (as opposed
+	  to the Launch Configuration, which goes through multiple webpages.)
+	* One of the two options is needed in order to specify new instance parameters such as:
+		* the AMI to use.
+		* the instance type to use.
+		* whether the instance should have a public IP.
+		* the storage volume the instance should use .
+		* the security groups (if any) the new instance should be associated with.
+2. Create an Auto Scaling Group
+	* Select the Launch Template or Configuration that new instance will be launched from.
+	* Set up the "Starting Instance" count.
+	* Set up the minimum and maximum number of instances that your solution can scale between.
+	* Set up the conditions that need to be met for "Scaling Up" (i.e. Average CPU usage >= 75% for 3 minutes).
+	* Set up the conditions that need to be met for "Scaling Down" (i.e. Average CPU usage <= 30% for 3 minutes).
+	* Set up AZs in which new instances will be created.
+
+## Combining ELB & EC2 Auto Scaling 
+
+Although ELBs and EC2 Auto Scaling *can* be used independently, they work best together.
+	* If you have a fixed number of instances/compute resources in a target group of an ELB, if you need more, the
+	  user will have to manually add more. If you need less, the user will have to manually remove some.
+	* If you have an EC2 Auto Scaling group without an ELB, how are you going to distribute traffic/requests evenly
+	  across your instances?
+
+* ELBs allows incoming traffic to be *averaged* across all resources within a target group.
+* EC2 Auto Scaling can be setup to *scale* the resources in that target group.
+
+* To associate an ALB or NLB, you must associate the auto scaling group with the ALB or NLB target group. This is
+  performed by editing the configuration of the Auto Scaling Group from the AWS Management Console.
+	* Note that there are two sections that are related to ELBs; the "Classic Load Balancer" field and the "Target
+	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
+	  be used for all newly created ALBs or NLBs.
