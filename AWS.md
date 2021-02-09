@@ -512,6 +512,96 @@ During the creation of the volume, the user can choose:
 * **What happens to the volume when the EC2 instance terminates**
 * To encrypt or not to encrypt
 
+## S3 - Simple Storage Service 
+
+* Most common storage service in AWS (applicable to many use cases).
+* Theoretically unlimited storage.
+* Supports individual files sizes up to 5 TB.
+* S3 is object based - meaning **it does not store objects (files) in a traditional hierarchy**. The address space is
+  flat and therefore each object has a unique URL by which it can be accessed.
+	* You **can** create folders/directories **within** a bucket to help with organization; however, S3 itself is
+	  not a hierarchical file system.
+		* Each object saved in S3 has a "key", which can be thought of as the filepath (it includes and
+		  directories within the bucket). The "full path" aka full URL for an object within S3 will be its
+		  bucket name and the object key.
+* S3 is a regional service; to ensure data persistence, AWS makes multiple copies of your data within different AZs
+  within the region you selected. This provides "Eleven 9's" worth of data integrity (99.999999999% durability = very
+  low likelihood of losing data).
+* Availability is **not** the same as Durability; AWS provides 99.5% - 99.99% data *Availability*, which means you will
+  be able to access your saved data 99.5% - 99.99% of the time. *Durability* refers to the the likelihood your data
+  isn't lost or corrupted.
+* **Data versioning is an option.**
+
+To save an object in S3 (manually):
+1. Create an S3 bucket with a **globally unique name**.
+	* This can be accessed via the AWS Management Console, and selecting "S3" under the "Storage" header.
+	* This means that your bucket name has to be unique **across all of AWS** (can't just be unique *to you*).
+	* by default, your account has a soft limit of 100 buckets, however this can be increased by contacting AWS.
+
+### Storage Classes
+
+Different storage classes allows the user to choose the tradeoffs between cost and accessibility that best suits the
+problem they are working on. There are 6 different storage classes:
+
+1. S3 Standard
+	* general purpose storage
+		* High throughput and low latency
+	* Lifecycle rules are an option 
+		* Lifecycle rules allow the user to setup a configuration that automatically moves objects saved in S3
+		  to a different storage class (i.e. if you haven't accessed some data in a while but still want to keep
+		  it around for the "just in case" moments, you can have that data moved to a less expensive and less
+		  easily accessible storage class).
+	* SSL encryption is available for data both at rest in an S3 bucket and in transit to/from and S3 bucket.
+2. S3 Intelligent Tiering (S3 INT)
+	* Best for use cases where the data access rate is unknown in advance.
+	* S3 INT has two subclasses; Frequent Access and Infrequent Access.
+		* **These subclasses are not the same as the "meta" versions with the same name; these subclasses are
+		  "within" the logical set of "S3 INT"**
+	* By default, an object is placed in the Frequent Access tier; if it hasn't been accessed in 30 days, it is
+	  moved to the Infrequent Access tier. As soon as it is accessed again, it is moved back to the Frequent Access
+	  tier and the clock starts again.
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+3. S3 Standard Infrequent Access (S3 S-IA)
+	* Similar to the Infrequent Tier subclass of the S3 INT storage class (above).
+	* Designed for object that aren't going to be accessed frequently (duh).
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+4. S3 One Zone Infrequent Access (S3 Z-IA)
+	* Designed for object that aren't going to be accessed frequently (duh).
+	* Durability of Eleven 9's, however this is *within a single AZ, as opposed to S3 S-IA, which has the same
+	  Durability but across multiple AZs*. This change offers the user a 20% decrease in cost.
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+
+Glacier Classes:
+
+* A fraction of the cost of the above storage classes, the tradeoff being you don't get instance access to your
+  data.
+* Best suited for "Cold Storage" - objects that will likely not need to be accessed but need to be kept around
+  "just in case".
+* Eleven 9's of Durability.
+* **No GUI for moving objects into Glacier "Vaults" (as they are called);** the GUI can only be used to create
+  the vaults. After that, data must be moved into the vaults via APIs, SDKs, or the AWS CLI (or, through
+  Lifecycle rules set up in the more frequent access classes).
+
+5. S3 Glacier
+	* Data *can* be accessed via 3 different routes, each with a different cost (listed in descending order relative
+	  to cost):
+		1. Expedited
+			* Available in 1-5 minutes
+			* Data must be under 250 MB.
+		2. Standard
+			* Available in 3-5 hours.
+			* Any size.
+		3. Bulk
+			* Available in 5-12 hours.
+			* Used for retrieving PB's of data at a time.
+6. S3 Glacier Deep Archive (S3 G-DA)
+	* Minimal access.
+	* Retrieval available within 12 hours (only one option).
+
+
 # Elastic Load Balancing (ELB) & EC2 Auto Scaling
 
 ## ELB - Elastic Load Balancer
@@ -534,7 +624,8 @@ distributing these requests evenly across the targeted resource group
 	* ALBs operate at level 7 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
 	* Flexible feature set for applications using HTTP/HTTPS protocols.
 	* **Operates at the request level.**
-	* Advanced routing, TLS termination and visibility features targeted at application architectures.
+	* Advanced routing, TLS (Transport Layer Security) termination and visibility features targeted at application
+	  architectures.
 	* Target groups can be setup so all requests of a specific protocol are routed to that group, through a specific
 	  port.
 2. Network Load Balancer (NLB)
@@ -640,3 +731,4 @@ Although ELBs and EC2 Auto Scaling *can* be used independently, they work best t
 	* Note that there are two sections that are related to ELBs; the "Classic Load Balancer" field and the "Target
 	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
 	  be used for all newly created ALBs or NLBs.
+
