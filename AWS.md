@@ -460,6 +460,134 @@ Choose:
 
 * **Deleting your instance and shutting down are different.**
 
+## ELB - Elastic Load Balancer
+
+The main function of an ELB is to help manage and control the flow of inboud requests destined to a group of targets by
+distributing these requests evenly across the targeted resource group
+* Targets could be EC2 instances, Lambda functions, different Docker containers, etc.
+* Targets can be in a single Availability Zone (AZ) or across multiple AZs
+
+* The "Elastic" in the name means that an ELB will automatically scale up or down as incoming traffic
+  increases/decreases *without any management on the part of the user*.
+	* Dynamic scaling can be setup simply.
+
+**ELB Types**
+
+* See [this table](https://aws.amazon.com/elasticloadbalancing/features/#compare) for a comparison of the different ELB
+  types
+
+1. Application Load Balancer (ALB)
+	* ALBs operate at level 7 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
+	* Flexible feature set for applications using HTTP/HTTPS protocols.
+	* **Operates at the request level.**
+	* Advanced routing, TLS (Transport Layer Security) termination and visibility features targeted at application
+	  architectures.
+	* Target groups can be setup so all requests of a specific protocol are routed to that group, through a specific
+	  port.
+2. Network Load Balancer (NLB)
+	* NLBs operate at level 4 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
+	* Ultra-high performance while maintaining very low latency.
+	* **Operates at the connection level.**
+	* Can handle millions of requests per second.
+3. Classic Load Balancer
+	* Used for applications that were built in the existing EC2 Classic Environment.
+	* **Operates at both the connection and request level.**
+	* This should only be used for an existing application running in the EC2-Classic network (legacy AWS
+	  infrastructure)
+
+**ELB Components**
+
+1. Listeners
+	* Defines how inbound connections are routed to target groups based on ports and protocols set as **conditions**
+	  (think `if else` statements).
+2. Target Groups
+	* A group of resources to which the ELB will route requests.
+	* One ELB can have multiple different target groups, each associated with different listener configurations and
+	  associated rules.
+3. Rules
+	* Rules (think `if else` statements) define how an incoming requests gets routed to which target group.
+4. Health Checks
+	* The ELB can (and does) contact each target within a target group using a specific protocol to receive a
+	  response. If that response doesn't come back, the ELB marks that target as 'unhealthy' and stop sending
+	  traffic to that target.
+5. ELB Schemes
+	* 5.1 Internet-Facing ELB
+		* As the name suggests, this ELB scheme handles connections/requests coming from other
+		  applications/servers through the internet. Due to this, this ELB scheme has a public DNS and
+		  associated Public IP.
+	* 5.2 Internal ELB
+		* This scheme is only used for communication within an applciation/system/solution. Therefore, this ELB
+		  only has a internal IP address and can therefore only communicate with requests that come from within
+		  the users VPC.
+6. ELB Nodes
+	* Each AZ you intend to work in needs to have its own ELB node
+7. Cross-Zone Load Balancing
+	* Allows the ELB to send requests to targets that aren't in its AZ.
+
+* An ELB can contain 1 or more listeners, each listener can contain 1 or more rules, each rule can contain 1 or more
+  conditions. **All conditions result in a single action.**
+
+### SSL Server Certificates 
+
+SSL = Secure Sockets Layer
+	* SSL is a cryptographic protocol, similar to TLS (Transport Layer Security)
+
+* HTTPS requests will sometimes need to be used in lieu of HTTPS requests to ensure an encrypted connection between a
+  client sending a request and your ALB.
+	* In order set this up, you will an SSL certificate.
+* The server certificate that the user will need to set up is an *X.509 certificate* (digital ID provisioned by a
+  Certificate Authority and managed by AWS Certificate Manager ( ACM ))
+	* This certificate is used to terminate the connection between the client and your application/solution, and
+	  only then is the request decrypted and sent to the resources in the ELB target group.
+
+* ACM allows you to provision and configure any SSL certifcates that will be used inside your AWS solution (most AZ's
+  are supported). If the AZ you are in isn't supported, you will have to configure a certificate using IAM.
+
+## EC2 Auto Scaling 
+
+As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
+demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
+spending money on resources they aren't using.
+
+**Components**
+
+1. Create a Launch Configuration or Launch Template
+	* **This must be setup prior to setting up the Auto Scaling Group** - otherwise the group wouldn't know what
+	  instance type and specifications to use when launching a new instance.
+	* Launch Configuration and Launch Templates are very similar, the only real difference being that a Template
+	  allows the user to specify a few advanced options, and has the entire setup process on one webpage (as opposed
+	  to the Launch Configuration, which goes through multiple webpages.)
+	* One of the two options is needed in order to specify new instance parameters such as:
+		* the AMI to use.
+		* the instance type to use.
+		* whether the instance should have a public IP.
+		* the storage volume the instance should use .
+		* the security groups (if any) the new instance should be associated with.
+2. Create an Auto Scaling Group
+	* Select the Launch Template or Configuration that new instance will be launched from.
+	* Set up the "Starting Instance" count.
+	* Set up the minimum and maximum number of instances that your solution can scale between.
+	* Set up the conditions that need to be met for "Scaling Up" (i.e. Average CPU usage >= 75% for 3 minutes).
+	* Set up the conditions that need to be met for "Scaling Down" (i.e. Average CPU usage <= 30% for 3 minutes).
+	* Set up AZs in which new instances will be created.
+
+### Combining ELB & EC2 Auto Scaling 
+
+Although ELBs and EC2 Auto Scaling *can* be used independently, they work best together.
+	* If you have a fixed number of instances/compute resources in a target group of an ELB, if you need more, the
+	  user will have to manually add more. If you need less, the user will have to manually remove some.
+	* If you have an EC2 Auto Scaling group without an ELB, how are you going to distribute traffic/requests evenly
+	  across your instances?
+
+* ELBs allows incoming traffic to be *averaged* across all resources within a target group.
+* EC2 Auto Scaling can be setup to *scale* the resources in that target group.
+
+* To associate an ALB or NLB, you must associate the auto scaling group with the ALB or NLB target group. This is
+  performed by editing the configuration of the Auto Scaling Group from the AWS Management Console.
+	* Note that there are two sections that are related to ELBs; the "Classic Load Balancer" field and the "Target
+	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
+	  be used for all newly created ALBs or NLBs.
+
 # Storage Fundamentals for AWS
 
 ## EBS - Elastic Block Storage
@@ -601,134 +729,6 @@ Glacier Classes:
 	* Minimal access.
 	* Retrieval available within 12 hours (only one option).
 
+## EFS - Elastic File System
 
-# Elastic Load Balancing (ELB) & EC2 Auto Scaling
-
-## ELB - Elastic Load Balancer
-
-The main function of an ELB is to help manage and control the flow of inboud requests destined to a group of targets by
-distributing these requests evenly across the targeted resource group
-* Targets could be EC2 instances, Lambda functions, different Docker containers, etc.
-* Targets can be in a single Availability Zone (AZ) or across multiple AZs
-
-* The "Elastic" in the name means that an ELB will automatically scale up or down as incoming traffic
-  increases/decreases *without any management on the part of the user*.
-	* Dynamic scaling can be setup simply.
-
-**ELB Types**
-
-* See [this table](https://aws.amazon.com/elasticloadbalancing/features/#compare) for a comparison of the different ELB
-  types
-
-1. Application Load Balancer (ALB)
-	* ALBs operate at level 7 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
-	* Flexible feature set for applications using HTTP/HTTPS protocols.
-	* **Operates at the request level.**
-	* Advanced routing, TLS (Transport Layer Security) termination and visibility features targeted at application
-	  architectures.
-	* Target groups can be setup so all requests of a specific protocol are routed to that group, through a specific
-	  port.
-2. Network Load Balancer (NLB)
-	* NLBs operate at level 4 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
-	* Ultra-high performance while maintaining very low latency.
-	* **Operates at the connection level.**
-	* Can handle millions of requests per second.
-3. Classic Load Balancer
-	* Used for applications that were built in the existing EC2 Classic Environment.
-	* **Operates at both the connection and request level.**
-	* This should only be used for an existing application running in the EC2-Classic network (legacy AWS
-	  infrastructure)
-
-**ELB Components**
-
-1. Listeners
-	* Defines how inbound connections are routed to target groups based on ports and protocols set as **conditions**
-	  (think `if else` statements).
-2. Target Groups
-	* A group of resources to which the ELB will route requests.
-	* One ELB can have multiple different target groups, each associated with different listener configurations and
-	  associated rules.
-3. Rules
-	* Rules (think `if else` statements) define how an incoming requests gets routed to which target group.
-4. Health Checks
-	* The ELB can (and does) contact each target within a target group using a specific protocol to receive a
-	  response. If that response doesn't come back, the ELB marks that target as 'unhealthy' and stop sending
-	  traffic to that target.
-5. ELB Schemes
-	* 5.1 Internet-Facing ELB
-		* As the name suggests, this ELB scheme handles connections/requests coming from other
-		  applications/servers through the internet. Due to this, this ELB scheme has a public DNS and
-		  associated Public IP.
-	* 5.2 Internal ELB
-		* This scheme is only used for communication within an applciation/system/solution. Therefore, this ELB
-		  only has a internal IP address and can therefore only communicate with requests that come from within
-		  the users VPC.
-6. ELB Nodes
-	* Each AZ you intend to work in needs to have its own ELB node
-7. Cross-Zone Load Balancing
-	* Allows the ELB to send requests to targets that aren't in its AZ.
-
-* An ELB can contain 1 or more listeners, each listener can contain 1 or more rules, each rule can contain 1 or more
-  conditions. **All conditions result in a single action.**
-
-## SSL Server Certificates 
-
-SSL = Secure Sockets Layer
-	* SSL is a cryptographic protocol, similar to TLS (Transport Layer Security)
-
-* HTTPS requests will sometimes need to be used in lieu of HTTPS requests to ensure an encrypted connection between a
-  client sending a request and your ALB.
-	* In order set this up, you will an SSL certificate.
-* The server certificate that the user will need to set up is an *X.509 certificate* (digital ID provisioned by a
-  Certificate Authority and managed by AWS Certificate Manager ( ACM ))
-	* This certificate is used to terminate the connection between the client and your application/solution, and
-	  only then is the request decrypted and sent to the resources in the ELB target group.
-
-* ACM allows you to provision and configure any SSL certifcates that will be used inside your AWS solution (most AZ's
-  are supported). If the AZ you are in isn't supported, you will have to configure a certificate using IAM.
-
-## EC2 Auto Scaling 
-
-As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
-demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
-spending money on resources they aren't using.
-
-**Components**
-
-1. Create a Launch Configuration or Launch Template
-	* **This must be setup prior to setting up the Auto Scaling Group** - otherwise the group wouldn't know what
-	  instance type and specifications to use when launching a new instance.
-	* Launch Configuration and Launch Templates are very similar, the only real difference being that a Template
-	  allows the user to specify a few advanced options, and has the entire setup process on one webpage (as opposed
-	  to the Launch Configuration, which goes through multiple webpages.)
-	* One of the two options is needed in order to specify new instance parameters such as:
-		* the AMI to use.
-		* the instance type to use.
-		* whether the instance should have a public IP.
-		* the storage volume the instance should use .
-		* the security groups (if any) the new instance should be associated with.
-2. Create an Auto Scaling Group
-	* Select the Launch Template or Configuration that new instance will be launched from.
-	* Set up the "Starting Instance" count.
-	* Set up the minimum and maximum number of instances that your solution can scale between.
-	* Set up the conditions that need to be met for "Scaling Up" (i.e. Average CPU usage >= 75% for 3 minutes).
-	* Set up the conditions that need to be met for "Scaling Down" (i.e. Average CPU usage <= 30% for 3 minutes).
-	* Set up AZs in which new instances will be created.
-
-## Combining ELB & EC2 Auto Scaling 
-
-Although ELBs and EC2 Auto Scaling *can* be used independently, they work best together.
-	* If you have a fixed number of instances/compute resources in a target group of an ELB, if you need more, the
-	  user will have to manually add more. If you need less, the user will have to manually remove some.
-	* If you have an EC2 Auto Scaling group without an ELB, how are you going to distribute traffic/requests evenly
-	  across your instances?
-
-* ELBs allows incoming traffic to be *averaged* across all resources within a target group.
-* EC2 Auto Scaling can be setup to *scale* the resources in that target group.
-
-* To associate an ALB or NLB, you must associate the auto scaling group with the ALB or NLB target group. This is
-  performed by editing the configuration of the Auto Scaling Group from the AWS Management Console.
-	* Note that there are two sections that are related to ELBs; the "Classic Load Balancer" field and the "Target
-	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
-	  be used for all newly created ALBs or NLBs.
 
