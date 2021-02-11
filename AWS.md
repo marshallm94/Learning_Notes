@@ -590,6 +590,16 @@ Although ELBs and EC2 Auto Scaling *can* be used independently, they work best t
 
 # Storage Fundamentals for AWS
 
+There are more storage options provided by AWS than those listed here, however the "big three" if you will are:
+
+* EBS - Elastic Block Volume
+	* Low latency
+	* Should be used like a traditional hard drive
+* S3 - Simple Storage Service
+	* Best for large objects that don't require frequent reading and writing.
+* EFS - Elastic File Storage
+	* "Traditional" file system
+
 ## EBS - Elastic Block Storage
 
 Provides storage to EC2 instances via 'EBS Volume'
@@ -730,5 +740,18 @@ Glacier Classes:
 	* Retrieval available within 12 hours (only one option).
 
 ## EFS - Elastic File System
+
+* **Can be concurrently accessed by multiple (up to thousands...) of EC2 isntances**
+* Uses a "traditional" hierarchical structure
+* EFS automatically "auto scales"; the user doesn't need to provision "more space"
+* Throughput and IOPS also dynamically scale
+* [Is not supported for instances using a Windows OS](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/AmazonEFS.html)
+	* another reason to hate windows...
+* AWS Region agnostic.
+
+Once the EFS is created, the user can create "mount points" within their VPC; once this is performed, any EC2 instance
+can read and write data to the EFS.
+
+## AWS Storage for On-Premises Backup and Disaster Recovery (DR)
 
 
