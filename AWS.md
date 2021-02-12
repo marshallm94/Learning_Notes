@@ -747,11 +747,59 @@ Glacier Classes:
 * Throughput and IOPS also dynamically scale
 * [Is not supported for instances using a Windows OS](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/AmazonEFS.html)
 	* another reason to hate windows...
+	* Checkout [AWS FSx](https://aws.amazon.com/fsx/) for Windows
 * AWS Region agnostic.
 
 Once the EFS is created, the user can create "mount points" within their VPC; once this is performed, any EC2 instance
 can read and write data to the EFS.
 
+## AWS Snowball & Snowmobile
+
+* If the user needs to transfer a large amount of data to be the cloud, AWS offers two options:
+	* Snowball:
+		* AWS ships a physical device (the "snowball") to the user that can contain 50TB - 80TB of data.
+		* Multiple devices can be used to scale to Petabyte size.
+		* This/These devices are then shipped back to AWS where the are uploaded to S3.
+	* Snowmobile:
+		* Exabyte-scale transfer service.
+		* A "snowmobile" is a 45 foot long shipping container pulled by a semi-truck to the user to which data
+		  can be uploaded and then sent back to AWS.
+		* Can transfer up to 100PB per snowmobile.
+
 ## AWS Storage for On-Premises Backup and Disaster Recovery (DR)
 
+**Cloud Storage and DR**
 
+* Issues with traditional backup methods for DR:
+	* backup drives may be stored in the same physical location as the production system storage. If this were to be
+	  the case and a physical disaster occurred that effected the production system storage, the backups would
+	  likelye be effected as well.
+	* Scalability - As infrastucture expands, so will the needs of your backup storage.
+	* Costs - An effective backup solution is a huge upfront cost for the user.
+	* Availability - If your backup storage isn't cloud based, you (the user) might run into some delays retrieving
+	  your data from an off site location.
+* Benefits of Cloud Storage for DR:
+	* Cost Efficient
+	* Scalable 
+	* Available and durable
+	* Secure and reliable
+	* **Zero maintainance of hardware**
+	* Off-site Storage
+	* Easy to test DR plans
+
+**Considerations when planning a DR Storage Solution**
+
+The values of the below two concepts will largely determine the path your DR plan takes:
+* RTO - Recovery Time Objective
+	* The maximum amount of time in which a service can remain unavailable before it is classed as damaging to the
+	  business/objective.
+* RPO - Recovery Point Objective
+	* The maximum amount of time for which data could be lost for a service.
+
+For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic damage to
+your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for example).
+
+* How will the user get data in/out of AWS?
+	* Direct Connection
+	* VPN Connection
+	* Internet Connection 
