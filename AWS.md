@@ -739,6 +739,14 @@ Glacier Classes:
 	* Minimal access.
 	* Retrieval available within 12 hours (only one option).
 
+* Check out [this link](https://aws.amazon.com/s3/pricing) for pricing information.
+* Check out [this link](https://aws.amazon.com/s3/storage-classes/?nc=sn&loc=3) for a performance summary of all S3
+  classes.
+* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
+  region.
+	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
+	  which, as the name implies, replicates data across regions.
+
 ## EFS - Elastic File System
 
 * **Can be concurrently accessed by multiple (up to thousands...) of EC2 isntances**
@@ -755,11 +763,20 @@ can read and write data to the EFS.
 
 ## AWS Snowball & Snowmobile
 
-* If the user needs to transfer a large amount of data to be the cloud, AWS offers two options:
+* If the user needs to transfer a large amount of data to be the cloud (or from the cloud to on-premises in the case of
+  a DR plan), AWS offers two options:
 	* Snowball:
 		* AWS ships a physical device (the "snowball") to the user that can contain 50TB - 80TB of data.
+			* dust, water, and tamper resistant.
 		* Multiple devices can be used to scale to Petabyte size.
 		* This/These devices are then shipped back to AWS where the are uploaded to S3.
+		* Configured for high speed data transfer. Each snowball has the following recievers installed,
+		  supporting 10 Gigabit transfer speeds:
+			* RJ45 (Cat6)
+			* SFP+ Copper
+			* SFP+ Optical
+		* Encrypted by default
+		* HIPAA Compliant
 	* Snowmobile:
 		* Exabyte-scale transfer service.
 		* A "snowmobile" is a 45 foot long shipping container pulled by a semi-truck to the user to which data
@@ -796,10 +813,66 @@ The values of the below two concepts will largely determine the path your DR pla
 * RPO - Recovery Point Objective
 	* The maximum amount of time for which data could be lost for a service.
 
-For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic damage to
-your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for example).
+* How will the user the data in/out of AWS?
+	* Direct Connection?
+	* VPN Connection?
+	* Internet Connection ?
+* If you need to transfer large amounts of data as part of a DR plan, check out AWS Snowball & Snowmobile
+* How quickly do you need your data back?
+	* Depend on RTO requirement (and are therefore solution/problem dependent).
+	* For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic
+	  damage to your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for
+	  example).
+* How much data do you need to import/export?
+	* Calculate your target transfer rate:
+		* check out [this link](http://www.thecloudcalculator.com/calculators/file-transfer.html) and you can
+		  input the necessary inputs (or the available inputs e.g. AWS Glacier IOPS and how much data you might
+		  need to transfer from your Glacier.)
 
-* How will the user get data in/out of AWS?
-	* Direct Connection
-	* VPN Connection
-	* Internet Connection 
+### Using S3 as a Data Backup Solution
+
+* Easily scalable and customizable (user can optimize the Durability, Availability & Cost for their needs)
+* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
+  region.
+	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
+	  which, as the name implies, replicates data across regions.
+	* From a DR perspective, this can reduce latency in the event that one region you are relying on is unavailable
+	  for some reason.
+* Multipart upload to S3:
+	* AWS recommends that any objects larger than 100 MB utilize multipart uploading, which "chunks" the data and
+	  uploads one chunk at a time, reassembling everything once all chunks are in S3.
+		* There are multiple benefits of this serice, a couple being:
+			1. Speed & Throughput - Since multiple parts can be uploaded in parallel, the user can reach the
+			   end goal (having the entire object uploaded to S3) faster.
+			2. Interruption Recovery - If there is a network issue (or any technological issue for that
+			   matter), uploading in chunks ensures that only the chunk that was interrupted has to be
+			   reuploaded and then the process can continue. The user won't run into a situation where the
+			   entire object is 95% uploaded, there is a network error, and they they have to start all over
+			   again from 0.
+* Security:
+	* Since S3 offers in-transit and static encryption, S3 is a good option for making sure your don't inadvertenly
+	  leak sensitive data.
+	* IAM Policies - Used to restrict access to S3 buckets depending on identities and permissions.
+	* Bucket Policies - JSON policies are assigned at the bucket level and control who has access to the buckets
+	  contents.
+	* Access Control Lists - Allows a more granular way of assigning permission relative to IAM policies (read,
+	  write, execute, etc.)
+	* Lifecycle Policies - Used to automatically move data between S3 classes.
+	* MFA Delete - Multifactor Authenticated Delete ensure that a user has to enter a 6 digit code to delete an
+	  object, ensuring objects aren't accidentally deleted.
+	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
+	  obviously requires more space than if it were not configured.
+
+
+# Standalone AWS services
+
+## AWS Artifact
+
+AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
+industry.
+
+* Can be accessed from the AWS Management Console
+* Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
+
+
+
