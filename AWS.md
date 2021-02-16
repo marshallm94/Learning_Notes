@@ -863,10 +863,7 @@ The values of the below two concepts will largely determine the path your DR pla
 	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
 	  obviously requires more space than if it were not configured.
 
-
-# Standalone AWS services
-
-## AWS Artifact
+### AWS Artifact
 
 AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
 industry.
@@ -874,5 +871,27 @@ industry.
 * Can be accessed from the AWS Management Console
 * Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
 
+### AWS Storage Gateway 
 
+* Sits between the users on-premises data storage and a backupt to AWS S3
 
+There are a few options available:
+1. Stored Volume Gateways:
+	* Primary storage is the on-premises data center
+	* Used to backup local storage volumes to S3 on an interval basis
+2. Cached Volume Gateways:
+	* Primary data storage is S3
+	* Local data storage is used as a 'cache' for recently accessed data (cached volume).
+3. Gateway-Virtual Tape Library
+	* "Virtual Tape Library is a cloud based tape backup solution, replacing physical components with virtual ones,
+	  while utilizing your existing tape backup application infrastructure."
+	* Components:
+		* Storage Gateway: Configured as a Tape-Gateway acting as a VTL with a capacity of 1500 virtual tapes.
+		* Virtual Tapes: Virtual equivalent to a physical tape cartridge with capacity of 100 GB - 2.5 TiB. Data
+		  stored on VT's are backed by S3 and visible in the virtual Tape library.
+		* Virtual Tape Library (VTL): Virtual equivalent to a Tape Library containing Virtual Tapes.
+		* Tape Drives: Each VTL comes with 10 Tape Drives, presented as iSCSI devices to your backup applications.
+		* Media Changer: A virtual device presented as an iSCSI device to backup applications that manages tapes
+		  between your Tape Drive and VTL.
+		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
+		  VTL to AWS Glacier.
