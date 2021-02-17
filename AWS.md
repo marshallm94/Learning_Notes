@@ -895,3 +895,113 @@ There are a few options available:
 		  between your Tape Drive and VTL.
 		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
 		  VTL to AWS Glacier.
+
+# Database Fundamentals for AWS
+
+* Database: Any mechanism for storing, managing and retrieving information
+* **"Databases are the foundation of modern application development. A database's implementation and how data is
+  structured will determine how well an application will perform as it scales."**
+* **Each database type is optimized to support a specific type of workload. Matching an application with the appropriate
+  database type is essential for highly performant and cost-efficient operation.**
+
+9 AWS Database Categories:
+
+1. Relational Databases
+2. Key-Value Databases
+3. Document Databases
+4. In-Memory Databases
+5. Graph Databases
+6. Columnar Databases
+7. Time Series Databases
+8. Quantum Ledger Databases
+9. Search Databases
+
+Choosing a database strategy:
+
+* Choosing a database used to be a platform choice (as opposed to a choice based on the problem domain/technology); 3-4
+  vendors would be considered, and once one was chosen (most likely based off of price point), *every application would
+  be built using the chosen platform*. While one *can* make a database type work for most solutions, that doesn't make
+  that database type the "right" choice.
+* Choosing a database type should be based on the data itself; it is possible, sometimes logical, to have a single
+  application use more than one database type.
+
+2 Workload Types:
+1. Operational Workloads
+	* OLTP ( Online Transactional Processing ) applications are the most common built applications and are centered
+	  around a set of common business processes that are: **Regular, Repeatable and Durable.**
+	* Usually powered by relational databases.
+2. Analytical Workloads
+	* OLAP ( Online Analytics Processing ) applications are those used for data analysis and machine learning. **The
+	  goal is to gain insight.** Workloads are often retrospective, streaming and predictive.
+
+There are two "meta types" of databases:
+1. Relational Databases
+	* Used for structured data
+	* Schemas are the logical blueprint of how data relates to other data. Schemas need to be full designed before
+	  any data can be entered into a relational database.
+		* Schema changes are costly in terms of time and computation. Additionally, schema changes run the risk
+		  of corrupting data.
+	* "Schema's are designed based on reporting requirements. This means that a database's expected output drives
+	  the creation of the database and how data is stored inside it."
+		* Personal (i.e. not in the course) note/opinion: I'm not sure how much I agree with this; this implies
+		  that application developers and DBA's "work backward" from the use case to how the data should be
+		  structured. What if a new requirement arises? It seems more logical to me to create a schema that maps
+		  what the data represents (the "information" so to speak) together in a logical manner.
+	* Modeling Data
+		* Structured data is almost always stored in tables.
+			* Tables have Primary Keys (PKs) that uniquely identify the information in that table.
+			* Tables have Foreign Keys (FKs) that are PKs in another table.
+	* Data Integrity
+		* "ACID" is the acronym for the governing principals of databases that ensure data is reliable and
+		  accurate:
+			* Atomicity:
+				* Refers to the elements that make up a single database transaction.
+				* Transactions are treated as "all or nothing"; they either succeed completely or fail
+				  completely.
+			* Consistency
+				* Refers to the database's state.
+				* Transactions **must** take the database from one valid state to another valid state.
+			* Isolation
+				* Refers prevents one transaction from interfering with another.
+			* Durability
+				* Refers to data changes being permanent once the transaction is committed to the
+				  database. 
+		* Keys 
+			* PKs and FKs are constrained to ensure database stability.
+			* **Entity Integrity**: Every table must have a PK that is unique to that table and the PK can
+			  not be blank for null
+			* **Referential Integrity**: Every value in a FK column exists as a PK in its originating table.
+	* Data Normalization
+		* Data is stored in relational databased to be highly normalized.
+		* Normalization is a process where information is organized efficiently and consistently before storing
+		  it.
+	* Scaling and Sharding
+		* A "Shard" is a copy of an exact copy of databases schema, possibly filled with slightly different
+		  information.
+		* Example: A Shard might contain all data for a set of customers in a specific geographic zone. Another
+		  shard would contain the same data for a different set of customers in a different geographic zone.
+		* Scaling:
+			* Horizontal: Adding a copy of the database server (aka "Sharding")
+			* Vertical: Growing the server (more memory, CPU, disk volume).
+				* Vertical scaling has limits (dictated by the physical components of the server). Once
+				  this limit is reached, the database must be sharded to grow.
+2. Non-relational Databases
+
+* Used for unstructured and semi-structured data
+
+## AWS RDS
+
+AWS's grouping of relational database engines. There are 6 options:
+
+1. Amazon Aurora
+	* AWS's cloud-native version of MySQL and PostGreSQL
+2. MySQL
+3. PostGreSQL
+4. MariaDB
+5. Oracle
+6. Microsoft SQL Server
+
+
+
+
+
