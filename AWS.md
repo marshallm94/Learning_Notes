@@ -986,8 +986,37 @@ There are two "meta types" of databases:
 				* Vertical scaling has limits (dictated by the physical components of the server). Once
 				  this limit is reached, the database must be sharded to grow.
 2. Non-relational Databases
-
-* Used for unstructured and semi-structured data
+	* Used for unstructured and semi-structured data
+	* Shema-less (which allows unstructured and semi-structured data stored).
+		* This aspect allows application developers to not have to wait for a database schema to be fully mapped
+		  out before "getting to the real problem".
+	* NoSQL
+		* NoSQL = "Not Only SQL"
+		* Broad term that encompasses different database models, some basic common characteristcs being:
+			* Non-relational.
+			* Open-source (typically this is the case - this isn't a necessity).
+			* Schema-less.
+			* Horizontally scalable.
+				* "Shared Nothing" Architecture - each node has one shard of the NoSQL database, and can
+				  thus work independently of all other processes on other nodes.
+			* Do not adhere to ACID constraints.
+				* By relaxing the "Consistency" principal of ACID, NoSQL systems can be highly durable
+				  and available. Relaxing the Consistency principals isn't a problem with NoSQL because
+				  NoSQL solutions were designed for inconsistent data.
+		* Most NoSQL databases access their data using their own custom API, or possibly a combination of their
+		  own custom API and "traditional" SQL. **There isn't a universal query language that is supported by
+		  all NoSQL databases.**
+	* Some examples of NoSQL databases models are:
+		1. Key-value Databases
+			* (think a database whose entire structure is similar to a map/Python dictionary)
+		2. Document Store Database
+			* Example: A database whose structure is similar to JSON; there can be nested keys, and the
+			  values can only be accessed by going "down the hierarchy".
+		3. Graph Store Database
+	* Advantages of NoSQL over SQL:
+		* Scaling is easier (horizontal instead of vertical scaling).
+		* NoSQL = less consistency, higher scalability/performance.
+		* SQL = more consistency, more difficult/less scalability.
 
 ## AWS RDS
 
