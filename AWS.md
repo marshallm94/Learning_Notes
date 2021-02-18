@@ -1030,7 +1030,3 @@ AWS's grouping of relational database engines. There are 6 options:
 5. Oracle
 6. Microsoft SQL Server
 
-
-
-
-bing
