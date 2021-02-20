@@ -1018,7 +1018,7 @@ There are two "meta types" of databases:
 		* NoSQL = less consistency, higher scalability/performance.
 		* SQL = more consistency, more difficult/less scalability.
 
-## AWS RDS
+## RDS - Relational Databases
 
 AWS's grouping of relational database engines. There are 6 options:
 
@@ -1030,3 +1030,99 @@ AWS's grouping of relational database engines. There are 6 options:
 5. Oracle
 6. Microsoft SQL Server
 
+## Nonrelational Databases
+
+### DynamoDB 
+
+* AWS's Key-Value (NoSQL) Database 
+* Associative array == dictionary == has table/array (all very similar to Python Dictionary)
+	* **Key must be unique**
+		* Most likely good to have a naming convention for keys to ensure the structure is organized.
+* Data is stored and retrieved using `get`, `put` and `delete` commands
+* Queries are based on the key
+* **Not optimized for search operations; it is very expensive to scan the entire key-value store**
+* Use cases:
+	* Commonly used for in-memory data caching. They can speed up applications by minimizing reads and writes to
+	  slower disk-based systems.
+
+### DocumentDB 
+
+* Designed to store, query and index JSON data.
+* Scale horizontally
+* Simiilar to key-value stores, however the value can be another key-value pair (nested however many times one would
+  like). In the abstract, the values in Document Databases are called "Documents".
+* Data inside a document can be queried, as opposed to a key-value database where the entire value is returned from a
+  single query.
+* Use cases:
+	* commonly used for storing sensor data from IoT devices.
+
+### Keyspaces (Apache Cassandra) 
+
+* AWS's Column Store database
+* Uses a "keyspace" to define the data it contains.
+	* Keyspace = set of column families that are similar to table in a relational database.
+		* A column family consists of multiple rows.
+		* Each row can contain a different number of columns.
+		* **Each column is limited to its row.** (in other words, columns do not span all rows in a column
+		  family)
+		* Each row has a the following components:
+			* Row Key (unique identifier)
+			* one or more columns. Each column contains a name-value pair, and a timestamp of the datetime
+			  the data was inserted (in order to find the more recent version of that data).
+* Efficient for data compression and partitioning, as well as applications ther rely heavily on parallel processing.
+
+### ElastiCache
+
+* AWS's In-Memory data store options (best for real-time data access applications)
+	* **Not technically a database**; since it is a "data storage" option, it is included here.
+* Primary use case is to provide an application with inexpensive access to data with sub-millisecond latency.
+* cached data == stale data 
+	* The price you pay for not having to query the database is the data isn't the most up-to-date.
+	* Caching should provide a speed or cost advantage. It doesn't make sense to cache data that is dynamic or that
+	  is seldom accessed.
+
+There are two subtypes:
+1. ElastiCache for Redis
+2. ElastiCache for Memcached
+
+### Neptune
+
+* AWS's Graph Database
+* Used for storing graphical data (e.g. networking applications)
+* Components are:
+	1. Nodes/Vertices - represent logical entities.
+	2. Edges - represent the relationship between two (or more) vertices.
+* Many Graph databases use their own proprietary query language
+* Use cases:
+	* Network based applications
+	* Problems whose data can be modeled via a graph.
+
+### Timestream
+
+* AWS's Time Series database
+* Timestamps are almost always the key in a time series databases
+
+### Quantum Ledger 
+
+* AWS's ledger database
+* Useful for recording transactions of an application
+* **All data is immutable**
+	* the action of updating data creates a new version of the record.
+	* changes to the database do not overwrite existing database records.
+* Uses hashing to verify that data hasn't been changed.
+	* Uses blockchain technology when creating hashes:
+		* Uses the data **and the hash of the previous data** to create the new hash value.
+		* Due to using this technology, data that is stored in a quantum ledger database can not be altered
+		  without leaving a trace (even by a skilled programmer). Thus, this database is good for uses cases
+		  where auditability might be a concern.
+* Use cases:
+	* Banking
+	* Insurance applications (to track the history of claims)
+
+### Elasticsearch Service
+
+* AWS's search database
+* Search databases often work with highly unstructured data that is far from consistent.
+* Indexes are stored as JSON documents
+* Uses an inverted index for fast full text searches.
+	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
