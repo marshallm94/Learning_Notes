@@ -460,8 +460,766 @@ Choose:
 
 * **Deleting your instance and shutting down are different.**
 
+## ELB - Elastic Load Balancer
+
+The main function of an ELB is to help manage and control the flow of inboud requests destined to a group of targets by
+distributing these requests evenly across the targeted resource group
+* Targets could be EC2 instances, Lambda functions, different Docker containers, etc.
+* Targets can be in a single Availability Zone (AZ) or across multiple AZs
+
+* The "Elastic" in the name means that an ELB will automatically scale up or down as incoming traffic
+  increases/decreases *without any management on the part of the user*.
+	* Dynamic scaling can be setup simply.
+
+**ELB Types**
+
+* See [this table](https://aws.amazon.com/elasticloadbalancing/features/#compare) for a comparison of the different ELB
+  types
+
+1. Application Load Balancer (ALB)
+	* ALBs operate at level 7 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
+	* Flexible feature set for applications using HTTP/HTTPS protocols.
+	* **Operates at the request level.**
+	* Advanced routing, TLS (Transport Layer Security) termination and visibility features targeted at application
+	  architectures.
+	* Target groups can be setup so all requests of a specific protocol are routed to that group, through a specific
+	  port.
+2. Network Load Balancer (NLB)
+	* NLBs operate at level 4 of the [OSI model](https://en.wikipedia.org/wiki/OSI_model)
+	* Ultra-high performance while maintaining very low latency.
+	* **Operates at the connection level.**
+	* Can handle millions of requests per second.
+3. Classic Load Balancer
+	* Used for applications that were built in the existing EC2 Classic Environment.
+	* **Operates at both the connection and request level.**
+	* This should only be used for an existing application running in the EC2-Classic network (legacy AWS
+	  infrastructure)
+
+**ELB Components**
+
+1. Listeners
+	* Defines how inbound connections are routed to target groups based on ports and protocols set as **conditions**
+	  (think `if else` statements).
+2. Target Groups
+	* A group of resources to which the ELB will route requests.
+	* One ELB can have multiple different target groups, each associated with different listener configurations and
+	  associated rules.
+3. Rules
+	* Rules (think `if else` statements) define how an incoming requests gets routed to which target group.
+4. Health Checks
+	* The ELB can (and does) contact each target within a target group using a specific protocol to receive a
+	  response. If that response doesn't come back, the ELB marks that target as 'unhealthy' and stop sending
+	  traffic to that target.
+5. ELB Schemes
+	* 5.1 Internet-Facing ELB
+		* As the name suggests, this ELB scheme handles connections/requests coming from other
+		  applications/servers through the internet. Due to this, this ELB scheme has a public DNS and
+		  associated Public IP.
+	* 5.2 Internal ELB
+		* This scheme is only used for communication within an applciation/system/solution. Therefore, this ELB
+		  only has a internal IP address and can therefore only communicate with requests that come from within
+		  the users VPC.
+6. ELB Nodes
+	* Each AZ you intend to work in needs to have its own ELB node
+7. Cross-Zone Load Balancing
+	* Allows the ELB to send requests to targets that aren't in its AZ.
+
+* An ELB can contain 1 or more listeners, each listener can contain 1 or more rules, each rule can contain 1 or more
+  conditions. **All conditions result in a single action.**
+
+### SSL Server Certificates 
+
+SSL = Secure Sockets Layer
+	* SSL is a cryptographic protocol, similar to TLS (Transport Layer Security)
+
+* HTTPS requests will sometimes need to be used in lieu of HTTPS requests to ensure an encrypted connection between a
+  client sending a request and your ALB.
+	* In order set this up, you will an SSL certificate.
+* The server certificate that the user will need to set up is an *X.509 certificate* (digital ID provisioned by a
+  Certificate Authority and managed by AWS Certificate Manager ( ACM ))
+	* This certificate is used to terminate the connection between the client and your application/solution, and
+	  only then is the request decrypted and sent to the resources in the ELB target group.
+
+* ACM allows you to provision and configure any SSL certifcates that will be used inside your AWS solution (most AZ's
+  are supported). If the AZ you are in isn't supported, you will have to configure a certificate using IAM.
+
+## EC2 Auto Scaling 
+
+As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
+demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
+spending money on resources they aren't using.
+
+**Components**
+
+1. Create a Launch Configuration or Launch Template
+	* **This must be setup prior to setting up the Auto Scaling Group** - otherwise the group wouldn't know what
+	  instance type and specifications to use when launching a new instance.
+	* Launch Configuration and Launch Templates are very similar, the only real difference being that a Template
+	  allows the user to specify a few advanced options, and has the entire setup process on one webpage (as opposed
+	  to the Launch Configuration, which goes through multiple webpages.)
+	* One of the two options is needed in order to specify new instance parameters such as:
+		* the AMI to use.
+		* the instance type to use.
+		* whether the instance should have a public IP.
+		* the storage volume the instance should use .
+		* the security groups (if any) the new instance should be associated with.
+2. Create an Auto Scaling Group
+	* Select the Launch Template or Configuration that new instance will be launched from.
+	* Set up the "Starting Instance" count.
+	* Set up the minimum and maximum number of instances that your solution can scale between.
+	* Set up the conditions that need to be met for "Scaling Up" (i.e. Average CPU usage >= 75% for 3 minutes).
+	* Set up the conditions that need to be met for "Scaling Down" (i.e. Average CPU usage <= 30% for 3 minutes).
+	* Set up AZs in which new instances will be created.
+
+### Combining ELB & EC2 Auto Scaling 
+
+Although ELBs and EC2 Auto Scaling *can* be used independently, they work best together.
+	* If you have a fixed number of instances/compute resources in a target group of an ELB, if you need more, the
+	  user will have to manually add more. If you need less, the user will have to manually remove some.
+	* If you have an EC2 Auto Scaling group without an ELB, how are you going to distribute traffic/requests evenly
+	  across your instances?
+
+* ELBs allows incoming traffic to be *averaged* across all resources within a target group.
+* EC2 Auto Scaling can be setup to *scale* the resources in that target group.
+
+* To associate an ALB or NLB, you must associate the auto scaling group with the ALB or NLB target group. This is
+  performed by editing the configuration of the Auto Scaling Group from the AWS Management Console.
+	* Note that there are two sections that are related to ELBs; the "Classic Load Balancer" field and the "Target
+	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
+	  be used for all newly created ALBs or NLBs.
+
 # Storage Fundamentals for AWS
+
+There are more storage options provided by AWS than those listed here, however the "big three" if you will are:
+
+* EBS - Elastic Block Volume
+	* Low latency
+	* Should be used like a traditional hard drive
+* S3 - Simple Storage Service
+	* Best for large objects that don't require frequent reading and writing.
+* EFS - Elastic File Storage
+	* "Traditional" file system
 
 ## EBS - Elastic Block Storage
 
 Provides storage to EC2 instances via 'EBS Volume'
+
+* Persistent, block level storage connect to EC2 instances via AWS network.
+* An EBS volume can be attached/accessed to/by **only one** EC2 instance, however multiple EBS volumes can be attached
+  to a single instance.
+* 'Snapshots' (aka backups) can be performed manually or setup to run on a scheduled basis.
+	* Theses backups are stored in an S3 bucket.
+	* EBS volumes can be recreated from snapshots
+	* Snapshots can be copied from one availability region to another
+
+**Reliability**
+* Every write to an EBS volume is repeated multiple times to protect against a complete loss of data.
+* **Volumes can only be attached to an EC2 instance in the same availability zone**
+
+### Volume Types
+
+* Having two volume options (below) allow the user to trade performance for cost in the best manner for their solution.
+* Different volume types have different IOPS (Input/Output per Second) thresholds
+
+1. SSD (Solid State Drive)
+	* Best for smaller blocks of data.
+	* There are two sub-types of SSD's:
+		* 1.1 General Purpose SSD
+		* 1.2 Provisioned IOPS SSD
+			* Highest performance EBS volume (best for low-latency requirements)
+2. HDD (Hard Disk Drive)
+	* Best for larger blocks of data.
+	* Designed for workloads that require a higher rate of throughput.
+	* There are two sub-types of HDD's:
+		* 2.1 Throughput optimized HDD
+			* Best for large blocks of data that are still throughput intensive
+			* **These volumes can NOT be used as boot volumes for instances**
+		* 2.2 Cold HDD
+			* Best for large blocks of data that don't need to be accessed frequently.
+			* **These volumes can NOT be used as boot volumes for instances**
+
+There are a few ways to create an EBS volume
+
+1. During the launch of an EC2 instance
+2. As a standalone EBS volume that can be atttached to an EC2 instance when required
+
+During the creation of the volume, the user can choose:
+* Whether to create the volume from a snapshot (of a previous volume) OR start a blank volume
+* Size
+* Volume type 
+* **What happens to the volume when the EC2 instance terminates**
+* To encrypt or not to encrypt
+
+## S3 - Simple Storage Service 
+
+* Most common storage service in AWS (applicable to many use cases).
+* Theoretically unlimited storage.
+* Supports individual files sizes up to 5 TB.
+* S3 is object based - meaning **it does not store objects (files) in a traditional hierarchy**. The address space is
+  flat and therefore each object has a unique URL by which it can be accessed.
+	* You **can** create folders/directories **within** a bucket to help with organization; however, S3 itself is
+	  not a hierarchical file system.
+		* Each object saved in S3 has a "key", which can be thought of as the filepath (it includes and
+		  directories within the bucket). The "full path" aka full URL for an object within S3 will be its
+		  bucket name and the object key.
+* S3 is a regional service; to ensure data persistence, AWS makes multiple copies of your data within different AZs
+  within the region you selected. This provides "Eleven 9's" worth of data integrity (99.999999999% durability = very
+  low likelihood of losing data).
+* Availability is **not** the same as Durability; AWS provides 99.5% - 99.99% data *Availability*, which means you will
+  be able to access your saved data 99.5% - 99.99% of the time. *Durability* refers to the the likelihood your data
+  isn't lost or corrupted.
+* **Data versioning is an option.**
+
+To save an object in S3 (manually):
+1. Create an S3 bucket with a **globally unique name**.
+	* This can be accessed via the AWS Management Console, and selecting "S3" under the "Storage" header.
+	* This means that your bucket name has to be unique **across all of AWS** (can't just be unique *to you*).
+	* by default, your account has a soft limit of 100 buckets, however this can be increased by contacting AWS.
+
+### Storage Classes
+
+Different storage classes allows the user to choose the tradeoffs between cost and accessibility that best suits the
+problem they are working on. There are 6 different storage classes:
+
+1. S3 Standard
+	* general purpose storage
+		* High throughput and low latency
+	* Lifecycle rules are an option 
+		* Lifecycle rules allow the user to setup a configuration that automatically moves objects saved in S3
+		  to a different storage class (i.e. if you haven't accessed some data in a while but still want to keep
+		  it around for the "just in case" moments, you can have that data moved to a less expensive and less
+		  easily accessible storage class).
+	* SSL encryption is available for data both at rest in an S3 bucket and in transit to/from and S3 bucket.
+2. S3 Intelligent Tiering (S3 INT)
+	* Best for use cases where the data access rate is unknown in advance.
+	* S3 INT has two subclasses; Frequent Access and Infrequent Access.
+		* **These subclasses are not the same as the "meta" versions with the same name; these subclasses are
+		  "within" the logical set of "S3 INT"**
+	* By default, an object is placed in the Frequent Access tier; if it hasn't been accessed in 30 days, it is
+	  moved to the Infrequent Access tier. As soon as it is accessed again, it is moved back to the Frequent Access
+	  tier and the clock starts again.
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+3. S3 Standard Infrequent Access (S3 S-IA)
+	* Similar to the Infrequent Tier subclass of the S3 INT storage class (above).
+	* Designed for object that aren't going to be accessed frequently (duh).
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+4. S3 One Zone Infrequent Access (S3 Z-IA)
+	* Designed for object that aren't going to be accessed frequently (duh).
+	* Durability of Eleven 9's, however this is *within a single AZ, as opposed to S3 S-IA, which has the same
+	  Durability but across multiple AZs*. This change offers the user a 20% decrease in cost.
+	* Lifecycle rules are an option.
+	* SSL encryption is available.
+
+Glacier Classes:
+
+* A fraction of the cost of the above storage classes, the tradeoff being you don't get instance access to your
+  data.
+* Best suited for "Cold Storage" - objects that will likely not need to be accessed but need to be kept around
+  "just in case".
+* Eleven 9's of Durability.
+* **No GUI for moving objects into Glacier "Vaults" (as they are called);** the GUI can only be used to create
+  the vaults. After that, data must be moved into the vaults via APIs, SDKs, or the AWS CLI (or, through
+  Lifecycle rules set up in the more frequent access classes).
+
+5. S3 Glacier
+	* Data *can* be accessed via 3 different routes, each with a different cost (listed in descending order relative
+	  to cost):
+		1. Expedited
+			* Available in 1-5 minutes
+			* Data must be under 250 MB.
+		2. Standard
+			* Available in 3-5 hours.
+			* Any size.
+		3. Bulk
+			* Available in 5-12 hours.
+			* Used for retrieving PB's of data at a time.
+6. S3 Glacier Deep Archive (S3 G-DA)
+	* Minimal access.
+	* Retrieval available within 12 hours (only one option).
+
+* Check out [this link](https://aws.amazon.com/s3/pricing) for pricing information.
+* Check out [this link](https://aws.amazon.com/s3/storage-classes/?nc=sn&loc=3) for a performance summary of all S3
+  classes.
+* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
+  region.
+	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
+	  which, as the name implies, replicates data across regions.
+
+## EFS - Elastic File System
+
+* **Can be concurrently accessed by multiple (up to thousands...) of EC2 isntances**
+* Uses a "traditional" hierarchical structure
+* EFS automatically "auto scales"; the user doesn't need to provision "more space"
+* Throughput and IOPS also dynamically scale
+* [Is not supported for instances using a Windows OS](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/AmazonEFS.html)
+	* another reason to hate windows...
+	* Checkout [AWS FSx](https://aws.amazon.com/fsx/) for Windows
+* AWS Region agnostic.
+
+Once the EFS is created, the user can create "mount points" within their VPC; once this is performed, any EC2 instance
+can read and write data to the EFS.
+
+## AWS Snowball & Snowmobile
+
+* If the user needs to transfer a large amount of data to be the cloud (or from the cloud to on-premises in the case of
+  a DR plan), AWS offers two options:
+	* Snowball:
+		* AWS ships a physical device (the "snowball") to the user that can contain 50TB - 80TB of data.
+			* dust, water, and tamper resistant.
+		* Multiple devices can be used to scale to Petabyte size.
+		* This/These devices are then shipped back to AWS where the are uploaded to S3.
+		* Configured for high speed data transfer. Each snowball has the following recievers installed,
+		  supporting 10 Gigabit transfer speeds:
+			* RJ45 (Cat6)
+			* SFP+ Copper
+			* SFP+ Optical
+		* Encrypted by default
+		* HIPAA Compliant
+	* Snowmobile:
+		* Exabyte-scale transfer service.
+		* A "snowmobile" is a 45 foot long shipping container pulled by a semi-truck to the user to which data
+		  can be uploaded and then sent back to AWS.
+		* Can transfer up to 100PB per snowmobile.
+
+## AWS Storage for On-Premises Backup and Disaster Recovery (DR)
+
+**Cloud Storage and DR**
+
+* Issues with traditional backup methods for DR:
+	* backup drives may be stored in the same physical location as the production system storage. If this were to be
+	  the case and a physical disaster occurred that effected the production system storage, the backups would
+	  likelye be effected as well.
+	* Scalability - As infrastucture expands, so will the needs of your backup storage.
+	* Costs - An effective backup solution is a huge upfront cost for the user.
+	* Availability - If your backup storage isn't cloud based, you (the user) might run into some delays retrieving
+	  your data from an off site location.
+* Benefits of Cloud Storage for DR:
+	* Cost Efficient
+	* Scalable 
+	* Available and durable
+	* Secure and reliable
+	* **Zero maintainance of hardware**
+	* Off-site Storage
+	* Easy to test DR plans
+
+**Considerations when planning a DR Storage Solution**
+
+The values of the below two concepts will largely determine the path your DR plan takes:
+* RTO - Recovery Time Objective
+	* The maximum amount of time in which a service can remain unavailable before it is classed as damaging to the
+	  business/objective.
+* RPO - Recovery Point Objective
+	* The maximum amount of time for which data could be lost for a service.
+
+* How will the user the data in/out of AWS?
+	* Direct Connection?
+	* VPN Connection?
+	* Internet Connection ?
+* If you need to transfer large amounts of data as part of a DR plan, check out AWS Snowball & Snowmobile
+* How quickly do you need your data back?
+	* Depend on RTO requirement (and are therefore solution/problem dependent).
+	* For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic
+	  damage to your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for
+	  example).
+* How much data do you need to import/export?
+	* Calculate your target transfer rate:
+		* check out [this link](http://www.thecloudcalculator.com/calculators/file-transfer.html) and you can
+		  input the necessary inputs (or the available inputs e.g. AWS Glacier IOPS and how much data you might
+		  need to transfer from your Glacier.)
+
+### Using S3 as a Data Backup Solution
+
+* Easily scalable and customizable (user can optimize the Durability, Availability & Cost for their needs)
+* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
+  region.
+	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
+	  which, as the name implies, replicates data across regions.
+	* From a DR perspective, this can reduce latency in the event that one region you are relying on is unavailable
+	  for some reason.
+* Multipart upload to S3:
+	* AWS recommends that any objects larger than 100 MB utilize multipart uploading, which "chunks" the data and
+	  uploads one chunk at a time, reassembling everything once all chunks are in S3.
+		* There are multiple benefits of this serice, a couple being:
+			1. Speed & Throughput - Since multiple parts can be uploaded in parallel, the user can reach the
+			   end goal (having the entire object uploaded to S3) faster.
+			2. Interruption Recovery - If there is a network issue (or any technological issue for that
+			   matter), uploading in chunks ensures that only the chunk that was interrupted has to be
+			   reuploaded and then the process can continue. The user won't run into a situation where the
+			   entire object is 95% uploaded, there is a network error, and they they have to start all over
+			   again from 0.
+* Security:
+	* Since S3 offers in-transit and static encryption, S3 is a good option for making sure your don't inadvertenly
+	  leak sensitive data.
+	* IAM Policies - Used to restrict access to S3 buckets depending on identities and permissions.
+	* Bucket Policies - JSON policies are assigned at the bucket level and control who has access to the buckets
+	  contents.
+	* Access Control Lists - Allows a more granular way of assigning permission relative to IAM policies (read,
+	  write, execute, etc.)
+	* Lifecycle Policies - Used to automatically move data between S3 classes.
+	* MFA Delete - Multifactor Authenticated Delete ensure that a user has to enter a 6 digit code to delete an
+	  object, ensuring objects aren't accidentally deleted.
+	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
+	  obviously requires more space than if it were not configured.
+
+### AWS Artifact
+
+AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
+industry.
+
+* Can be accessed from the AWS Management Console
+* Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
+
+### AWS Storage Gateway 
+
+* Sits between the users on-premises data storage and a backupt to AWS S3
+
+There are a few options available:
+1. Stored Volume Gateways:
+	* Primary storage is the on-premises data center
+	* Used to backup local storage volumes to S3 on an interval basis
+2. Cached Volume Gateways:
+	* Primary data storage is S3
+	* Local data storage is used as a 'cache' for recently accessed data (cached volume).
+3. Gateway-Virtual Tape Library
+	* "Virtual Tape Library is a cloud based tape backup solution, replacing physical components with virtual ones,
+	  while utilizing your existing tape backup application infrastructure."
+	* Components:
+		* Storage Gateway: Configured as a Tape-Gateway acting as a VTL with a capacity of 1500 virtual tapes.
+		* Virtual Tapes: Virtual equivalent to a physical tape cartridge with capacity of 100 GB - 2.5 TiB. Data
+		  stored on VT's are backed by S3 and visible in the virtual Tape library.
+		* Virtual Tape Library (VTL): Virtual equivalent to a Tape Library containing Virtual Tapes.
+		* Tape Drives: Each VTL comes with 10 Tape Drives, presented as iSCSI devices to your backup applications.
+		* Media Changer: A virtual device presented as an iSCSI device to backup applications that manages tapes
+		  between your Tape Drive and VTL.
+		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
+		  VTL to AWS Glacier.
+
+# Database Fundamentals for AWS
+
+* Database: Any mechanism for storing, managing and retrieving information
+* **"Databases are the foundation of modern application development. A database's implementation and how data is
+  structured will determine how well an application will perform as it scales."**
+* **Each database type is optimized to support a specific type of workload. Matching an application with the appropriate
+  database type is essential for highly performant and cost-efficient operation.**
+
+9 AWS Database Categories:
+
+1. Relational Databases
+2. Key-Value Databases
+3. Document Databases
+4. In-Memory Databases
+5. Graph Databases
+6. Columnar Databases
+7. Time Series Databases
+8. Quantum Ledger Databases
+9. Search Databases
+
+Choosing a database strategy:
+
+* Choosing a database used to be a platform choice (as opposed to a choice based on the problem domain/technology); 3-4
+  vendors would be considered, and once one was chosen (most likely based off of price point), *every application would
+  be built using the chosen platform*. While one *can* make a database type work for most solutions, that doesn't make
+  that database type the "right" choice.
+* Choosing a database type should be based on the data itself; it is possible, sometimes logical, to have a single
+  application use more than one database type.
+
+2 Workload Types:
+1. Operational Workloads
+	* OLTP ( Online Transactional Processing ) applications are the most common built applications and are centered
+	  around a set of common business processes that are: **Regular, Repeatable and Durable.**
+	* Usually powered by relational databases.
+2. Analytical Workloads
+	* OLAP ( Online Analytics Processing ) applications are those used for data analysis and machine learning. **The
+	  goal is to gain insight.** Workloads are often retrospective, streaming and predictive.
+
+There are two "meta types" of databases:
+1. Relational Databases
+	* Used for structured data
+	* Schemas are the logical blueprint of how data relates to other data. Schemas need to be full designed before
+	  any data can be entered into a relational database.
+		* Schema changes are costly in terms of time and computation. Additionally, schema changes run the risk
+		  of corrupting data.
+	* "Schema's are designed based on reporting requirements. This means that a database's expected output drives
+	  the creation of the database and how data is stored inside it."
+		* Personal (i.e. not in the course) note/opinion: I'm not sure how much I agree with this; this implies
+		  that application developers and DBA's "work backward" from the use case to how the data should be
+		  structured. What if a new requirement arises? It seems more logical to me to create a schema that maps
+		  what the data represents (the "information" so to speak) together in a logical manner.
+	* Modeling Data
+		* Structured data is almost always stored in tables.
+			* Tables have Primary Keys (PKs) that uniquely identify the information in that table.
+			* Tables have Foreign Keys (FKs) that are PKs in another table.
+	* Data Integrity
+		* "ACID" is the acronym for the governing principals of databases that ensure data is reliable and
+		  accurate:
+			* Atomicity:
+				* Refers to the elements that make up a single database transaction.
+				* Transactions are treated as "all or nothing"; they either succeed completely or fail
+				  completely.
+			* Consistency
+				* Refers to the database's state.
+				* Transactions **must** take the database from one valid state to another valid state.
+			* Isolation
+				* Refers prevents one transaction from interfering with another.
+			* Durability
+				* Refers to data changes being permanent once the transaction is committed to the
+				  database. 
+		* Keys 
+			* PKs and FKs are constrained to ensure database stability.
+			* **Entity Integrity**: Every table must have a PK that is unique to that table and the PK can
+			  not be blank for null
+			* **Referential Integrity**: Every value in a FK column exists as a PK in its originating table.
+	* Data Normalization
+		* Data is stored in relational databased to be highly normalized.
+		* Normalization is a process where information is organized efficiently and consistently before storing
+		  it.
+	* Scaling and Sharding
+		* A "Shard" is a copy of an exact copy of databases schema, possibly filled with slightly different
+		  information.
+		* Example: A Shard might contain all data for a set of customers in a specific geographic zone. Another
+		  shard would contain the same data for a different set of customers in a different geographic zone.
+		* Scaling:
+			* Horizontal: Adding a copy of the database server (aka "Sharding")
+			* Vertical: Growing the server (more memory, CPU, disk volume).
+				* Vertical scaling has limits (dictated by the physical components of the server). Once
+				  this limit is reached, the database must be sharded to grow.
+2. Non-relational Databases
+	* Used for unstructured and semi-structured data
+	* Shema-less (which allows unstructured and semi-structured data stored).
+		* This aspect allows application developers to not have to wait for a database schema to be fully mapped
+		  out before "getting to the real problem".
+	* NoSQL
+		* NoSQL = "Not Only SQL"
+		* Broad term that encompasses different database models, some basic common characteristcs being:
+			* Non-relational.
+			* Open-source (typically this is the case - this isn't a necessity).
+			* Schema-less.
+			* Horizontally scalable.
+				* "Shared Nothing" Architecture - each node has one shard of the NoSQL database, and can
+				  thus work independently of all other processes on other nodes.
+			* Do not adhere to ACID constraints.
+				* By relaxing the "Consistency" principal of ACID, NoSQL systems can be highly durable
+				  and available. Relaxing the Consistency principals isn't a problem with NoSQL because
+				  NoSQL solutions were designed for inconsistent data.
+		* Most NoSQL databases access their data using their own custom API, or possibly a combination of their
+		  own custom API and "traditional" SQL. **There isn't a universal query language that is supported by
+		  all NoSQL databases.**
+	* Some examples of NoSQL databases models are:
+		1. Key-value Databases
+			* (think a database whose entire structure is similar to a map/Python dictionary)
+		2. Document Store Database
+			* Example: A database whose structure is similar to JSON; there can be nested keys, and the
+			  values can only be accessed by going "down the hierarchy".
+		3. Graph Store Database
+	* Advantages of NoSQL over SQL:
+		* Scaling is easier (horizontal instead of vertical scaling).
+		* NoSQL = less consistency, higher scalability/performance.
+		* SQL = more consistency, more difficult/less scalability.
+
+## RDS - Relational Database Service
+
+AWS's grouping of relational database engines. There are 6 options:
+
+1. Amazon Aurora
+	* AWS's cloud-native version of MySQL and PostGreSQL.
+2. MySQL
+	* Considered the #1 open source relational database management system.
+3. PostGreSQL
+	* Close #2 behind MySQL for open source DB's.
+4. MariaDB
+5. Oracle
+6. Microsoft SQL Server
+
+* Choose the instance type that you will run your DB on based on the problem domain; general purpose might be the best
+  option for one problem, but memory-optimized might be needed for another.
+* Multi AZ:
+	* If the user wants to have a failover for the RDS DB in case something happens to the primary instance, select
+	  *Multi AZ* when deploying the primary instance. This creates a second copy of the primary RDS instance in a
+	  separate AZ within the same region as the primary one.
+	* Replication of data from the primary instance to the secondary instance happens syncronously.
+	* If the primary instance does fail (for whatever reason), the RDS failover process takes places
+	  automatically without the need for user input. RDS will update the DNS record to point to the secondary
+	  instance for you.
+	* Fore more info, check [this link](https://cloudacademy.com/course/using-rds-multi-az-read-replicas/)
+* Storage Scaling:
+	* Storage Autoscaling is an option that can be selected for the following RDS engines:
+		* MySQL, PostGreSQL, MariaDB, Oracle and Microsoft SQL Server.
+			* All use EBS volumes for storage.
+		* When setting storage autoscaling, the user must set the minimum (start size) of the DB and the maximum
+		  size to which the DB can scale.
+	* Amazon Aurora	uses shared cluster storage, and thus doesn't need to be manually set to autoscale; autoscaling
+	  is automatically configured.
+* Compute Scaling:
+	* Vertical (enhancing performance of current isntance(s)) or Horizontal scaling (increasing the count of
+	  instances) can be scheduled, or happen immediately.
+	* "Read Replicas" are copies of your database that can be created so that 'read only' traffic has a dedicated
+	  instance. This allows the read and write functionality to each have a dedicated instance (the read replica
+	  updates itself from the main DB on an asyncronous interval).
+* Snapshots can be setup on a recurring interval.
+
+### Creating a RDS DB
+
+1. Click on 'RDS' from the AWS Management Console
+2. Create a DB.
+	* (there is an option to restore from S3 as well)
+3. Choose the DB creation method: Standard or Easy:
+	* Standard: allow the user to configure more specifications.
+	* Easy: as it sounds, gets the user up and running faster with fewer configurable options (kind of like the
+	  "Lightsail" of Storage).,
+4. Choose a DB engine type (see above for options).
+5. Choose the engine version
+6. Choose a template:
+	* "Production", "Dev/Test" and "Free Tier"
+7. Create a DB instance identifier (note this is not the name of a table).
+8. Choose DB instance size.
+9. Choose storage type and the minimum and maximum storage (for storage).
+10. Choose to enable/not enable Multi AZ.
+11. Walk through the Standard configurations, selecting the appropriate methods for your use case. 
+
+* Note that at the end of the RDS DB setup, there will be a section that has the estimate of the monthly cost of running
+  your DB.
+
+## Nonrelational Databases
+
+### DynamoDB 
+
+* AWS's Key-Value (NoSQL) Database 
+* Associative array == dictionary == hash table/array (all very similar JSON)
+	* **Key must be unique**
+		* Most likely good to have a naming convention for keys to ensure the structure is organized.
+* Data is stored and retrieved using `get`, `put` and `delete` commands
+* Queries are based on the key
+* Used for high performance applications with single digit latency.
+* **Not optimized for search operations; it is very expensive to scan the entire key-value store**
+* Use cases:
+	* Commonly used for in-memory data caching. They can speed up applications by minimizing reads and writes to
+	  slower disk-based systems.
+* Advantages of DynamoDB:
+	* Fully managed by AWS
+	* Schema-less
+	* Highly available
+	* Fast (regardless of size (unlike relational DBs))
+* Disadvantages of DynamoDB:
+	* Eventual Consistency
+		* This means that there is the possibility that stale data is returned from a query.
+	* Queries are less flexible than SQL
+		* Computation will have to be done in the application itself.
+	* Workflow limitations:
+		* Maximum record size of 400 KB
+		* maximum indexes per table: 20 global, 5 secondary.
+	* Provisioned throughput
+		* IOPS must be set in advance; therefore if the user exceeds this threshold, the query will fail.
+
+#### Creating a DynamoDB
+
+Since DynamoDB is a NoSQL DB, there are fewer specifications required to get things up and running.
+
+The bare minimum to get a DynamoDB started:
+
+1. Choose a Table Name
+2. Choose a PK for that table (used to partition across hosts for scalability and availability).
+3. Accept remaining defaults
+4. Create the DB
+
+if you don't want to accept all the defaults, there are a few more options:
+
+(continued from 2 above)
+3. Add a secondary index
+	* 1 query can only use 1 index, so if you want to search across multiple attributes, you will need to create
+	  additionaly indices.
+4. Select Read/Write Capacity
+	* AWS bases the cost of DynamoDB on the amount of read/write capacity units.
+	* by default, there are 5 read capacity units and 5 write capacity units (RCUs and WCUs).
+	* There are two capacity modes the user can choose from:
+		* Provisioned: The user sets the RCUs and WCUs 'up front'. This is useful if the workload is
+		  known in advance.
+		* On-Demand: As the name implies, RCUs and WCUs are **not** specified up front, and are scaled on
+		  demand. **This is more expensive than the Provisioned mode,** and therefore should be used when you
+		  are unsure what traffic you will have. Once you have an estimate of your RCUs and WCUs needed for
+		  performance, you should switch to Provisioned mode to be more cost effective.
+5. Set Encryption protocols
+	* By default, data is encrypted at rest.
+
+### DocumentDB 
+
+* Designed to store, query and index JSON data.
+* Scale horizontally
+* Simiilar to key-value stores, however the value can be another key-value pair (nested however many times one would
+  like). In the abstract, the values in Document Databases are called "Documents".
+* Data inside a document can be queried, as opposed to a key-value database where the entire value is returned from a
+  single query.
+* Use cases:
+	* commonly used for storing sensor data from IoT devices.
+
+### Keyspaces (Apache Cassandra) 
+
+* AWS's Column Store database
+* Uses a "keyspace" to define the data it contains.
+	* Keyspace = set of column families that are similar to table in a relational database.
+		* A column family consists of multiple rows.
+		* Each row can contain a different number of columns.
+		* **Each column is limited to its row.** (in other words, columns do not span all rows in a column
+		  family)
+		* Each row has a the following components:
+			* Row Key (unique identifier)
+			* one or more columns. Each column contains a name-value pair, and a timestamp of the datetime
+			  the data was inserted (in order to find the more recent version of that data).
+* Efficient for data compression and partitioning, as well as applications ther rely heavily on parallel processing.
+
+### ElastiCache
+
+* AWS's In-Memory data store options (best for real-time data access applications)
+	* **Not technically a database**; since it is a "data storage" option, it is included here.
+* Primary use case is to provide an application with inexpensive access to data with sub-millisecond latency.
+* cached data == stale data 
+	* The price you pay for not having to query the database is the data isn't the most up-to-date.
+	* Caching should provide a speed or cost advantage. It doesn't make sense to cache data that is dynamic or that
+	  is seldom accessed.
+
+There are two subtypes:
+1. ElastiCache for Redis
+2. ElastiCache for Memcached
+
+### Neptune
+
+* AWS's Graph Database
+* Used for storing graphical data (e.g. networking applications)
+* Components are:
+	1. Nodes/Vertices - represent logical entities.
+	2. Edges - represent the relationship between two (or more) vertices.
+* Many Graph databases use their own proprietary query language
+* Use cases:
+	* Network based applications
+	* Problems whose data can be modeled via a graph.
+
+### Timestream
+
+* AWS's Time Series database
+* Timestamps are almost always the key in a time series databases
+
+### Quantum Ledger 
+
+* AWS's ledger database
+* Useful for recording transactions of an application
+* **All data is immutable**
+	* the action of updating data creates a new version of the record.
+	* changes to the database do not overwrite existing database records.
+* Uses hashing to verify that data hasn't been changed.
+	* Uses blockchain technology when creating hashes:
+		* Uses the data **and the hash of the previous data** to create the new hash value.
+		* Due to using this technology, data that is stored in a quantum ledger database can not be altered
+		  without leaving a trace (even by a skilled programmer). Thus, this database is good for uses cases
+		  where auditability might be a concern.
+* Use cases:
+	* Banking
+	* Insurance applications (to track the history of claims)
+
+### Elasticsearch Service
+
+* AWS's search database
+* Search databases often work with highly unstructured data that is far from consistent.
+* Indexes are stored as JSON documents
+* Uses an inverted index for fast full text searches.
+	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
