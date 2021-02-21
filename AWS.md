@@ -1018,32 +1018,129 @@ There are two "meta types" of databases:
 		* NoSQL = less consistency, higher scalability/performance.
 		* SQL = more consistency, more difficult/less scalability.
 
-## RDS - Relational Databases
+## RDS - Relational Database Service
 
 AWS's grouping of relational database engines. There are 6 options:
 
 1. Amazon Aurora
-	* AWS's cloud-native version of MySQL and PostGreSQL
+	* AWS's cloud-native version of MySQL and PostGreSQL.
 2. MySQL
+	* Considered the #1 open source relational database management system.
 3. PostGreSQL
+	* Close #2 behind MySQL for open source DB's.
 4. MariaDB
 5. Oracle
 6. Microsoft SQL Server
+
+* Choose the instance type that you will run your DB on based on the problem domain; general purpose might be the best
+  option for one problem, but memory-optimized might be needed for another.
+* Multi AZ:
+	* If the user wants to have a failover for the RDS DB in case something happens to the primary instance, select
+	  *Multi AZ* when deploying the primary instance. This creates a second copy of the primary RDS instance in a
+	  separate AZ within the same region as the primary one.
+	* Replication of data from the primary instance to the secondary instance happens syncronously.
+	* If the primary instance does fail (for whatever reason), the RDS failover process takes places
+	  automatically without the need for user input. RDS will update the DNS record to point to the secondary
+	  instance for you.
+	* Fore more info, check [this link](https://cloudacademy.com/course/using-rds-multi-az-read-replicas/)
+* Storage Scaling:
+	* Storage Autoscaling is an option that can be selected for the following RDS engines:
+		* MySQL, PostGreSQL, MariaDB, Oracle and Microsoft SQL Server.
+			* All use EBS volumes for storage.
+		* When setting storage autoscaling, the user must set the minimum (start size) of the DB and the maximum
+		  size to which the DB can scale.
+	* Amazon Aurora	uses shared cluster storage, and thus doesn't need to be manually set to autoscale; autoscaling
+	  is automatically configured.
+* Compute Scaling:
+	* Vertical (enhancing performance of current isntance(s)) or Horizontal scaling (increasing the count of
+	  instances) can be scheduled, or happen immediately.
+	* "Read Replicas" are copies of your database that can be created so that 'read only' traffic has a dedicated
+	  instance. This allows the read and write functionality to each have a dedicated instance (the read replica
+	  updates itself from the main DB on an asyncronous interval).
+* Snapshots can be setup on a recurring interval.
+
+### Creating a RDS DB
+
+1. Click on 'RDS' from the AWS Management Console
+2. Create a DB.
+	* (there is an option to restore from S3 as well)
+3. Choose the DB creation method: Standard or Easy:
+	* Standard: allow the user to configure more specifications.
+	* Easy: as it sounds, gets the user up and running faster with fewer configurable options (kind of like the
+	  "Lightsail" of Storage).,
+4. Choose a DB engine type (see above for options).
+5. Choose the engine version
+6. Choose a template:
+	* "Production", "Dev/Test" and "Free Tier"
+7. Create a DB instance identifier (note this is not the name of a table).
+8. Choose DB instance size.
+9. Choose storage type and the minimum and maximum storage (for storage).
+10. Choose to enable/not enable Multi AZ.
+11. Walk through the Standard configurations, selecting the appropriate methods for your use case. 
+
+* Note that at the end of the RDS DB setup, there will be a section that has the estimate of the monthly cost of running
+  your DB.
 
 ## Nonrelational Databases
 
 ### DynamoDB 
 
 * AWS's Key-Value (NoSQL) Database 
-* Associative array == dictionary == has table/array (all very similar to Python Dictionary)
+* Associative array == dictionary == hash table/array (all very similar JSON)
 	* **Key must be unique**
 		* Most likely good to have a naming convention for keys to ensure the structure is organized.
 * Data is stored and retrieved using `get`, `put` and `delete` commands
 * Queries are based on the key
+* Used for high performance applications with single digit latency.
 * **Not optimized for search operations; it is very expensive to scan the entire key-value store**
 * Use cases:
 	* Commonly used for in-memory data caching. They can speed up applications by minimizing reads and writes to
 	  slower disk-based systems.
+* Advantages of DynamoDB:
+	* Fully managed by AWS
+	* Schema-less
+	* Highly available
+	* Fast (regardless of size (unlike relational DBs))
+* Disadvantages of DynamoDB:
+	* Eventual Consistency
+		* This means that there is the possibility that stale data is returned from a query.
+	* Queries are less flexible than SQL
+		* Computation will have to be done in the application itself.
+	* Workflow limitations:
+		* Maximum record size of 400 KB
+		* maximum indexes per table: 20 global, 5 secondary.
+	* Provisioned throughput
+		* IOPS must be set in advance; therefore if the user exceeds this threshold, the query will fail.
+
+#### Creating a DynamoDB
+
+Since DynamoDB is a NoSQL DB, there are fewer specifications required to get things up and running.
+
+The bare minimum to get a DynamoDB started:
+
+1. Choose a Table Name
+2. Choose a PK for that table (used to partition across hosts for scalability and availability).
+3. Accept remaining defaults
+4. Create the DB
+
+if you don't want to accept all the defaults, there are a few more options:
+
+(continued from 2 above)
+3. Add a secondary index
+	* 1 query can only use 1 index, so if you want to search across multiple attributes, you will need to create
+	  additionaly indices.
+4. Select Read/Write Capacity
+	* AWS bases the cost of DynamoDB on the amount of read/write capacity units.
+	* by default, there are 5 read capacity units and 5 write capacity units (RCUs and WCUs).
+	* There are two capacity modes the user can choose from:
+		* Provisioned: The user sets the RCUs and WCUs 'up front'. This is useful if the workload is
+		  known in advance.
+		* On-Demand: As the name implies, RCUs and WCUs are **not** specified up front, and are scaled on
+		  demand. **This is more expensive than the Provisioned mode,** and therefore should be used when you
+		  are unsure what traffic you will have. Once you have an estimate of your RCUs and WCUs needed for
+		  performance, you should switch to Provisioned mode to be more cost effective.
+5. Set Encryption protocols
+	* By default, data is encrypted at rest.
 
 ### DocumentDB 
 
