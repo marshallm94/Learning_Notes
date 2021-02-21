@@ -1223,3 +1223,35 @@ There are two subtypes:
 * Indexes are stored as JSON documents
 * Uses an inverted index for fast full text searches.
 	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
+
+# Network Fundamentals for AWS
+
+The pillar of the networking on AWS is the VPC - Virtual Private Cloud.
+
+## VPC
+
+* VPCs are **isolated** segments of the AWS cloud; they can be thought of as distinct 'computational universes' that
+  aren't connected to other VPCs (or the internet) by default.
+* Default = 5 VPCs per region per AWS account.
+* High level view of creating a VPC:
+	1. Give your VPC a name.
+	2. Define an IP address range the VPC can use - in the form of a CIDR block (Classless Inter-Domain Routing).
+
+## Subnets
+
+* Subnets are a subset of your VPC.
+* In the same way that the VPC must have a CIDR block assigned to it, each subnet must have a CIDR block assigned to it.
+* Subnets can communicate with other subnets within a VPC be default.
+* A route table is a set of rules that determine how traffic flows into, out of and within your VPC.
+* Subnets are private by default (i.e. not connected to the internet). To make a subnet public, an internet gateway
+  (IGW) must be attached to your VPC, and then the address of the IGW must be added to the route table of the subnet you
+  would like to make public.
+* Subnets must be associated within an AZ within the region of your VPC.
+* For high resiliency and availability, it is best to replicate services and their subnets across multiple AZs.
+	* In the image below, services are replicated across AZs. If one of the 3 AZs fails, there won't be an
+	  interruption in service.
+
+![](images/multi_az_networking.png)
+
+* Note that not all IP addresses in a subnet's CIDR block are available to be assigned to various hosts:
+	* Certain IPs are reserved for AWS networking, DNS, and other routing services.
