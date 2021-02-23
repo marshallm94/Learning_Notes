@@ -1,4 +1,5 @@
-The below notes were taken while going through the AWS Cloud Practitioner Certification Preparation on Cloud Academy
+The below notes were taken while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
+Cloud Academy
 
 [TOC]
 
@@ -749,7 +750,7 @@ Glacier Classes:
 
 ## EFS - Elastic File System
 
-* **Can be concurrently accessed by multiple (up to thousands...) of EC2 isntances**
+* **Can be concurrently accessed by multiple (up to thousands...) of EC2 instances**
 * Uses a "traditional" hierarchical structure
 * EFS automatically "auto scales"; the user doesn't need to provision "more space"
 * Throughput and IOPS also dynamically scale
@@ -1052,7 +1053,7 @@ AWS's grouping of relational database engines. There are 6 options:
 	* Amazon Aurora	uses shared cluster storage, and thus doesn't need to be manually set to autoscale; autoscaling
 	  is automatically configured.
 * Compute Scaling:
-	* Vertical (enhancing performance of current isntance(s)) or Horizontal scaling (increasing the count of
+	* Vertical (enhancing performance of current instance(s)) or Horizontal scaling (increasing the count of
 	  instances) can be scheduled, or happen immediately.
 	* "Read Replicas" are copies of your database that can be created so that 'read only' traffic has a dedicated
 	  instance. This allows the read and write functionality to each have a dedicated instance (the read replica
@@ -1226,7 +1227,8 @@ There are two subtypes:
 
 # Network Fundamentals for AWS
 
-The pillar of the networking on AWS is the VPC - Virtual Private Cloud.
+The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
+documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
 
 ## VPC
 
@@ -1255,3 +1257,56 @@ The pillar of the networking on AWS is the VPC - Virtual Private Cloud.
 
 * Note that not all IP addresses in a subnet's CIDR block are available to be assigned to various hosts:
 	* Certain IPs are reserved for AWS networking, DNS, and other routing services.
+
+## NACLs - Network Access Control Lists 
+
+* [AWS Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html)
+	* "A network access control list (NACL) is an optional layer of security for your VPC that acts as a firewall
+	  for controlling traffic in and out of **one or more** subnets."
+* **Allow/Deny traffic at the network level**.
+* NACLs are network firewalls. They determine what traffic is allowed to flow into/out of one or more subnets.
+	* Note that this is not the same as route tables.
+	* Route tables define **how** traffic moves **within** a subnet.
+* NACLs define rules for both inbound and outbound traffic.
+* Rules in NACLs are executed in a similar fashion to `if elif else` statements:
+	* Once a condition is met, the action associated with that condition is executed and traffic is denied/allowed
+	  accordingly. **No conditions are checked after one is met.**
+* **Stateless**
+
+## Security Groups
+
+* **Control traffic at the instance level ( as opposed to the network level (NACLs) )**.
+* Different setup from NACLs in that there isn't a "Allow/Deny" field in the setup table; with Security Groups, if there
+  is a row specifying a Type, Protocol, Port, etc, then that type of traffic is allows. In short, if the traffic is
+  specified in the security group, it's allows to communicate with the instance. If it isn't in the Security Group, it
+  is denied.
+* **Stateful**
+
+## NAT Gateway 
+
+* "A NAT Gateway allows intances within a private subnet to access the internet while blocking all traffic that
+  originates from the internet."
+	* This is necessary because the user is responsible for keeping the OS' of instances within a private subnet up
+	  to date.
+* NAT Gateways are logically located within a public subnet (and therefore access the internet the same way any other
+  resource in the public subnet does - through the IGW).
+
+## Bastion Hosts
+
+* Since instances within a private subnet are, by designe, not able to be accessed via the internet, there needs to be a
+  way to access these instance for developers/engineers to work; enter Bastion Hosts.
+* Bastion hosts are EC2 instances used for developers/engineers to access EC2 instances within a private subnet.
+
+In the image below:
+* The engineer has two private SSH keys on his machine; one that accesses the bastion host and one that accesses the EC2
+  instance in the private subnet.
+* Working backwards (from EC2 instance to dev computer):
+	* The security group of the EC2 instance in the private subnet must be configured to allow traffic from the
+	  bastion host in the public subnet (via SSH).
+	* The security group of the bastion host must be configured to allows traffic from the developer's/engineer's
+	  computer (via SSH).
+	* The NACL of the public subnet allows traffic from the IGW.
+	* **SSH Agent Forwarding** allows the developer to use the bastion host and "jump" to the EC2 instance he wants
+	  to work on.
+
+![](images/bastion_host_networking.png)
