@@ -1241,6 +1241,8 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 
 ## Subnets
 
+* "A VPC subnet is a range of IP addresses in your VPC. You can add one or more subnets in each Availability Zone, but
+  **each subnet must reside entirely within one Availability Zone and cannot span zones**"
 * Subnets are a subset of your VPC.
 * In the same way that the VPC must have a CIDR block assigned to it, each subnet must have a CIDR block assigned to it.
 * Subnets can communicate with other subnets within a VPC be default.
@@ -1284,6 +1286,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 
 ## NAT Gateway 
 
+* NAT = Network Access Translation
 * "A NAT Gateway allows intances within a private subnet to access the internet while blocking all traffic that
   originates from the internet."
 	* This is necessary because the user is responsible for keeping the OS' of instances within a private subnet up
@@ -1310,3 +1313,41 @@ In the image below:
 	  to work on.
 
 ![](images/bastion_host_networking.png)
+
+## VPN & Direct Connect
+
+**VPN**
+* In order for a VPN to work your VPC in AWS, your VPC needs to be configured with a virtual gateway.
+* The machine frmo which you want to connect to your VPC will need to have a customer gateway configured.
+* A VPN tunnel is then created between the customer gateway and the virtual gateway.
+* The route table of the private subnet will need to have the virtual gateway & target machine IP set up as well.
+
+**Direct Connect**
+* Does **not** use the internet to connect to a remote machine (i.e. your traffic doesn't cross public networks).
+* Uses a "middleman" (Direct Connect Location) to connect the user to AWS:
+	* The user has a router on premises that connects to a their router at the Direct Connect Location.
+	* The users router **at the Direct Connect Location** connects to AWS' router, **also at the Direct Connect
+	  Location.**
+	* This router connects to a virtual gateway associated with the users AWS infrastucture.
+* You can still use a VPN over Direct Connect, although it isn't necessary since your traffic is on a private network.
+
+## VPC Peering
+
+* Connects two VPC's together.
+	* 1:1 connections only - so if you want to connect 3 or more VPC peers, they will have to be pairwise.
+* Can connect VPCs in the same region or in different regions.
+* The CIDR blocks can't have **any** overlap of two connected VPC's.
+
+## Transit Gateway 
+
+* Similar to VPC Peering, although the AWS Transit Gateway allows the user to connect a VPC to more than one other VPCs.
+* Can be thought of as a 'central hub' for VPC connections - it drastically reduces the number of connections the user
+  has to manage:
+	* If X is connected to a Transit Gateway, it can access everything else that is connected to the Transit
+	  Gateway.
+
+# Random Notes
+
+* An Elastic IP address (EIP) is a static and public IP address that you can associate with an EC2 instance. EIPs have
+  the benefit of not changing when you stop and start an EC2 instance, whereas the default public IP that comes with an
+  EC2 instance may change. This gives you the benefit of a reliable IP address to associate with your EC2 instance.
