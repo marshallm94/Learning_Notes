@@ -1346,6 +1346,19 @@ In the image below:
 	* If X is connected to a Transit Gateway, it can access everything else that is connected to the Transit
 	  Gateway.
 
+# Management Fundamentals for AWS 
+
+## CloudTrail
+
+## Config
+
+## Trusted Advisor
+
+## CloudWatch
+
+## Health Dashboards
+
+
 # Random Notes
 
 * An Elastic IP address (EIP) is a static and public IP address that you can associate with an EC2 instance. EIPs have
