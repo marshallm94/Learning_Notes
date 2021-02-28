@@ -842,7 +842,7 @@ The values of the below two concepts will largely determine the path your DR pla
 * Multipart upload to S3:
 	* AWS recommends that any objects larger than 100 MB utilize multipart uploading, which "chunks" the data and
 	  uploads one chunk at a time, reassembling everything once all chunks are in S3.
-		* There are multiple benefits of this serice, a couple being:
+		* There are multiple benefits of this service, a couple being:
 			1. Speed & Throughput - Since multiple parts can be uploaded in parallel, the user can reach the
 			   end goal (having the entire object uploaded to S3) faster.
 			2. Interruption Recovery - If there is a network issue (or any technological issue for that
@@ -1348,15 +1348,140 @@ In the image below:
 
 # Management Fundamentals for AWS 
 
-## CloudTrail
+* All of the tools below can be found from the AWS Management Console, under the "Management Tools" header.
 
 ## Config
 
+* With cloud based architectures having the ability to adapt to problem domain changes, the architecture can constantly
+  be changing (as it is designed too), and therefore hard to keep track of. Config is AWS' tool to make managing your
+  resources easier.
+* There are many questions that typically come into play in managing resources, some being:
+	* What resources do we have?
+	* Are there any security vulnerabilities?
+	* How are the resources linked within the environment?
+	* Do we have a history of the changes made to the architecture?
+	* Is the infrastructure compliant with domain specific governance/compliance controls?
+	* Do we have accurate auditing informaion?
+* AWS Config captures changes to your AWS environment so that managing your resources is easier. Some things Config does:
+	* Act as a resource inventory
+	* Capture resources changes
+	* Store configuration history
+	* Provide a snapshot of configurations (at timepoint *t*)
+	* Send notifications about changes
+	* Provide AWS CloudTrail integration (tracks who made an architecture change)
+	* Use Rules to check compliance
+	* Perform security analysis
+	* Identify relationships between resources.
+* **Config does not capture the above information for all AWS resources**.
+	* Check [this link](https://docs.aws.amazon.com/config/latest/developerguide/resource-config-reference.html) to
+	  see which AWS resources are covered.
+* **Config is region specific.** This means that if you have resources in more than one region (which is probable), you
+  will have to set up Config to track the environment in both regions separately.
+	* You can choose to track all resources within a region or, you can choose to track all resources that apply to
+	  this region (best for resources such as IAM that are 'region-agnostic').
+
+## CloudTrail
+
+* CloudTrail is the "verion control" for AWS' cloud architecture.
+* CloudTrail records and tracks all API requests in the user's AWS account. These requests could come from a number of
+  different sources:
+	* AWS SDKs
+	* AWS CLI
+	* AWS Management Console
+	* Another AWS Service (e.g. if Autoscaling instantiates a new EC2 instance, this will be recorded by CloudTrail
+	  and the "user" would be the Autoscaling service).
+* CloudTrail events are logged, and the log is stored in an S3 bucket.
+* Log files can be stored for as long as the user would like.
+* Can be integrated with Config.
+* Can be very effective for security analysis (events have metadata stored with them, such as the time the API request
+  was made, as well as the IP that initiated it.)
+* CloudTrail logs can also serve as evidence that domain specific compliance standards are being met.
+
 ## Trusted Advisor
+
+* Trusted Advisor recommends improvements to your solution across all resources based on best practices. These could
+  include:
+	* Cost Optimization
+	* Performance improvement opportunities
+	* Potential Security weaknesses
+	* Fault tolerance best practices
+* Not all "best practice recommendations" are available for anyone with an AWS account:
+	* Business and Enterprise support plans provide access to ALL the Trusted Advisor checks (50+)
+	* Any AWS account has access to 6 core checks. These free 6 checks are split between the "Performance" and
+	  "Security" categories:
+		* Performance:
+			* Service Limits
+		* Security:
+			* Security Groups - Specific Ports Unrestricted
+			* EBS Public Snapshots
+			* RDS Public Snapshots 
+			* IAM Use
+			* MFA on root account
+* Some additional features include:
+	* Trusted Advisor Notifications:
+		* free opt-in or opt-out 
+		* tracks resource check changes and cost saving estimates over 7 days and can be emailed to up to 3
+		  recipients
+	* Exclude Items:
+		* Allows you to manually configure resources classes you want excluded from Trusted Advisor checks.
+	* Action Checks:
+		* Hyperlinks that show you the documentation associated with a particular problem.
+		* Example: if you are approaching the maximum number of VPC's within a region, the action check would
+		  point you to a support page where you can ask for an increase in your "VPC allowance."
+	* Access Management:
+		* Trusted Advisor is tightly integrated with IAM and thus you can configure the level of access
+		  Trusted Advisor is granted.
+	* Refresh:
+		* Determines the rate that checks are "re-checked" (default is every 24 hours).
 
 ## CloudWatch
 
+* CloudWatch is designed to create & monitor service specific metrics. The main uses cases are:
+	* Help maintain a good user experience.
+	* Insight into the performance of your environment/solution.
+	* Ability to right-size any problems and scale effectively.
+	* Effective RCA of service interruptions.
+	* Identify how to prevent future failures and outages.
+* Different services are designed for different purposes, and thus have their own unique metrics:
+	* For example, the EC2 service might have a "CPU utilization" metric while the S3 service might have a "total
+	  number of objects" metric.
+* You can also configure custom metrics for your application.
+* CloudWatch offers two monitoring modes:
+	1. Basic 
+		* default
+		* records metrics every 5 minutes
+	2. Detailed
+		* records metrics every minute
+		* **costs extra money**
+* Alarms
+	* Alarms have 3 possible states:
+		1. OK - the metric associated with the alarm is in the predefined threshold.
+		2. Alarm - the metric associated with the alarm is outside the predefined threshold.
+		3. Insufficient Data - Not enough data has been collected to determine the alarm state.
+* Logging
+	* CloudWatch is very effective at collecting logs in one place.
+		* e.g. if you have 20 front end hosts directing traffic to the backend of your application, and some
+		  event occurs that puts 10 of those hosts out of service, CloudWatch can collect all the log info
+		  associated with that event in one place, as opposed to going to each individual host once it is back
+		  up and finding out what happened on an individual basis.
+	
 ## Health Dashboards
+
+Two types of dashboard, both of which are used to identify potential problems that would affect your cloud-based solution.
+
+1. Service Health Dashboard 
+	* A complete health check of all AWS services in all regions: [link here](http://status.aws.amazon.com/)
+	* Each service can take on one of four values:
+		1. Service is operating normally
+		2. Informational message
+		3. Service Degredation
+		4. Service Disruption
+	* Ability to view service status of each service within each region **for the past year**.
+		* Can help with RCA of issues related to a users solution
+2. Personal Health Dashboard 
+	* Notifies you of any service interruptions that may affect the resources and services that you are using within
+	  your AWS account. [link here](http://phd.aws.amazon.com/)
+	* Provides a simple overview of the health of AWS services that might affect resources running from your account.
 
 
 # Random Notes
@@ -1384,7 +1509,7 @@ In the image below:
 	* Geographic Domains 
 		* Used to determine the geographic location of the site itself (e.g. '.uk', '.com.au')
 * [ Resource Record Types ](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
-* Routing Policies - When you create a resource record set, you must choose a routing policy that will be appliced to
+* Routing Policies - When you create a resource record set, you must choose a routing policy that will be applied to
   it, and this then determines how route 53 will respond to these queries.
 	* Simple Routing Policy 
 		* Used for single resources that perform a single function.
