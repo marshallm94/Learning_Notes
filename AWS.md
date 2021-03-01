@@ -1483,6 +1483,45 @@ Two types of dashboard, both of which are used to identify potential problems th
 	  your AWS account. [link here](http://phd.aws.amazon.com/)
 	* Provides a simple overview of the health of AWS services that might affect resources running from your account.
 
+# Architecture Fundamentals for AWS
+
+* Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
+
+## AWS Global Infrastructure
+
+The AWS global infrastructure is composed of 4 key elements:
+1. Availability Zones (AZs)
+	* AZs are a "within"/a subset of regions.
+	* The physical server(hardware) centers of AWS.
+	* Compute, Storage, Network and Database resources are provisioned within AZs.
+	* There can be multiple server(hardware) centers per AZ.
+	* Each AZ is isolated from the others in a region; they use separate power sources and connectivity providers in
+	  order make isolate service disruptions.
+	* Making use of at least two AZs per component of your application/solution is a best practice in case one AZ
+	  fails.
+2. Regions
+	* **Not all AWS services are available in every region.**
+	* [Click here](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services) for a link to
+	  which services are available in which regions (updated daily).
+		* This must be considered when architecting your infrastructure.
+		* Some services are classed as global services and therefore aren't tied to any specific region.
+	* A set of AZs.
+	* Regions acts independently of the other regions.
+	* A region will have at least two AZs.
+	* Global regions help to maintain data compliance laws.
+	* Utilizing multiple regions *can* be useful (if your use case is a global company for example).
+3. Edge Locations
+	* Deployed in highly populated areas around the world.
+	* Edge locations are used to by AWS CloudFront and AWS Lambda@Edge to cache data and reduce latency. This is
+	  called a global content delivery network (CDN).
+	* **Primarily used by end-users**
+4. Regional Edge Caches
+	* Have a larger cache-width than each of the individual edge locations.
+	* Regional Edge Caches sit between Edge Locations and Origin servers(hardware).
+	* Data is retained for longer at Regional Edge Caches.
+	* Edge locations can retrieve data from Regional Edge Caches (assuming it is still valid/there) instead of going
+	  all the way to the origin server(hardware).
+
 
 # Random Notes
 
