@@ -784,118 +784,6 @@ can read and write data to the EFS.
 		  can be uploaded and then sent back to AWS.
 		* Can transfer up to 100PB per snowmobile.
 
-## AWS Storage for On-Premises Backup and Disaster Recovery (DR)
-
-**Cloud Storage and DR**
-
-* Issues with traditional backup methods for DR:
-	* backup drives may be stored in the same physical location as the production system storage. If this were to be
-	  the case and a physical disaster occurred that effected the production system storage, the backups would
-	  likelye be effected as well.
-	* Scalability - As infrastucture expands, so will the needs of your backup storage.
-	* Costs - An effective backup solution is a huge upfront cost for the user.
-	* Availability - If your backup storage isn't cloud based, you (the user) might run into some delays retrieving
-	  your data from an off site location.
-* Benefits of Cloud Storage for DR:
-	* Cost Efficient
-	* Scalable 
-	* Available and durable
-	* Secure and reliable
-	* **Zero maintainance of hardware**
-	* Off-site Storage
-	* Easy to test DR plans
-
-**Considerations when planning a DR Storage Solution**
-
-The values of the below two concepts will largely determine the path your DR plan takes:
-* RTO - Recovery Time Objective
-	* The maximum amount of time in which a service can remain unavailable before it is classed as damaging to the
-	  business/objective.
-* RPO - Recovery Point Objective
-	* The maximum amount of time for which data could be lost for a service.
-
-* How will the user the data in/out of AWS?
-	* Direct Connection?
-	* VPN Connection?
-	* Internet Connection ?
-* If you need to transfer large amounts of data as part of a DR plan, check out AWS Snowball & Snowmobile
-* How quickly do you need your data back?
-	* Depend on RTO requirement (and are therefore solution/problem dependent).
-	* For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic
-	  damage to your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for
-	  example).
-* How much data do you need to import/export?
-	* Calculate your target transfer rate:
-		* check out [this link](http://www.thecloudcalculator.com/calculators/file-transfer.html) and you can
-		  input the necessary inputs (or the available inputs e.g. AWS Glacier IOPS and how much data you might
-		  need to transfer from your Glacier.)
-
-### Using S3 as a Data Backup Solution
-
-* Easily scalable and customizable (user can optimize the Durability, Availability & Cost for their needs)
-* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
-  region.
-	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
-	  which, as the name implies, replicates data across regions.
-	* From a DR perspective, this can reduce latency in the event that one region you are relying on is unavailable
-	  for some reason.
-* Multipart upload to S3:
-	* AWS recommends that any objects larger than 100 MB utilize multipart uploading, which "chunks" the data and
-	  uploads one chunk at a time, reassembling everything once all chunks are in S3.
-		* There are multiple benefits of this service, a couple being:
-			1. Speed & Throughput - Since multiple parts can be uploaded in parallel, the user can reach the
-			   end goal (having the entire object uploaded to S3) faster.
-			2. Interruption Recovery - If there is a network issue (or any technological issue for that
-			   matter), uploading in chunks ensures that only the chunk that was interrupted has to be
-			   reuploaded and then the process can continue. The user won't run into a situation where the
-			   entire object is 95% uploaded, there is a network error, and they they have to start all over
-			   again from 0.
-* Security:
-	* Since S3 offers in-transit and static encryption, S3 is a good option for making sure your don't inadvertenly
-	  leak sensitive data.
-	* IAM Policies - Used to restrict access to S3 buckets depending on identities and permissions.
-	* Bucket Policies - JSON policies are assigned at the bucket level and control who has access to the buckets
-	  contents.
-	* Access Control Lists - Allows a more granular way of assigning permission relative to IAM policies (read,
-	  write, execute, etc.)
-	* Lifecycle Policies - Used to automatically move data between S3 classes.
-	* MFA Delete - Multifactor Authenticated Delete ensure that a user has to enter a 6 digit code to delete an
-	  object, ensuring objects aren't accidentally deleted.
-	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
-	  obviously requires more space than if it were not configured.
-
-### AWS Artifact
-
-AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
-industry.
-
-* Can be accessed from the AWS Management Console
-* Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
-
-### AWS Storage Gateway 
-
-* Sits between the users on-premises data storage and a backupt to AWS S3
-
-There are a few options available:
-1. Stored Volume Gateways:
-	* Primary storage is the on-premises data center
-	* Used to backup local storage volumes to S3 on an interval basis
-2. Cached Volume Gateways:
-	* Primary data storage is S3
-	* Local data storage is used as a 'cache' for recently accessed data (cached volume).
-3. Gateway-Virtual Tape Library
-	* "Virtual Tape Library is a cloud based tape backup solution, replacing physical components with virtual ones,
-	  while utilizing your existing tape backup application infrastructure."
-	* Components:
-		* Storage Gateway: Configured as a Tape-Gateway acting as a VTL with a capacity of 1500 virtual tapes.
-		* Virtual Tapes: Virtual equivalent to a physical tape cartridge with capacity of 100 GB - 2.5 TiB. Data
-		  stored on VT's are backed by S3 and visible in the virtual Tape library.
-		* Virtual Tape Library (VTL): Virtual equivalent to a Tape Library containing Virtual Tapes.
-		* Tape Drives: Each VTL comes with 10 Tape Drives, presented as iSCSI devices to your backup applications.
-		* Media Changer: A virtual device presented as an iSCSI device to backup applications that manages tapes
-		  between your Tape Drive and VTL.
-		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
-		  VTL to AWS Glacier.
 
 # Database Fundamentals for AWS
 
@@ -953,7 +841,7 @@ There are two "meta types" of databases:
 			* Tables have Primary Keys (PKs) that uniquely identify the information in that table.
 			* Tables have Foreign Keys (FKs) that are PKs in another table.
 	* Data Integrity
-		* "ACID" is the acronym for the governing principals of databases that ensure data is reliable and
+		* "ACID" is the acronym for the governing principles of databases that ensure data is reliable and
 		  accurate:
 			* Atomicity:
 				* Refers to the elements that make up a single database transaction.
@@ -1001,8 +889,8 @@ There are two "meta types" of databases:
 				* "Shared Nothing" Architecture - each node has one shard of the NoSQL database, and can
 				  thus work independently of all other processes on other nodes.
 			* Do not adhere to ACID constraints.
-				* By relaxing the "Consistency" principal of ACID, NoSQL systems can be highly durable
-				  and available. Relaxing the Consistency principals isn't a problem with NoSQL because
+				* By relaxing the "Consistency" principle of ACID, NoSQL systems can be highly durable
+				  and available. Relaxing the Consistency principles isn't a problem with NoSQL because
 				  NoSQL solutions were designed for inconsistent data.
 		* Most NoSQL databases access their data using their own custom API, or possibly a combination of their
 		  own custom API and "traditional" SQL. **There isn't a universal query language that is supported by
@@ -1521,6 +1409,251 @@ The AWS global infrastructure is composed of 4 key elements:
 	* Data is retained for longer at Regional Edge Caches.
 	* Edge locations can retrieve data from Regional Edge Caches (assuming it is still valid/there) instead of going
 	  all the way to the origin server(hardware).
+
+## DR - Disaster Recovery
+
+**Cloud Storage and DR**
+
+* Issues with traditional backup methods for DR:
+	* backup drives may be stored in the same physical location as the production system storage. If this were to be
+	  the case and a physical disaster occurred that effected the production system storage, the backups would
+	  likelye be effected as well.
+	* Scalability - As infrastucture expands, so will the needs of your backup storage.
+	* Costs - An effective backup solution is a huge upfront cost for the user.
+	* Availability - If your backup storage isn't cloud based, you (the user) might run into some delays retrieving
+	  your data from an off site location.
+* Benefits of Cloud Storage for DR:
+	* Cost Efficient
+	* Scalable 
+	* Available and durable
+	* Secure and reliable
+	* **Zero maintainance of hardware**
+	* Off-site Storage
+	* Easy to test DR plans
+
+**Considerations when planning a DR Storage Solution**
+
+The values of the below two concepts will largely determine the path your DR plan takes:
+* RTO - Recovery Time Objective
+	* The maximum amount of time in which a service can remain unavailable before it is classed as damaging to the
+	  business/objective.
+* RPO - Recovery Point Objective
+	* The maximum amount of time for which data could be lost for a service.
+
+* How will the user move the data in/out of AWS?
+	* Direct Connection?
+	* VPN Connection?
+	* Internet Connection ?
+* If you need to transfer large amounts of data as part of a DR plan, check out AWS Snowball & Snowmobile
+* How quickly do you need your data back?
+	* Depend on RTO requirement (and are therefore solution/problem dependent).
+	* For example, if your RTO is 1 hour (meaning if a service is out for more than an hour there is catastrophic
+	  damage to your business), this eliminates some services from your DR plan (S3 Glacier Storage classes, for
+	  example).
+* How much data do you need to import/export?
+	* Calculate your target transfer rate:
+		* check out [this link](http://www.thecloudcalculator.com/calculators/file-transfer.html) and you can
+		  input the necessary inputs (or the available inputs e.g. AWS Glacier IOPS and how much data you might
+		  need to transfer from your Glacier.)
+
+### Using S3 as a Data Backup Solution
+
+* Easily scalable and customizable (user can optimize the Durability, Availability & Cost for their needs)
+* Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
+  region.
+	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
+	  which, as the name implies, replicates data across regions.
+	* From a DR perspective, this can reduce latency in the event that one region you are relying on is unavailable
+	  for some reason.
+* Multipart upload to S3:
+	* AWS recommends that any objects larger than 100 MB utilize multipart uploading, which "chunks" the data and
+	  uploads one chunk at a time, reassembling everything once all chunks are in S3.
+		* There are multiple benefits of this service, a couple being:
+			1. Speed & Throughput - Since multiple parts can be uploaded in parallel, the user can reach the
+			   end goal (having the entire object uploaded to S3) faster.
+			2. Interruption Recovery - If there is a network issue (or any technological issue for that
+			   matter), uploading in chunks ensures that only the chunk that was interrupted has to be
+			   reuploaded and then the process can continue. The user won't run into a situation where the
+			   entire object is 95% uploaded, there is a network error, and they they have to start all over
+			   again from 0.
+* Security:
+	* Since S3 offers in-transit and static encryption, S3 is a good option for making sure your don't inadvertenly
+	  leak sensitive data.
+	* IAM Policies - Used to restrict access to S3 buckets depending on identities and permissions.
+	* Bucket Policies - JSON policies are assigned at the bucket level and control who has access to the buckets
+	  contents.
+	* Access Control Lists - Allows a more granular way of assigning permission relative to IAM policies (read,
+	  write, execute, etc.)
+	* Lifecycle Policies - Used to automatically move data between S3 classes.
+	* MFA Delete - Multifactor Authenticated Delete ensure that a user has to enter a 6 digit code to delete an
+	  object, ensuring objects aren't accidentally deleted.
+	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
+	  obviously requires more space than if it were not configured.
+
+### AWS Artifact
+
+AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
+industry.
+
+* Can be accessed from the AWS Management Console
+* Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
+
+### AWS Storage Gateway 
+
+* Sits between the users on-premises data storage and a backup to AWS S3
+
+There are a few options available:
+1. Stored Volume Gateways:
+	* Primary storage is the on-premises data center
+	* Used to backup local storage volumes to S3 on an interval basis
+2. Cached Volume Gateways:
+	* Primary data storage is S3
+	* Local data storage is used as a 'cache' for recently accessed data (cached volume).
+3. Gateway-Virtual Tape Library
+	* "Virtual Tape Library is a cloud based tape backup solution, replacing physical components with virtual ones,
+	  while utilizing your existing tape backup application infrastructure."
+	* Components:
+		* Storage Gateway: Configured as a Tape-Gateway acting as a VTL with a capacity of 1500 virtual tapes.
+		* Virtual Tapes: Virtual equivalent to a physical tape cartridge with capacity of 100 GB - 2.5 TiB. Data
+		  stored on VT's are backed by S3 and visible in the virtual Tape library.
+		* Virtual Tape Library (VTL): Virtual equivalent to a Tape Library containing Virtual Tapes.
+		* Tape Drives: Each VTL comes with 10 Tape Drives, presented as iSCSI devices to your backup applications.
+		* Media Changer: A virtual device presented as an iSCSI device to backup applications that manages tapes
+		  between your Tape Drive and VTL.
+		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
+		  VTL to AWS Glacier.
+
+### Strategies 
+
+* [4 Strategies Overview](https://www.ecloudgate.com/Doc/DisasterRecovery_Overview)
+* [4 Strategies
+  Overview(AWS)](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html)
+
+#### Backup & Restore
+
+* For on-premises or cloud based solutions, data is backed up to S3 using Storage Gateway, should a disaster occur,
+  restored from the appropriate S3 bucket(s).
+* Data can be restored via an internet connection, or (if lots of data needs to be restored), AWS Import/Export can be
+  used to ship physical containers from which data can be restored.
+* RTO in 24 hours or less.
+* RPO in hours.
+
+#### Pilot Light
+
+* Similar to its namesake, the Pilot Strategy is to have the core components of a system duplicated. From this small
+  "pilot light" of components, the rest of the system can be rapidly provisioned and be up and running.
+* **Note that "core components" are solution dependent**; it isn't always going to be X, Y and Z that are the "core
+  compenents". The architect will have to decide this.
+* Typically, you should have pre-configured AMI's from which new EC2 instances can be deployed.
+* Will have slightly better RPO/RTO than the "Backup & Restore" strategy since the core components are already up and
+  running.
+* Environments can be scripted using CloudFormation.
+* Any DNS can be updated to point at front end servers once they are up and running in AWS.
+
+#### Warm Standby
+
+* Similar to the pilot light strategy, although expended; in addition to the "core components"/"pilot light" always
+  running, additional services are duplicated and always running as well.
+* Front end servers would be on the least powerful EC2 instances, however they would always be running.
+* The on-premises system and cloud based backup system run side by side, however the backup system isn't scaled to
+  handle production throughput unless a disaster occurs, at which point it can be scaled (either vertically or
+  horizontally).
+* Any DNS can be updated to point at cloud based front end servers if a disaster occurs.
+
+#### Multi Site
+
+* Two, production throughput capable systems are run side by side. Route 53 can be used to route the majority (or 100%)
+  of the traffic to the on-premises solution by default.
+* If something happens to the on-premises system, changing the Route 53 loading is all that needs to be configured to
+  route all traffic to the cloud based solution.
+	* Ensuring that autoscaling and ELBs are setup in the cloud environment to dynamically adjust to the new
+	  thoughput will make your life a lot easier.
+* Lowest RTO/RPO, at the highest cost.
+
+Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
+
+## Well Architected Framework
+
+The AWS "Well Architected Framework" is a set of best practices that have been refined over the years across different
+problem domains that typically lead to well architected systems.
+
+There are 5 pillars of the well architected framework:
+
+1. [Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
+	* Definition: Creating, running and maintaining systems to help solve a problem.
+	* Based on 3 best practices:
+		1. Organization
+		2. Prepare 
+		3. Operate 
+		4. Evolve
+	* 6 Design Principles:
+		1. Perform operations as code
+			* AKA you can/should define your environment/system/solution with code wherever you can; remove
+			  as much possibility for human error as possible.
+		2. Annotate documentation
+		3. Make frequent, small, reversible changes
+		4. Refine operations procedures frequently 
+		5. Anticipate failure 
+		6. Learn from operational failure 
+2. [Security](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
+	* Definition: Managing and securing your infrastructure by protecting your data.
+	* Based on 5 best practices:
+		1. Identity & Access Management
+		2. Detective Controls
+		3. Infrastructure Protection
+		4. Data Protection
+		5. Incident Response
+	* 6 Design Principles:
+		1. Implement a strong identity foundation
+			* Implement the principle of "least privilege" for highly sensitive data.
+		2. Enable traceability
+		3. Apply security at all layers
+			* i.e. VPCs, subnets, security groups.
+		4. Automate security best practices
+		5. Protect data in transit and at rest
+		6. Prepare for security events
+	
+3. [Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
+	* Definition: The ability of a system to perform its intended function correctly and consistently. 
+	* Based on 4 best practices:
+		1. Foundations
+		2. Workload architecture 
+		3. Change management
+		4. Failure management
+	* 5 Design Principles:
+		1. Test recovery procedure
+		2. Automatically recover from failure
+		3. Scale horizontally to increase aggregate system availability
+		4. Stop guessing capacity
+		5. Manage change in automation
+4. [Performance Efficiency](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
+	* Definition: The efficient use of computational resources to meet requirements.
+	* Based on 4 best practices:
+		1. Selection
+		2. Review
+		3. Monitoring
+		4. Tradeoffs
+	* 5 Design Principles:
+		1. Democratize advanced technologies
+			* Make advanced technology implementation easy.
+		2. Go global in minutes
+		3. User serverless architectures
+		4. Experiment more often
+		5. Consider mechanical sympathy
+5. [Cost Optimization](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
+	* Definition: (it's in the name) - Minimize cloud computation costs.
+	* Based on 4 best practices:
+		1. Practice cloud financial management
+		2. Expenditure and Usage Awareness
+		3. Cost effective resources
+		4. Manage demand and supply resources
+	* 5 Design Principles:
+		1. Implement cloud financial management
+		2. Adopt a consumption model
+		3. Measure overall efficiency
+		4. Stop spending money on undifferentiated heavy lifting
+			* i.e. don't use traditional data centers unless you have a good reason.
+		5. Analyze and attribute expediture.
 
 
 # Random Notes
