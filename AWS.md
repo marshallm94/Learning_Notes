@@ -1655,6 +1655,108 @@ There are 5 pillars of the well architected framework:
 			* i.e. don't use traditional data centers unless you have a good reason.
 		5. Analyze and attribute expediture.
 
+# Security Fundamentals for AWS
+
+At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
+
+Overview:
+* The user is responsible for the security level of the resources that are **in** the cloud (i.e. access to/from said
+  resources), while AWS is responsible for the security *of the cloud itself.*
+
+![](images/Shared_Responsibility_Model.jpg)
+
+## IAM - Identity & Access Management
+
+* **IAM is a global service - it applies to all regions in AWS.**
+* Identity Management: Authenticating who has has access to your AWS account.
+	* Answers the question, "Who is the user?"
+* Access Management: Determining what (services) an identity can access within your AWS account.
+	* Answers the question, "What can this user do?"
+		* for example:
+			* Can this user read and write to an RDS instance, or only read?
+			* Can this user configure EC2 autoscaling settings or not?
+			* Can this user change Route 53 configurations or not?
+* IAM is only as strong as you (the user) configure it.
+* Components of IAM:
+	* Users 
+		* used to identify distinct identities/users.
+	* Groups
+		* groups of users.
+	* Roles
+		* objects that a different identities can adopt to assume a new set of permissions.
+	* Policy Permissions
+		* JSON policies that define what services can and can not be accessed.
+	* Access Control Mechanisms
+		* Mechanisms that govern how a resource can be accessed.
+* IAM is found under the "Security, Identity & Compliance" tab of the AWS Management Console.
+* The IAM dashboard includes:
+	* IAM sign in link - this is url that would be provided to users who will need access to the AWS Management
+	  Console (or at least some pieces of it).
+	* A summmary of the IAM resources (e.g. how many users, groups, policies that are currently active).
+	* A list of AWS IAM best practices and whether your account has met them.
+
+### Users
+
+* A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
+  account that represents an application that needs permissions to access certain resources in your AWS environment
+  programmatically.
+* A *User* can be created manually from the Management Console, or programmatically with the AWS CLI, Tools for Windows
+  Powershell or the IAM HTTP API.
+* Creating a *User* has 7 steps:
+	1. Create a username
+	2. Define the AWS access type:
+		* AWS Management Console (manual/for humans).
+			* if this is selected, a password will need to be created for the username.
+		* Programmatic access.
+			* If this is selected, an access key ID and secred access key ID will issued and associated with
+			  the username for use with AWS CLIs and SDKs.
+	3. Define password (if access type = AWS Management Console)
+	4. Permissions assignment.
+		* Can be accomplished by adding the user to a predefined group.
+		* Can be accomplished by copying permissions from another user.
+		* Can be accomplished by attaching existing policies to the new user.
+	5. Review and confirm information
+	6. Create the user
+	7. Download security credentials of the new user (can also be emailed to the user)
+* Once the user is created, it will be assigned an ARN (Amazon Resource Name), which is a unique identifier of the
+  object.
+
+### Groups 
+
+* Any users within a group inherit the permissions applied to that group.
+* Using groups to assign permissions is a best practice.
+	* instead of making the same change to 10 individual user objects, make the change once to the policy
+	  permissions of the group which the 10 users are a part of.
+* Groups are not used in the authentication process but are used to authorize access through AWS policies.
+* Groups are usually defined by job role or specific requirements.
+* Creating a Group has 3 steps:
+	1. Set up the Group name
+	2. Assign permissions to the group via policies.
+	3. Review and create.
+* Once a group is created, users can be assigned to said group.
+* **There is a default maximum of 100 groups per AWS account.** To increase, the user will need to contact AWS.
+* **A User can only be associated with 10 groups.**
+
+### Roles 
+
+* "An IAM role is similar to an IAM user, in that it is an AWS identity with permission policies that determine what the
+  identity can and cannot do in AWS. However, instead of being uniquely associated with one individual, a role is
+  intended to be assumable by anyone who needs it."
+  [Documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
+* Allow users (*which could be an application*) to adopt a set of temporary set of IAM permissions to access specific
+  resources.
+	* For example:
+		* If an application is hosted on an EC2 instance and needs to access some objects in an S3 bucket, you
+		  could either keep the keys needed to access the S3 bucket on the EC2 instance, which is not only a bad
+		  practice but a managerial burdern. Instead, you should associated an IAM role with the EC2 instance,
+		  which accomplishes the same goal.
+* Roles don't have access keys or credentials assigned to them; the credentials are dynamically assigned by AWS.
+* Roles can be assigned to multiple EC2 instances, and thus changes to the role will apply to all those instances.
+
+
+
+
+
 
 # Random Notes
 
