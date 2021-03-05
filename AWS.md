@@ -1752,11 +1752,105 @@ Overview:
 		  which accomplishes the same goal.
 * Roles don't have access keys or credentials assigned to them; the credentials are dynamically assigned by AWS.
 * Roles can be assigned to multiple EC2 instances, and thus changes to the role will apply to all those instances.
+* There are 4 different types of Roles:
+	1. Service Role
+		* This Role will be assumed by computational resources in order to communicate with other resources in
+		  your cloud infrastructure.
+	2. Service-Linked Role
+		* Predefined to specific services by AWS (can't be altered by the user).
+		* Example services: Amazon Lex - Bots, Amazon Lex - Channels
+	3. Cross-Account Access Role
+		* Allows one AWS account to communicate and configure select options of a different AWS account
+		* 2 Components:
+			1. The 'Trusting' Account - This is the account that has the resources that need to be accessed.
+			2. The 'Trusted' Account - This is the account that contains Users that need to access resources
+			   in the 'Trusting' account.
+		* To create a Cross-Account Access Role:
+			1. The role must be created in the Trusting account.
+			2. A 'Trust' is established with the Role by the AWS account number of the Trusted account.
+			3. Permissions are applied to the Role via policies.
+			4. The Users in the trusted account have a policy attached.
+	4. Identity Provider Access Role
+		* 3 different options:
+			1. Grant access to web identity providers 
+				* Creates a trust for Users using Amazon Cognito, Amazon, Facebook, Google or another
+				  provider.
+			2. Grant Web Single Sign on to SAML Providers 
+				* Allows access for users coming from a Security Assertion Markup Language (SAML)
+				  provider.
+			3. Grant API access to SAML Providers 
+				* Allows access from SAML providers via the AWS CLI, SDK or API calls.
 
+### Policies 
 
+* Policies are used to assign permissions to Users, Groups and Roles.
+* Formatted as JSON, policies will have the following names:
+	1. Version
+		* Specifies the policy language version (looks like/is a date - most likely a convention on AWS' part to
+		  keep things easy to track).
+	2. Statement 
+		* Is an array (i.e. multiple policies can be within the same statement)
+		* Defines the main element of the policy.  2.1. Sid
+			* Statement ID - unique identifier (which will be needed when there are multiple policies per
+			  statement).  2.2. Action
+			* The action that will either be allowed or denied. **Actions are effectively API calls for
+			  different services. This means that there will **not** be a uniform structure of actions for
+			  all policies (different services have different use cases and therefore have different API
+			  calls).  2.3. Effect
+			* This element can either be set to "Allow" or "Deny" and determines whether the Action element
+			  will be allowed or denied.
+			* **The default is Deny** 2.4. Resource
+			* This element specifies the actual resource you wish the 'Action' and 'Effect' to be applied
+			  to.
+			* AWS uses ARNs (Amazon Resource Name)s to specify resources. These follow the below syntax:
+				* `arn:partition:service:region:account-id:resource`
+				* The value of the `resource` in the above code will depend on the Action you are using.
+				  2.5. Condition
+			* Optional element 
+			* Allows you to control when the permission will be effective (i.e. if these conditions are met
+			  then the permission is allowed/denied).
 
+```JSON
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "FirstStatement",
+      "Effect": "Allow",
+      "Action": ["iam:ChangePassword"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecondStatement",
+      "Effect": "Allow",
+      "Action": "s3:ListAllMyBuckets",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ThirdStatement",
+      "Effect": "Allow",
+      "Action": [
+        "s3:List*",
+        "s3:Get*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::confidential-data",
+        "arn:aws:s3:::confidential-data/*"
+      ],
+      "Condition": {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
+    }
+  ]
+}
+```
 
-
+There are 2 IAM Policy Types:
+	* Managed Policies
+		* 2 subtypes:
+			* AWS Managed Policies
+				* These are preconfigured by AWS and cover most permissions
+			* Customer Managed Policies
+				* Configured by the customer.
+	* Inline Policies
 
 # Random Notes
 
