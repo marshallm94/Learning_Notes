@@ -784,7 +784,6 @@ can read and write data to the EFS.
 		  can be uploaded and then sent back to AWS.
 		* Can transfer up to 100PB per snowmobile.
 
-
 # Database Fundamentals for AWS
 
 * Database: Any mechanism for storing, managing and retrieving information
@@ -1844,13 +1843,66 @@ Overview:
 ```
 
 There are 2 IAM Policy Types:
-	* Managed Policies
-		* 2 subtypes:
-			* AWS Managed Policies
-				* These are preconfigured by AWS and cover most permissions
-			* Customer Managed Policies
-				* Configured by the customer.
-	* Inline Policies
+* Managed Policies
+	* Can be attached to multiple Users, Groups & Roles
+	* 2 subtypes:
+		* AWS Managed Policies
+			* These are preconfigured by AWS and cover most permissions
+			* Examples: AmazonS3FullAccess, AmazonS3ReadOnlyAccess
+		* Customer Managed Policies
+			* Configured by the customer.
+			* 3 ways to create a Customer Managed Policy:
+				1. Copy any AWS Managed Policy and edit as needed.
+				2. Policy Generator: create a policy by choosing options from dropdown boxes.
+				3. Create your own policy: write your own JSON policy from scratch.
+			* All policies should be validated using the "Validate Policy" button (in all of the 3 steps
+			  above).
+* Inline Policies
+	* Can **not** be attached to multiple Users, Groups & Roles; these are directly embedded into a specific User,
+	  Group or Role.
+	* To create an inline policy, you will have to select the "Permission Tab" within the Users/Group/Role tab, and
+	  click the button to add an inline policy (keep point is it is performed *through* the IAM object it will be
+	  applied to).
+	* This policy, once created, will not show up in a drop down list of AWS Managed or Customer Managed dropdown
+	  list.
+* If there are conflicting permissions for any IAM object (User, Group or Role), **any "Deny" permission will override
+  any number of "Allow" permissions.**
+
+## MFA - Multi-Factor Authentication 
+
+* Add another layer of security
+	* Perhaps useful for users of an AWS account that have a lot of powerful permissions.
+* Uses a 6 digit random sequence of numbers
+* Prior to MFA working, it must be configured for a given User through the IAM console:
+	1. Select the User 
+	2. Go to the 'security credentials' tab
+	3. Change 'Assigned MFA Device' from 'No' by editing it.
+		* Google Authenticator is a good virtual MFA option to use and is supported by AWS.
+
+## Identity Federation (IdP)
+
+* Allows you to access and manage AWS resources even if you don't have a user account within IAM.
+* Effectively allows users to "bootstrap" a User IAM object using an account from another provider.
+	* Allows a Single Sign On (SSO) solution for users.
+	* Think "Would you like to sign in using your Google/Gmail Account?" type of thing.
+* Prior to users being able to do this, a trust relationship must be setup between the IdP and your AWS account. There
+  are 2 types of IdP supported by AWS:
+	1. OpenID
+		* Examples: Facebook, Google, Amazon
+	2. SAML
+		* Example: Microsoft Active Directory
+
+## KMS - Key Management Service 
+
+* AWS managed service that allows management of encryption keys to secure data.
+
+## Other IAM Services 
+
+* In the "Account Settings" you can set the password policy for all users of the AWS account.
+* Credential Report:
+	* A CSV file containing a list of all IAM users and credentials with self-explanatory columns.
+* You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
+  password, that can access your AWS resources. 
 
 # Random Notes
 
