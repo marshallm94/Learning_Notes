@@ -1974,4 +1974,77 @@ There are 2 IAM Policy Types:
 	* The user will need to configure which edge locations they want their cached data to be stored at.
 * Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
 
+## Securing AWS Organizations with Service Control Policies (SCPs)
 
+* All of the below can be configured via the *AWS Organizations* "portal" (for lack of a better word), which is under
+  the "Governance" tab within the AWS Management Console.
+* Check out the [full documentation here](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)
+
+### AWS Organizations
+
+* For a sufficiently large system, there may come a time when more than one AWS account is needed to partition different
+  access levels, roles, and organizational units. For example:
+	* There might be an entire team dedicated to security and compliance of the system, each member of the team
+	  under the umbrella of one AWS account.
+	* Another team might be in charge of billing, each member of the team under the umbrella of that AWS account.
+	* et cetera.
+* "The more accounts you have the more distributed your environment becomes and the associated security risks and
+  exposure increase and multiply". 
+* **AWS organizations are designed to bring multiple accounts under one umbrella.**
+* AWS organizations have a few key components:
+	1. Organizations 
+		* An Organization is an element that serves to form a hierarchical structure of multiple AWS accounts.
+		* Can be thought of as a hierarchical graphical tree of your entire AWS account structure.
+	2. Root
+		* The Root object is at the top of the hierarchy - all accounts will fall under this object and within
+		  any AWS Organization, there can only be one Root object.
+	3. Organizational Units (OUs)
+		* Organizational Units are objects/concepts that provided the means of categorizing different AWS
+		  accounts within an Organization.
+		* Used to group together different AWS accounts.
+	4. Accounts
+		* The different AWS accounts (ID by a 12 digit account number) associated with your AWS Organization
+		  that are used to provision and manage resources.
+	5. Service Control Policies (SCPs)
+		* Allow you to control what Services and Features are available from a given AWS account within and
+		  Organization.
+		* SCPs can be applied at any level of the Organization hierarchy, and will be applied to all child
+		  objects: For example:
+			* You could create an SCP that only allows access to RDS services. You could then apply this SCP
+			  to your "Database" Organizational Unit, and any AWS accounts (and therefore users associated
+			  with those accounts), would only be able to access Amazon RDS services.
+* The primary benefit of AWs Organizations is the ability to manage multiple accounts from a single account, known as
+  the Master Account. Additionally, this can help consolidate billing efforts.
+* Steps to set up an AWS Organization:
+	1. Choose an AWS Account that will be the Master Account.
+		* It is best practice that this Master account does **not** actually provision/manage any AWS resources;
+		  it simply manages the Organization.
+		* This Master account has various responibilities:
+			1. Create additional AWS accounts within the Org.
+			2. Invite other accounts to join the Org.
+			3. Remove AWS accounts from the Org.
+			4. Apply security features via SCPs to different levels of the Org.
+	2. Choose an Org Type:
+		1. Enable All Features 
+		2. Enable Only Consolidated Billing
+		* If you want to use SCPs (which is kind of the point), you will need to select 'Enable All Features'
+	3. Create OUs and invite/create AWs Accounts to join the Org.
+
+### SCPs 
+
+* SCPs do **not** grant a user access to AWS resources, they set the boundaries around which services can even have
+  access granted to them. Permissions will still need to be configured at the User/Group/Role level via IAM within an
+  AWS account.
+	* In the same way that IAM "Deny" policies will always override an "Allow" policy, the same applies for SCPs; if
+	  a Group has a policy that grants them access to a policy defined by the AWS account the Group is associated
+	  with, but the Master Account sets up and SCP that denies access this same service, the Group will be denied
+	  access to this service.
+	* ""Additionally, if a User/Group/Role within an AWS account is allowed access to service X *before a , 
+* In order to create SCPs, the Master Account will need the following permission enabled:
+	`organizations:EnablePolicyType`
+	`organizations:DescribeOrganization`
+* Since multiple SCPs can be created and attached to individual accounts or OUs, it is important to understand the
+  inheritance of SCP resembles that of set intersections (see the below image). You can also
+  [check the documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_inheritance_auth.html)
+
+![](images/scps.png)
