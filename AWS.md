@@ -2048,3 +2048,12 @@ There are 2 IAM Policy Types:
   [check the documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_inheritance_auth.html)
 
 ![](images/scps.png)
+
+* SCPs do not affect resource based policies, they only affect principals managed by your accounts in your Org.
+* SCPs affectt all users and roles in an AWS account, including the root user (of that account).
+* If you disable SCPs for any reason, all SCPs will be deleted. If you want to reconfigure the same SCPs, you will have
+  to do so manually as **the default is to grant FullAWSAccess.**
+* The following elements are not affected by SCPs:
+	* Any actions performed by the Master Account.
+	* SCPs do not affect service-linked roles.
+	* SCPs do not affect managing CloudFront keys.
