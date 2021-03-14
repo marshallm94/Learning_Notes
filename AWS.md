@@ -1904,7 +1904,7 @@ There are 2 IAM Policy Types:
 * You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
   password, that can access your AWS resources. 
 
-# Random Notes
+# "Not-Cleanly-Classifiable" Fundamentals for AWS 
 
 * An Elastic IP address (EIP) is a static and public IP address that you can associate with an EC2 instance. EIPs have
   the benefit of not changing when you stop and start an EC2 instance, whereas the default public IP that comes with an
@@ -2057,3 +2057,71 @@ There are 2 IAM Policy Types:
 	* Any actions performed by the Master Account.
 	* SCPs do not affect service-linked roles.
 	* SCPs do not affect managing CloudFront keys.
+
+## WAF, Firewall Manager & Shield
+
+### WAF - Web Application Firewall
+
+* "AWS WAF helps prevent web sites and web applications from being maliciously attacked by common web attack patters
+  (such as SQL injection)"
+* WAF Components:
+	* Conditions 
+		* Conditions allow you to specify what elements of the incoming HTTP or HTTPS request you want WAF to be
+		  monitoring for.
+		* Some WAF conditions include:
+			* Cross-site scripting
+				* **One of the largest vulnerabilities found in web applications today**
+				* Scripts that have been written to maliciously gain access to client side data via a
+				  normally trusted web page/application.
+			* Geo match
+				* Allow/Block requests from specific geographies.
+				* Note that geography based request filtering will first pass through CloudFront. So if
+				  you are using the CloudFront service in your solution, setting up Geo match conditions
+				  in WAF is redundant and a waste of time.
+			* IP addreses
+				* Allow/Block requests from specific IP ranges.
+			* Size constraints
+				* Allow/Block requests based on the size of various parts of the request.
+			* SQL injection attacks
+			* String and regex matching
+	* Rules 
+		* Rules are composed of more than one condition. In order for the action associated with a rule to be
+		  carried out, **all conditions associated with that rule must be met (it is an `AND` conditional).
+			* For example, if you have a rule that says "Allow requests if 1) the request originates from
+			  Oklahoma AND 2) the request is from X list of IP addresses", and a request comes in that is
+			  from Oklahoma but not in the specified IP list, the request will be denied.
+	* Web ACLs (Access Control Lists)
+		* ACLs have three possible actions: Allow, Block or Count.
+* Similar to NACLs, Web ACLs rules are executed in the order that they are listed within the web ACL. This means that a
+  request will take the action of the first rule that it matches, even if there is another rule further down the list
+  that the request would also match. Given this, a good structure for a Web ACL is:
+	1. Explicitly allow requests from "whitelisted" IPs; IPs that you know aren't malicious.
+	2. Explicitly block requests from "blacklisted" IPs; IPs that you know are malicious.
+	3. Finally, list the various rules composed of WAF conditions to identify bad requests.
+
+### Firewall Manager 
+
+* Firewall Manager is designed to help the user manage WAF in a multi-account setting - the AWS Organization.
+* In order to make use of the Firewall Manager, the AWS Organization must have been enable with all features (not just
+  consolidated billing)
+* [Full documentation here](https://aws.amazon.com/firewall-manager/)
+
+### Shield 
+
+* Closely related to WAF and Firewall Manager
+* Designed to protect your infrastructure against Distributed Denial of Service (DDoS) attacks. A DDoS attack sends a
+  high volume of requests to a server from multiple distributed services, preventing legitimate requests from getting
+  through as well as severely limiting the performance of the server.
+* There are multiple types of DDoS attacks:
+	* SYN Flood
+	* DNS query Flood
+	* HTTP flood/Cache-busting
+* AWS Shield has two options:
+	* Standard
+		* Free to AWS account holders.
+		* Offers DDoS protection against common layer 3 (Network) and layer 4 (Transport) DDoS attacks.
+		* Integrated with CloudFront and Route 53.
+	* Advanced 
+		* Costs extra.
+		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
+
