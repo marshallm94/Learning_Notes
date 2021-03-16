@@ -1370,6 +1370,49 @@ Two types of dashboard, both of which are used to identify potential problems th
 	  your AWS account. [link here](http://phd.aws.amazon.com/)
 	* Provides a simple overview of the health of AWS services that might affect resources running from your account.
 
+## Cost Management & Customer Support 
+
+Some Cost Management services provided by AWS are:
+
+1. TCO Calculator (cost of migrating to AWS)
+	* TCO = Total Cost of Ownership
+	* Allows the user to compare costs of an AWS Cloud based solution to an on-premises solution.
+	* Anyone can use this - you don't need an AWS account/to already be using AWS.
+2. Billing Dashboard (check recent costs)
+	* 3 separate graphs to look at:
+		1. Spend Summary Graph
+			* Shows the previous months total cost.
+			* Shows the amount spend month-to-date.
+			* Estimates total amount you will spend by month end.
+		2. Spend by Service Graph
+			* Shows percentage of total cost by service.
+		3. Service by Spend Graph
+			* Shows amount spent on service.
+3. Cost Explorer (analyze long term spending trends)
+	* Similar to Billing Dashboard, but offers more graphs to view expenditure (as opposed to just 3).
+	* Graphs data for up to 12 months, forecasts expenditure for up to 3 months.
+	* Offers way to filter expenditure data.
+	* Note that custom graphs are not possible - **if you want a more in depth look at expenditures, use "Cost and
+	  Usage Reports" to download the CSV of expenditure data and play with it in whatever way you like.
+4. AWS Budgets (limit spending)
+	* Allows you to set service limits and alert you if you exceed them
+	* There are 3 budget types:
+		1. Cost Budgets
+			* Set a cost limit for a service.
+		2. Usage Budgets
+			* Set a usage limit for a service.
+		3. Reserved Instance Utilization Budgets
+			* Makes sure your reserved instances are operating at their desired levels (an EC2 instance that
+			  is just idling probably isn't a good use of money).
+5. Consolidated Billing (simplify your bills)
+	* If your company has separate AWS accounts, Consolidated Billing can consolidate all cost into one place (gee,
+	  who woulda thought...)
+	* There is the potential for cost savings if you meet some volume thresholds.
+
+
+
+
+
 # Architecture Fundamentals for AWS
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
@@ -1894,7 +1937,39 @@ There are 2 IAM Policy Types:
 
 ## KMS - Key Management Service 
 
-* AWS managed service that allows management of encryption keys to secure data.
+* AWS managed service that allows management of encryption keys to securely encrypt/decrypt data.
+* **KMS only encrypts data at rest (i.e. S3 buckets). KMS does not encrypt data in transit/motion.**
+	* To encrypt data in transit, another method would need to be used (such as an SSL)
+* Administrators at AWS do NOT have access to your keys within KMS and they cannot recover these keys should you lose
+  the keys themselves, or access to these keys.
+	* It is the reponsibility of the user to designate a KMS administrator and that administrators responsibility to
+	  manage the encryption keys.
+* Works seamlessly with CloudTrail (makes compliance and potential audits easier).
+* KMS is region specific. This means if your solution/system spans multiple regions, you would need to setup KMS in each
+  region where data encryption is needed.
+* There are 4 main components of KMS:
+	1. Customer Master Keys (CMKs)
+		* Main key type in KMS.
+		* 3 subtypes of CMKs:
+			1. Customer Managed
+				* Cost extra, but other the greatest control/flexibility.
+				* The user is able to create/delete/disable the key, configure key policies & Grants, as
+				  well as adjust the key rotation periods.
+			2. AWS Managed
+				* The user is unable to modify these keys, although you can still track their usage.
+				* These keys are created and used by the services that integrate with KMS directly.
+			3. AWS Owned
+				* The user can't view or track these keys; they are abstracted away from your AWS account.
+				* Examples of services that use these are DynamoDB and S3 Master Key.
+	2. Data Encryption Keys (DEKs)
+		* Created by CMKs, however they can be used outside of KMS to perform encryption, either in non-AWS
+		  applications or by other AWS services.
+	3. Key Policies
+		* Key policies determine who can do what with the key (e.g. who can use the key encrypt data, who can
+		  administer the CMK to perform functions such as deleting and revoking the key).
+	4. Grants
+		* Grants allow you to programmatically delegate your permissions to another principal or user.
+
 
 ## Other IAM Services 
 
