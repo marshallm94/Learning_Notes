@@ -1372,7 +1372,7 @@ Two types of dashboard, both of which are used to identify potential problems th
 
 ## Cost Management & Customer Support 
 
-Some Cost Management services provided by AWS are:
+Cost Management services provided by AWS are:
 
 1. TCO Calculator (cost of migrating to AWS)
 	* TCO = Total Cost of Ownership
@@ -1409,9 +1409,35 @@ Some Cost Management services provided by AWS are:
 	  who woulda thought...)
 	* There is the potential for cost savings if you meet some volume thresholds.
 
+Customer Support services provided by AWS are:
 
+1. Basic
+	* Default support tier for all users.
+	* Features offered:
+		* Customer service and Communities (documentation, white papers, open-source stuff).
+		* Trusted Advisor's six core checks.
+		* Access to Personal Dashboard.
+2. Developer
+	* ideal for individual users experimenting with AWS.
+	* Features offered:
+		* Customer service and Communities (documentation, white papers, open-source stuff).
+		* Trusted Advisor's six core checks.
+		* Access to Personal Dashboard.
+3. Business
+	* ideal for multiple accounts, supporting a production environment on AWS, and using 1-2 services heavily.
+	* Features offered:
+		* Customer service and Communities (documentation, white papers, open-source stuff).
+		* All Trusted Advisor service checks.
+		* Access to Personal Dashboard and Health API.
+4. Enterprise
+	* ideal for multiple accounts that support large scale, business critical systems.
+	* Features offered:
+		* Customer service and Communities (documentation, white papers, open-source stuff).
+		* All Trusted Advisor service checks.
+		* Access to Personal Dashboard and Health API.
 
-
+* There are differences in the level/promptness of support you will receive from AWS, depending on which plan you
+  choose. You can [check the documenation to see how this plays out](https://aws.amazon.com/premiumsupport/plans/)
 
 # Architecture Fundamentals for AWS
 
