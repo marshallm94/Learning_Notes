@@ -119,7 +119,8 @@ The 4 main services offered by a cloud infrastructure provider are:
 
 ### AMIs - Amazon Machine Images
 
-* An AMI is a template for a VM; this can include the OS, specific applications for your use case, custom configurations, etc.
+* An AMI is a template for a VM; this can include the OS, specific applications for your use case, custom
+  configurations, etc.
 * To create your own custom AMI:
 	* Choose a basic AMI the first time you launch an EC2 instance (only specifying the OS you want for example),
 	  and then once the instance is launched, you can install any applications related to your solution, configure
