@@ -75,7 +75,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 	  context of the application.
 2. Platform as a Service (PaaS)
 	* Allows customization from the OS level and up (network, host hardware etc. managed by provider).
-3. Infrasture as a Service (IaaS)
+3. Infrastructure as a Service (IaaS)
 	* Allows customization at the OS level and up (including virtual clouds). The hardware is typically managed by the provider.
 
 ## Common Use Cases of Cloud Computing 
@@ -99,7 +99,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 	* Generators, Fire Suppression, etc. are all on premise at the data center, and is therefore the responsibility
 	  of the data center.
 * Network Infrastructure (Switches/Routers/Firewalls)
-	* The public cloud user is able to create configurations that simulate the logical effet of switches, routers
+	* The public cloud user is able to create configurations that simulate the logical effect of switches, routers
 	  and firewalls.
 	* In AWS, virtual clouds are called Virtual Private Networks (VPCs) and are configured by the end user. This
 	  therefore means that the security & infrastructure *of the VPC* is the responsibility of the end user.
