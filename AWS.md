@@ -1997,6 +1997,81 @@ There are 2 IAM Policy Types:
 		* Grants allow you to programmatically delegate your permissions to another principal or user.
 
 
+## Inspector
+
+* Inspector helps you detect security risks in your applications, as well as on the EC2 instances your applications run
+  on.
+* Inspector is agent based, and this agent must be installed on the EC2 instances you want it to run on. Once installed,
+  you can choose which security checks are run for that particular instance, and this can vary from instance to instance.
+* Inspector has built in libraries of known best practices that are run against your system.
+* There are 9 main components of Inspector:
+	1. Amazon Inspector Role
+		* The Inspector role needs to be created to allow Inspector access to the EC2 instance you want to
+		  inspect for security vulnerabilities.
+		* This role can be created in IAM and will need read only access to all EC2 instances (or all those that
+		  you want checked).
+	2. Assessment Target
+		* These are groupings of EC2 instances that you want to run a security evaluation on.
+		* Can be managed and organized via tags.
+	3. AWS Agents
+		* AWS Agents must be installed on the instances that you want to run security checks on.
+		* Since Inspector is an AWS managed service, the user doesn't need to worry about keeping the agent
+		  software up to date; this will be performed automatically.
+	4. Assessment Templates
+		* Assessment templates are a blueprint for how you want an assessment to be run. They can include:
+			* The rule packages you want to use.
+			* The duration you want the assessment to run (AWS recommends 1 hour).
+			* Whether SNS (Simple Notification Servce) should notify you under certain conditions (e.g. when
+			  the assessment starts/finishes).
+	5. Rule Packages
+		* Rule packages are predefined security best practices that Inspector stores in a pre-built library.
+		  When creating an assessment plan, you can choose which rule packages you want to use.
+		* **Not all rule packages can be run on all OS'**. There are some rule packages that can only be run on
+		  Linux distributions.
+		* There are a few different rule packages:
+			* Common Vulnerabilities and Exposures
+				* publically known referenced list of security threats (think open source "check for
+				  this security risk" list).
+				* This list is constantly updated.
+			* Center for Internet Security (CIS) Benchmarks
+			* Security Best Practices
+				* Looks for weaknesses in common security best practices.
+				* **Only for Linux distributions.**
+		* Each rule within a rule package will have an associated severity:
+			1. High: High risk security vulnerabilities that should be addressed immediately.
+			2. Medium: Medium risk security vulnerabilities that should be addressed after all High risk
+			   Findings are addressed.
+			3. Low: Low risk security vulnerabilities that should only be addressed after all High and
+			   Medium risk vulnerabilities are addressed.
+			4. Informational: Not a security risk, but information related to your EC2 instance/application
+			   that is of interest.
+	6. Assessment Run
+		* This is the action of assessing the EC2 instance(s); you can configure how long you want the
+		  assessment to run, however, again, AWS recommends 1 hour.
+		* This is when Telemetry data is sent back to Inspector.
+		* Multiple assessment runs can occur at the same time, so long as there isn't any overlap in the targets
+		  of the two (or more) assessment runs.
+	7. Telemetry
+		* Telemetry refers to the data that the agent collects during the assessment run; this is data that is
+		  checked against the rule packages you defined to determine which (if any) security vulnerabilities
+		  your EC2 instance/application is susceptible to.
+		* Telemetry is sent from the agent back to Inspector, which then encrypts the Telemetry and stores it
+		  temporarily in an S3 bucket. To create an assessment report, Inspector retrieves this data from the S3
+		  bucket and decrypts it.
+		* This data is sent over a Transport Layer Security (TLS) protected channel.
+		* Telemetry data is deleted after 30 days.
+	8. Assessment Report
+		* This is the output of an assessment run; there are two types of assessment reports:
+			1. Findings Report: For when you are only interested in any security concerns.
+				* lists  which targets were assessed, which rule packages were used, and a detailed
+				  report of the findings.
+			2. Full Report: For when you want a more comprehensive list of what was performed in the
+			   assessment run, including things that aren't a security concern.
+	9. Findings
+		* Findings are security vulnerabilities.
+		* For each finding, an explanation is given as well as guidance on how to solve the problem.
+
+
 ## Other IAM Services 
 
 * In the "Account Settings" you can set the password policy for all users of the AWS account.
