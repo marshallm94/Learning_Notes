@@ -167,6 +167,7 @@ Different payment plans available:
 * On-Demand Instances
 	* launched at any time
 	* flat rate per instance type
+	* billing for an EC2 instance begins when the AMI boot sequence is initiated.
 	* typically used for short term uses
 * Reserved Instances
 	* best applied to long term, predictable workloads (applications that you know need to be running for a set
@@ -342,8 +343,8 @@ Storage, Database or Network) are charged using the standard pricing of those re
 
 Elastick Beanstalk is a service that takes your uploaded code and automatically provisions and deployes the resources
 needed to make the application operational.
-	* This service is likely the most useful for engineers who may not have the familiarity, skills or desire to
-	  manage the deployment, provisioning and monitoring of developed applications.
+* This service is likely the most useful for engineers who may not have the familiarity, skills or desire to
+  manage the deployment, provisioning and monitoring of developed applications.
 
 * Able to operate with a variety of platforms and programming languages, some examples being:
 	* Single Container Docker
@@ -362,7 +363,7 @@ Key Components:
 * Environment Tier
 	* Applications that are communicating with other servers (usually via HTTP requests using port 80) are run in a
 	  *web server environment*. AWS infrastructure usually used includes:
-	  	* Route 53
+		* Route 53
 		* Elastic Load Balancer
 		* Auto Scaling
 		* EC2
@@ -550,6 +551,7 @@ SSL = Secure Sockets Layer
 As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
 demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
 spending money on resources they aren't using.
+* One of the main benefits of Auto Scaling is your application gains better fault tolerance.
 
 **Components**
 
@@ -607,6 +609,7 @@ There are more storage options provided by AWS than those listed here, however t
 Provides storage to EC2 instances via 'EBS Volume'
 
 * Persistent, block level storage connect to EC2 instances via AWS network.
+	* Data saved via an EBS volume will persist after an instance is terminated.
 * An EBS volume can be attached/accessed to/by **only one** EC2 instance, however multiple EBS volumes can be attached
   to a single instance.
 * 'Snapshots' (aka backups) can be performed manually or setup to run on a scheduled basis.
@@ -726,6 +729,7 @@ Glacier Classes:
   Lifecycle rules set up in the more frequent access classes).
 
 5. S3 Glacier
+	* A user can restore up to 10 GB of data from S3 Glacier per month **for free.**
 	* Data *can* be accessed via 3 different routes, each with a different cost (listed in descending order relative
 	  to cost):
 		1. Expedited
@@ -1170,6 +1174,8 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
   is a row specifying a Type, Protocol, Port, etc, then that type of traffic is allows. In short, if the traffic is
   specified in the security group, it's allows to communicate with the instance. If it isn't in the Security Group, it
   is denied.
+* You can change an instance's security group, however the instance will have to be rebooted for the changes to take
+  effect.
 * **Stateful**
 
 ## NAT Gateway 
@@ -1996,6 +2002,7 @@ There are 2 IAM Policy Types:
 		  administer the CMK to perform functions such as deleting and revoking the key).
 	4. Grants
 		* Grants allow you to programmatically delegate your permissions to another principal or user.
+* **KMS is priced per CMK and the number of requests received per month.**
 
 
 ## Inspector
@@ -2018,6 +2025,8 @@ There are 2 IAM Policy Types:
 		* AWS Agents must be installed on the instances that you want to run security checks on.
 		* Since Inspector is an AWS managed service, the user doesn't need to worry about keeping the agent
 		  software up to date; this will be performed automatically.
+		* Note that AWS Agents have a minimal impact on the performance of the instance during the Assessment
+		  Run process.
 	4. Assessment Templates
 		* Assessment templates are a blueprint for how you want an assessment to be run. They can include:
 			* The rule packages you want to use.
