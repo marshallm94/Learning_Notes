@@ -1450,6 +1450,91 @@ Customer Support services provided by AWS are:
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
 
+## Well Architected Framework
+
+![](images/aws_well_architected_framework.png)
+
+The AWS "Well Architected Framework" is a set of best practices that have been refined over the years across different
+problem domains that typically lead to well architected systems.
+
+There are 5 pillars of the well architected framework:
+
+1. [Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
+	* Definition: Creating, running and maintaining systems to help solve a problem.
+	* Based on 3 best practices:
+		1. Organization
+		2. Prepare 
+		3. Operate 
+		4. Evolve
+	* 6 Design Principles:
+		1. Perform operations as code
+			* AKA you can/should define your environment/system/solution with code wherever you can; remove
+			  as much possibility for human error as possible.
+		2. Annotate documentation
+		3. Make frequent, small, reversible changes
+		4. Refine operations procedures frequently 
+		5. Anticipate failure 
+		6. Learn from operational failure 
+2. [Security](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
+	* Definition: Managing and securing your infrastructure by protecting your data.
+	* Based on 5 best practices:
+		1. Identity & Access Management
+		2. Detective Controls
+		3. Infrastructure Protection
+		4. Data Protection
+		5. Incident Response
+	* 6 Design Principles:
+		1. Implement a strong identity foundation
+			* Implement the principle of "least privilege" for highly sensitive data.
+		2. Enable traceability
+		3. Apply security at all layers
+			* i.e. VPCs, subnets, security groups.
+		4. Automate security best practices
+		5. Protect data in transit and at rest
+		6. Prepare for security events
+	
+3. [Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
+	* Definition: The ability of a system to perform its intended function correctly and consistently. 
+	* Based on 4 best practices:
+		1. Foundations
+		2. Workload architecture 
+		3. Change management
+		4. Failure management
+	* 5 Design Principles:
+		1. Test recovery procedure
+		2. Automatically recover from failure
+		3. Scale horizontally to increase aggregate system availability
+		4. Stop guessing capacity
+		5. Manage change in automation
+4. [Performance Efficiency](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
+	* Definition: The efficient use of computational resources to meet requirements.
+	* Based on 4 best practices:
+		1. Selection
+		2. Review
+		3. Monitoring
+		4. Tradeoffs
+	* 5 Design Principles:
+		1. Democratize advanced technologies
+			* Make advanced technology implementation easy.
+		2. Go global in minutes
+		3. User serverless architectures
+		4. Experiment more often
+		5. Consider mechanical sympathy
+5. [Cost Optimization](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
+	* Definition: (it's in the name) - Minimize cloud computation costs.
+	* Based on 4 best practices:
+		1. Practice cloud financial management
+		2. Expenditure and Usage Awareness
+		3. Cost effective resources
+		4. Manage demand and supply resources
+	* 5 Design Principles:
+		1. Implement cloud financial management
+		2. Adopt a consumption model
+		3. Measure overall efficiency
+		4. Stop spending money on undifferentiated heavy lifting
+			* i.e. don't use traditional data centers unless you have a good reason.
+		5. Analyze and attribute expediture.
+
 ## AWS Global Infrastructure
 
 The AWS global infrastructure is composed of 4 key elements:
@@ -1646,89 +1731,6 @@ There are a few options available:
 * Lowest RTO/RPO, at the highest cost.
 
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
-
-## Well Architected Framework
-
-The AWS "Well Architected Framework" is a set of best practices that have been refined over the years across different
-problem domains that typically lead to well architected systems.
-
-There are 5 pillars of the well architected framework:
-
-1. [Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
-	* Definition: Creating, running and maintaining systems to help solve a problem.
-	* Based on 3 best practices:
-		1. Organization
-		2. Prepare 
-		3. Operate 
-		4. Evolve
-	* 6 Design Principles:
-		1. Perform operations as code
-			* AKA you can/should define your environment/system/solution with code wherever you can; remove
-			  as much possibility for human error as possible.
-		2. Annotate documentation
-		3. Make frequent, small, reversible changes
-		4. Refine operations procedures frequently 
-		5. Anticipate failure 
-		6. Learn from operational failure 
-2. [Security](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
-	* Definition: Managing and securing your infrastructure by protecting your data.
-	* Based on 5 best practices:
-		1. Identity & Access Management
-		2. Detective Controls
-		3. Infrastructure Protection
-		4. Data Protection
-		5. Incident Response
-	* 6 Design Principles:
-		1. Implement a strong identity foundation
-			* Implement the principle of "least privilege" for highly sensitive data.
-		2. Enable traceability
-		3. Apply security at all layers
-			* i.e. VPCs, subnets, security groups.
-		4. Automate security best practices
-		5. Protect data in transit and at rest
-		6. Prepare for security events
-	
-3. [Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
-	* Definition: The ability of a system to perform its intended function correctly and consistently. 
-	* Based on 4 best practices:
-		1. Foundations
-		2. Workload architecture 
-		3. Change management
-		4. Failure management
-	* 5 Design Principles:
-		1. Test recovery procedure
-		2. Automatically recover from failure
-		3. Scale horizontally to increase aggregate system availability
-		4. Stop guessing capacity
-		5. Manage change in automation
-4. [Performance Efficiency](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
-	* Definition: The efficient use of computational resources to meet requirements.
-	* Based on 4 best practices:
-		1. Selection
-		2. Review
-		3. Monitoring
-		4. Tradeoffs
-	* 5 Design Principles:
-		1. Democratize advanced technologies
-			* Make advanced technology implementation easy.
-		2. Go global in minutes
-		3. User serverless architectures
-		4. Experiment more often
-		5. Consider mechanical sympathy
-5. [Cost Optimization](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
-	* Definition: (it's in the name) - Minimize cloud computation costs.
-	* Based on 4 best practices:
-		1. Practice cloud financial management
-		2. Expenditure and Usage Awareness
-		3. Cost effective resources
-		4. Manage demand and supply resources
-	* 5 Design Principles:
-		1. Implement cloud financial management
-		2. Adopt a consumption model
-		3. Measure overall efficiency
-		4. Stop spending money on undifferentiated heavy lifting
-			* i.e. don't use traditional data centers unless you have a good reason.
-		5. Analyze and attribute expediture.
 
 # Security Fundamentals for AWS
 
@@ -2310,4 +2312,3 @@ There are 2 IAM Policy Types:
 	* Advanced 
 		* Costs extra.
 		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
-
