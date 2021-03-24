@@ -310,15 +310,15 @@ management system, known as the control plane. The AWS account owner only need t
 nodes if using EKS.
 
 Kubernetes:
-	* The control plane contains API's, the kubelet processes and the Kubernetes Master.
-	* The control plane allocates containers onto nodes (according to CPU needs)
-	* The control plane tracks the state of all Kubernetes objects, continually monitoring them.
+* The control plane contains API's, the kubelet processes and the Kubernetes Master.
+* The control plane allocates containers onto nodes (according to CPU needs)
+* The control plane tracks the state of all Kubernetes objects, continually monitoring them.
 EKS takes care of all the above processes for the AWS users
 
 Worker nodes:
-	* Kubernetes clusters are composed of nodes (worker machine - One-Demand EC2 instance on AWS)
-	* Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
-	* Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
+* Kubernetes clusters are composed of nodes (worker machine - One-Demand EC2 instance on AWS)
+* Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
+* Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
 
 ### Setting up EKS
 
@@ -1121,6 +1121,70 @@ There are two subtypes:
 
 The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
 documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
+
+
+## AWS Route 53
+
+* DNS = Domain Name System
+	* Responsible for the translation of domain names (e.g. amazon.com) to correct IP addresses (machines).
+* Route 53 = AWS's DNS
+* Hosted Zones 
+	* hosted zones are containers that hold information about how you want to route traffic for a given domain name.
+	* 2 Types:
+		* Public Hosted Zone: Determines how traffic is routed on the internet and can be created when you
+		  register your domain with route 53.
+		* Private Hosted Zone: For an AWS VPC, determines how traffic is routed within the VPC.
+* Domain Types:
+	* TLDs - Generic Top-Level Domains
+		* Used to determine what type of information a user might find on the website.
+	* Geographic Domains 
+		* Used to determine the geographic location of the site itself (e.g. '.uk', '.com.au')
+* [ Resource Record Types ](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
+* Routing Policies - When you create a resource record set, you must choose a routing policy that will be applied to
+  it, and this then determines how route 53 will respond to these queries.
+	* Simple Routing Policy 
+		* Used for single resources that perform a single function.
+		* Think a small, static website where performance doesn't really matter.
+	* Failover Routing Policy
+		* Allows you to route traffic based on the health of the targets.
+		* Specify a primary and secondary resource, and traffic will only be directed to the secondary resource
+		  if the primary resource is unresponsive.
+	* Geo-Location Routing Policy
+		* Allows you to route traffic based on the location of the request.
+		* Example: if a request comes from an IP in India, you might wan to route that differently than traffic
+		  that comes from Russia.
+	* Geoproximity Routing Policy
+		* Similary to Geo-Location routing, however this routing policy is based on both the location of the
+		  requesting IP (the client), and the responding IP (the server).
+	* Latency Routing Policy
+		* Used for situations where there are multiple instances of a resource, and you want route 53 to route
+		  traffic based on which server will provide the lowest latency.
+	* Multivalue Answer Routing Policy
+		* Allows you to get a response from a DNS request from up to 8 records that are picked at random.
+		* Can help with load balancing.
+	* Weighted Routing Policy
+		* Used when there are multiple resources that perform the same purpose.
+		* Allows you to route traffic based on weights; send it to resource A 20% of the time, resource B 40% of
+		  the time, etc.
+
+## AWS CloudFront 
+
+* AWS' fault-tolerant and globally scalable content delivery network service.
+	* The whole goal of this service is to reduce latency; if some data that your application serves is relatively
+	  unchanging, then CloudFront will cache that data in different places around the world so that requests from
+	  Asia don't have to travel all the way to Ohio (where your AWS hosted resource is located) to retrieve said
+	  data. It can simply go to the closest "Edge Location", where the data is cached.
+* Distributes requests to the closest "edge" (are they referring to graph theory edges here?) based on the users
+  location. This ends up having the lowest latency using cached data.
+* Edge Locations = sites deployed in major cities around the world.
+* Distributions:
+	* CloudFront uses distributions to control which source data it needs to redistribute and to where
+	* OAI = Origin Access Identity. An OAI is a cloudfront user that can serve as a intermediary between outside
+	  requests and your server **if your server is an S3 bucket**. The reason you might want to do this is for
+	  security reason; giving the world access to the object URL in your S3 bucket might be undesired based on use
+	  case.
+	* The user will need to configure which edge locations they want their cached data to be stored at.
+* Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
 
 ## VPC
 
@@ -2097,70 +2161,6 @@ There are 2 IAM Policy Types:
 * An Elastic IP address (EIP) is a static and public IP address that you can associate with an EC2 instance. EIPs have
   the benefit of not changing when you stop and start an EC2 instance, whereas the default public IP that comes with an
   EC2 instance may change. This gives you the benefit of a reliable IP address to associate with your EC2 instance.
-
-## Introduction to DNS & Content Delivery on AWS
-
-### AWS Route 53
-
-* DNS = Domain Name System
-	* Responsible for the translation of domain names (e.g. amazon.com) to correct IP addresses (machines).
-* Route 53 = AWS's DNS
-* Hosted Zones 
-	* hosted zones are containers that hold information about how you want to route traffic for a given domain name.
-	* 2 Types:
-		* Public Hosted Zone: Determines how traffic is routed on the internet and can be created when you
-		  register your domain with route 53.
-		* Private Hosted Zone: For an AWS VPC, determines how traffic is routed within the VPC.
-* Domain Types:
-	* TLDs - Generic Top-Level Domains
-		* Used to determine what type of information a user might find on the website.
-	* Geographic Domains 
-		* Used to determine the geographic location of the site itself (e.g. '.uk', '.com.au')
-* [ Resource Record Types ](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
-* Routing Policies - When you create a resource record set, you must choose a routing policy that will be applied to
-  it, and this then determines how route 53 will respond to these queries.
-	* Simple Routing Policy 
-		* Used for single resources that perform a single function.
-		* Think a small, static website where performance doesn't really matter.
-	* Failover Routing Policy
-		* Allows you to route traffic based on the health of the targets.
-		* Specify a primary and secondary resource, and traffic will only be directed to the secondary resource
-		  if the primary resource is unresponsive.
-	* Geo-Location Routing Policy
-		* Allows you to route traffic based on the location of the request.
-		* Example: if a request comes from an IP in India, you might wan to route that differently than traffic
-		  that comes from Russia.
-	* Geoproximity Routing Policy
-		* Similary to Geo-Location routing, however this routing policy is based on both the location of the
-		  requesting IP (the client), and the responding IP (the server).
-	* Latency Routing Policy
-		* Used for situations where there are multiple instances of a resource, and you want route 53 to route
-		  traffic based on which server will provide the lowest latency.
-	* Multivalue Answer Routing Policy
-		* Allows you to get a response from a DNS request from up to 8 records that are picked at random.
-		* Can help with load balancing.
-	* Weighted Routing Policy
-		* Used when there are multiple resources that perform the same purpose.
-		* Allows you to route traffic based on weights; send it to resource A 20% of the time, resource B 40% of
-		  the time, etc.
-### AWS CloudFront 
-
-* AWS' fault-tolerant and globally scalable content delivery network service.
-	* The whole goal of this service is to reduce latency; if some data that your application serves is relatively
-	  unchanging, then CloudFront will cache that data in different places around the world so that requests from
-	  Asia don't have to travel all the way to Ohio (where your AWS hosted resource is located) to retrieve said
-	  data. It can simply go to the closest "Edge Location", where the data is cached.
-* Distributes requests to the closest "edge" (are they referring to graph theory edges here?) based on the users
-  location. This ends up having the lowest latency using cached data.
-* Edge Locations = sites deployed in major cities around the world.
-* Distributions:
-	* CloudFront uses distributions to control which source data it needs to redistribute and to where
-	* OAI = Origin Access Identity. An OAI is a cloudfront user that can serve as a intermediary between outside
-	  requests and your server **if your server is an S3 bucket**. The reason you might want to do this is for
-	  security reason; giving the world access to the object URL in your S3 bucket might be undesired based on use
-	  case.
-	* The user will need to configure which edge locations they want their cached data to be stored at.
-* Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
 
 ## Securing AWS Organizations with Service Control Policies (SCPs)
 
