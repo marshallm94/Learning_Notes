@@ -1190,6 +1190,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 
 * VPCs are **isolated** segments of the AWS cloud; they can be thought of as distinct 'computational universes' that
   aren't connected to other VPCs (or the internet) by default.
+* **VPCs span all AZs in a region.**
 * Default = 5 VPCs per region per AWS account.
 * High level view of creating a VPC:
 	1. Give your VPC a name.
@@ -1199,6 +1200,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 
 * "A VPC subnet is a range of IP addresses in your VPC. You can add one or more subnets in each Availability Zone, but
   **each subnet must reside entirely within one Availability Zone and cannot span zones**"
+* **Subnets are isolated to 1 AZ (within 1 region).**
 * Subnets are a subset of your VPC.
 * In the same way that the VPC must have a CIDR block assigned to it, each subnet must have a CIDR block assigned to it.
 * Subnets can communicate with other subnets within a VPC be default.
