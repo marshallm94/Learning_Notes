@@ -1304,6 +1304,365 @@ In the image below:
 	* If X is connected to a Transit Gateway, it can access everything else that is connected to the Transit
 	  Gateway.
 
+# Security Fundamentals for AWS
+
+At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
+
+Overview:
+* The user is responsible for the security level of the resources that are **in** the cloud (i.e. access to/from said
+  resources), while AWS is responsible for the security *of the cloud itself.*
+
+![](images/Shared_Responsibility_Model.jpg)
+
+## IAM - Identity & Access Management
+
+* **IAM is a global service - it applies to all regions in AWS.**
+* Identity Management: Authenticating who has has access to your AWS account.
+	* Answers the question, "Who is the user?"
+* Access Management: Determining what (services) an identity can access within your AWS account.
+	* Answers the question, "What can this user do?"
+		* for example:
+			* Can this user read and write to an RDS instance, or only read?
+			* Can this user configure EC2 autoscaling settings or not?
+			* Can this user change Route 53 configurations or not?
+* IAM is only as strong as you (the user) configure it.
+* Components of IAM:
+	* Users 
+		* used to identify distinct identities/users.
+	* Groups
+		* groups of users.
+	* Roles
+		* objects that a different identities can adopt to assume a new set of permissions.
+	* Policy Permissions
+		* JSON policies that define what services can and can not be accessed.
+	* Access Control Mechanisms
+		* Mechanisms that govern how a resource can be accessed.
+* IAM is found under the "Security, Identity & Compliance" tab of the AWS Management Console.
+* The IAM dashboard includes:
+	* IAM sign in link - this is url that would be provided to users who will need access to the AWS Management
+	  Console (or at least some pieces of it).
+	* A summmary of the IAM resources (e.g. how many users, groups, policies that are currently active).
+	* A list of AWS IAM best practices and whether your account has met them.
+
+### Users
+
+* A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
+  account that represents an application that needs permissions to access certain resources in your AWS environment
+  programmatically.
+* A *User* can be created manually from the Management Console, or programmatically with the AWS CLI, Tools for Windows
+  Powershell or the IAM HTTP API.
+* Creating a *User* has 7 steps:
+	1. Create a username
+	2. Define the AWS access type:
+		* AWS Management Console (manual/for humans).
+			* if this is selected, a password will need to be created for the username.
+		* Programmatic access.
+			* If this is selected, an access key ID and secred access key ID will issued and associated with
+			  the username for use with AWS CLIs and SDKs.
+	3. Define password (if access type = AWS Management Console)
+	4. Permissions assignment.
+		* Can be accomplished by adding the user to a predefined group.
+		* Can be accomplished by copying permissions from another user.
+		* Can be accomplished by attaching existing policies to the new user.
+	5. Review and confirm information
+	6. Create the user
+	7. Download security credentials of the new user (can also be emailed to the user)
+* Once the user is created, it will be assigned an ARN (Amazon Resource Name), which is a unique identifier of the
+  object.
+
+### Groups 
+
+* Any users within a group inherit the permissions applied to that group.
+* Using groups to assign permissions is a best practice.
+	* instead of making the same change to 10 individual user objects, make the change once to the policy
+	  permissions of the group which the 10 users are a part of.
+* Groups are not used in the authentication process but are used to authorize access through AWS policies.
+* Groups are usually defined by job role or specific requirements.
+* Creating a Group has 3 steps:
+	1. Set up the Group name
+	2. Assign permissions to the group via policies.
+	3. Review and create.
+* Once a group is created, users can be assigned to said group.
+* **There is a default maximum of 100 groups per AWS account.** To increase, the user will need to contact AWS.
+* **A User can only be associated with 10 groups.**
+
+### Roles 
+
+* "An IAM role is similar to an IAM user, in that it is an AWS identity with permission policies that determine what the
+  identity can and cannot do in AWS. However, instead of being uniquely associated with one individual, a role is
+  intended to be assumable by anyone who needs it."
+  [Documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
+* Allow users (*which could be an application*) to adopt a set of temporary set of IAM permissions to access specific
+  resources.
+	* For example:
+		* If an application is hosted on an EC2 instance and needs to access some objects in an S3 bucket, you
+		  could either keep the keys needed to access the S3 bucket on the EC2 instance, which is not only a bad
+		  practice but a managerial burdern. Instead, you should associated an IAM role with the EC2 instance,
+		  which accomplishes the same goal.
+* Roles don't have access keys or credentials assigned to them; the credentials are dynamically assigned by AWS.
+* Roles can be assigned to multiple EC2 instances, and thus changes to the role will apply to all those instances.
+* There are 4 different types of Roles:
+	1. Service Role
+		* This Role will be assumed by computational resources in order to communicate with other resources in
+		  your cloud infrastructure.
+	2. Service-Linked Role
+		* Predefined to specific services by AWS (can't be altered by the user).
+		* Example services: Amazon Lex - Bots, Amazon Lex - Channels
+	3. Cross-Account Access Role
+		* Allows one AWS account to communicate and configure select options of a different AWS account
+		* 2 Components:
+			1. The 'Trusting' Account - This is the account that has the resources that need to be accessed.
+			2. The 'Trusted' Account - This is the account that contains Users that need to access resources
+			   in the 'Trusting' account.
+		* To create a Cross-Account Access Role:
+			1. The role must be created in the Trusting account.
+			2. A 'Trust' is established with the Role by the AWS account number of the Trusted account.
+			3. Permissions are applied to the Role via policies.
+			4. The Users in the trusted account have a policy attached.
+	4. Identity Provider Access Role
+		* 3 different options:
+			1. Grant access to web identity providers 
+				* Creates a trust for Users using Amazon Cognito, Amazon, Facebook, Google or another
+				  provider.
+			2. Grant Web Single Sign on to SAML Providers 
+				* Allows access for users coming from a Security Assertion Markup Language (SAML)
+				  provider.
+			3. Grant API access to SAML Providers 
+				* Allows access from SAML providers via the AWS CLI, SDK or API calls.
+
+### Policies 
+
+* Policies are used to assign permissions to Users, Groups and Roles.
+* Formatted as JSON, policies will have the following names:
+	1. Version
+		* Specifies the policy language version (looks like/is a date - most likely a convention on AWS' part to
+		  keep things easy to track).
+	2. Statement 
+		* Is an array (i.e. multiple policies can be within the same statement)
+		* Defines the main element of the policy.  2.1. Sid
+			* Statement ID - unique identifier (which will be needed when there are multiple policies per
+			  statement).  2.2. Action
+			* The action that will either be allowed or denied. **Actions are effectively API calls for
+			  different services. This means that there will **not** be a uniform structure of actions for
+			  all policies (different services have different use cases and therefore have different API
+			  calls).  2.3. Effect
+			* This element can either be set to "Allow" or "Deny" and determines whether the Action element
+			  will be allowed or denied.
+			* **The default is Deny** 2.4. Resource
+			* This element specifies the actual resource you wish the 'Action' and 'Effect' to be applied
+			  to.
+			* AWS uses ARNs (Amazon Resource Name)s to specify resources. These follow the below syntax:
+				* `arn:partition:service:region:account-id:resource`
+				* The value of the `resource` in the above code will depend on the Action you are using.
+				  2.5. Condition
+			* Optional element 
+			* Allows you to control when the permission will be effective (i.e. if these conditions are met
+			  then the permission is allowed/denied).
+
+```JSON
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "FirstStatement",
+      "Effect": "Allow",
+      "Action": ["iam:ChangePassword"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SecondStatement",
+      "Effect": "Allow",
+      "Action": "s3:ListAllMyBuckets",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ThirdStatement",
+      "Effect": "Allow",
+      "Action": [
+        "s3:List*",
+        "s3:Get*"
+      ],
+      "Resource": [
+        "arn:aws:s3:::confidential-data",
+        "arn:aws:s3:::confidential-data/*"
+      ],
+      "Condition": {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
+    }
+  ]
+}
+```
+
+There are 2 IAM Policy Types:
+* Managed Policies
+	* Can be attached to multiple Users, Groups & Roles
+	* 2 subtypes:
+		* AWS Managed Policies
+			* These are preconfigured by AWS and cover most permissions
+			* Examples: AmazonS3FullAccess, AmazonS3ReadOnlyAccess
+		* Customer Managed Policies
+			* Configured by the customer.
+			* 3 ways to create a Customer Managed Policy:
+				1. Copy any AWS Managed Policy and edit as needed.
+				2. Policy Generator: create a policy by choosing options from dropdown boxes.
+				3. Create your own policy: write your own JSON policy from scratch.
+			* All policies should be validated using the "Validate Policy" button (in all of the 3 steps
+			  above).
+* Inline Policies
+	* Can **not** be attached to multiple Users, Groups & Roles; these are directly embedded into a specific User,
+	  Group or Role.
+	* To create an inline policy, you will have to select the "Permission Tab" within the Users/Group/Role tab, and
+	  click the button to add an inline policy (keep point is it is performed *through* the IAM object it will be
+	  applied to).
+	* This policy, once created, will not show up in a drop down list of AWS Managed or Customer Managed dropdown
+	  list.
+* If there are conflicting permissions for any IAM object (User, Group or Role), **any "Deny" permission will override
+  any number of "Allow" permissions.**
+
+## MFA - Multi-Factor Authentication 
+
+* Add another layer of security
+	* Perhaps useful for users of an AWS account that have a lot of powerful permissions.
+* Uses a 6 digit random sequence of numbers
+* Prior to MFA working, it must be configured for a given User through the IAM console:
+	1. Select the User 
+	2. Go to the 'security credentials' tab
+	3. Change 'Assigned MFA Device' from 'No' by editing it.
+		* Google Authenticator is a good virtual MFA option to use and is supported by AWS.
+
+## Identity Federation (IdP)
+
+* Allows you to access and manage AWS resources even if you don't have a user account within IAM.
+* Effectively allows users to "bootstrap" a User IAM object using an account from another provider.
+	* Allows a Single Sign On (SSO) solution for users.
+	* Think "Would you like to sign in using your Google/Gmail Account?" type of thing.
+* Prior to users being able to do this, a trust relationship must be setup between the IdP and your AWS account. There
+  are 2 types of IdP supported by AWS:
+	1. OpenID
+		* Examples: Facebook, Google, Amazon
+	2. SAML
+		* Example: Microsoft Active Directory
+
+## KMS - Key Management Service 
+
+* AWS managed service that allows management of encryption keys to securely encrypt/decrypt data.
+* **KMS only encrypts data at rest (i.e. S3 buckets). KMS does not encrypt data in transit/motion.**
+	* To encrypt data in transit, another method would need to be used (such as an SSL)
+* Administrators at AWS do NOT have access to your keys within KMS and they cannot recover these keys should you lose
+  the keys themselves, or access to these keys.
+	* It is the reponsibility of the user to designate a KMS administrator and that administrators responsibility to
+	  manage the encryption keys.
+* Works seamlessly with CloudTrail (makes compliance and potential audits easier).
+* KMS is region specific. This means if your solution/system spans multiple regions, you would need to setup KMS in each
+  region where data encryption is needed.
+* There are 4 main components of KMS:
+	1. Customer Master Keys (CMKs)
+		* Main key type in KMS.
+		* 3 subtypes of CMKs:
+			1. Customer Managed
+				* Cost extra, but other the greatest control/flexibility.
+				* The user is able to create/delete/disable the key, configure key policies & Grants, as
+				  well as adjust the key rotation periods.
+			2. AWS Managed
+				* The user is unable to modify these keys, although you can still track their usage.
+				* These keys are created and used by the services that integrate with KMS directly.
+			3. AWS Owned
+				* The user can't view or track these keys; they are abstracted away from your AWS account.
+				* Examples of services that use these are DynamoDB and S3 Master Key.
+	2. Data Encryption Keys (DEKs)
+		* Created by CMKs, however they can be used outside of KMS to perform encryption, either in non-AWS
+		  applications or by other AWS services.
+	3. Key Policies
+		* Key policies determine who can do what with the key (e.g. who can use the key encrypt data, who can
+		  administer the CMK to perform functions such as deleting and revoking the key).
+	4. Grants
+		* Grants allow you to programmatically delegate your permissions to another principal or user.
+* **KMS is priced per CMK and the number of requests received per month.**
+
+
+## Inspector
+
+* Inspector helps you detect security risks in your applications, as well as on the EC2 instances your applications run
+  on.
+* Inspector is agent based, and this agent must be installed on the EC2 instances you want it to run on. Once installed,
+  you can choose which security checks are run for that particular instance, and this can vary from instance to instance.
+* Inspector has built in libraries of known best practices that are run against your system.
+* There are 9 main components of Inspector:
+	1. Amazon Inspector Role
+		* The Inspector role needs to be created to allow Inspector access to the EC2 instance you want to
+		  inspect for security vulnerabilities.
+		* This role can be created in IAM and will need read only access to all EC2 instances (or all those that
+		  you want checked).
+	2. Assessment Target
+		* These are groupings of EC2 instances that you want to run a security evaluation on.
+		* Can be managed and organized via tags.
+	3. AWS Agents
+		* AWS Agents must be installed on the instances that you want to run security checks on.
+		* Since Inspector is an AWS managed service, the user doesn't need to worry about keeping the agent
+		  software up to date; this will be performed automatically.
+		* Note that AWS Agents have a minimal impact on the performance of the instance during the Assessment
+		  Run process.
+	4. Assessment Templates
+		* Assessment templates are a blueprint for how you want an assessment to be run. They can include:
+			* The rule packages you want to use.
+			* The duration you want the assessment to run (AWS recommends 1 hour).
+			* Whether SNS (Simple Notification Servce) should notify you under certain conditions (e.g. when
+			  the assessment starts/finishes).
+	5. Rule Packages
+		* Rule packages are predefined security best practices that Inspector stores in a pre-built library.
+		  When creating an assessment plan, you can choose which rule packages you want to use.
+		* **Not all rule packages can be run on all OS'**. There are some rule packages that can only be run on
+		  Linux distributions.
+		* There are a few different rule packages:
+			* Common Vulnerabilities and Exposures
+				* publically known referenced list of security threats (think open source "check for
+				  this security risk" list).
+				* This list is constantly updated.
+			* Center for Internet Security (CIS) Benchmarks
+			* Security Best Practices
+				* Looks for weaknesses in common security best practices.
+				* **Only for Linux distributions.**
+		* Each rule within a rule package will have an associated severity:
+			1. High: High risk security vulnerabilities that should be addressed immediately.
+			2. Medium: Medium risk security vulnerabilities that should be addressed after all High risk
+			   Findings are addressed.
+			3. Low: Low risk security vulnerabilities that should only be addressed after all High and
+			   Medium risk vulnerabilities are addressed.
+			4. Informational: Not a security risk, but information related to your EC2 instance/application
+			   that is of interest.
+	6. Assessment Run
+		* This is the action of assessing the EC2 instance(s); you can configure how long you want the
+		  assessment to run, however, again, AWS recommends 1 hour.
+		* This is when Telemetry data is sent back to Inspector.
+		* Multiple assessment runs can occur at the same time, so long as there isn't any overlap in the targets
+		  of the two (or more) assessment runs.
+	7. Telemetry
+		* Telemetry refers to the data that the agent collects during the assessment run; this is data that is
+		  checked against the rule packages you defined to determine which (if any) security vulnerabilities
+		  your EC2 instance/application is susceptible to.
+		* Telemetry is sent from the agent back to Inspector, which then encrypts the Telemetry and stores it
+		  temporarily in an S3 bucket. To create an assessment report, Inspector retrieves this data from the S3
+		  bucket and decrypts it.
+		* This data is sent over a Transport Layer Security (TLS) protected channel.
+		* Telemetry data is deleted after 30 days.
+	8. Assessment Report
+		* This is the output of an assessment run; there are two types of assessment reports:
+			1. Findings Report: For when you are only interested in any security concerns.
+				* lists  which targets were assessed, which rule packages were used, and a detailed
+				  report of the findings.
+			2. Full Report: For when you want a more comprehensive list of what was performed in the
+			   assessment run, including things that aren't a security concern.
+	9. Findings
+		* Findings are security vulnerabilities.
+		* For each finding, an explanation is given as well as guidance on how to solve the problem.
+
+## Other IAM Services 
+
+* In the "Account Settings" you can set the password policy for all users of the AWS account.
+* Credential Report:
+	* A CSV file containing a list of all IAM users and credentials with self-explanatory columns.
+* You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
+  password, that can access your AWS resources. 
+
 # Management Fundamentals for AWS 
 
 * All of the tools below can be found from the AWS Management Console, under the "Management Tools" header.
@@ -1795,366 +2154,6 @@ There are a few options available:
 * Lowest RTO/RPO, at the highest cost.
 
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
-
-# Security Fundamentals for AWS
-
-At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
-
-Overview:
-* The user is responsible for the security level of the resources that are **in** the cloud (i.e. access to/from said
-  resources), while AWS is responsible for the security *of the cloud itself.*
-
-![](images/Shared_Responsibility_Model.jpg)
-
-## IAM - Identity & Access Management
-
-* **IAM is a global service - it applies to all regions in AWS.**
-* Identity Management: Authenticating who has has access to your AWS account.
-	* Answers the question, "Who is the user?"
-* Access Management: Determining what (services) an identity can access within your AWS account.
-	* Answers the question, "What can this user do?"
-		* for example:
-			* Can this user read and write to an RDS instance, or only read?
-			* Can this user configure EC2 autoscaling settings or not?
-			* Can this user change Route 53 configurations or not?
-* IAM is only as strong as you (the user) configure it.
-* Components of IAM:
-	* Users 
-		* used to identify distinct identities/users.
-	* Groups
-		* groups of users.
-	* Roles
-		* objects that a different identities can adopt to assume a new set of permissions.
-	* Policy Permissions
-		* JSON policies that define what services can and can not be accessed.
-	* Access Control Mechanisms
-		* Mechanisms that govern how a resource can be accessed.
-* IAM is found under the "Security, Identity & Compliance" tab of the AWS Management Console.
-* The IAM dashboard includes:
-	* IAM sign in link - this is url that would be provided to users who will need access to the AWS Management
-	  Console (or at least some pieces of it).
-	* A summmary of the IAM resources (e.g. how many users, groups, policies that are currently active).
-	* A list of AWS IAM best practices and whether your account has met them.
-
-### Users
-
-* A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
-  account that represents an application that needs permissions to access certain resources in your AWS environment
-  programmatically.
-* A *User* can be created manually from the Management Console, or programmatically with the AWS CLI, Tools for Windows
-  Powershell or the IAM HTTP API.
-* Creating a *User* has 7 steps:
-	1. Create a username
-	2. Define the AWS access type:
-		* AWS Management Console (manual/for humans).
-			* if this is selected, a password will need to be created for the username.
-		* Programmatic access.
-			* If this is selected, an access key ID and secred access key ID will issued and associated with
-			  the username for use with AWS CLIs and SDKs.
-	3. Define password (if access type = AWS Management Console)
-	4. Permissions assignment.
-		* Can be accomplished by adding the user to a predefined group.
-		* Can be accomplished by copying permissions from another user.
-		* Can be accomplished by attaching existing policies to the new user.
-	5. Review and confirm information
-	6. Create the user
-	7. Download security credentials of the new user (can also be emailed to the user)
-* Once the user is created, it will be assigned an ARN (Amazon Resource Name), which is a unique identifier of the
-  object.
-
-### Groups 
-
-* Any users within a group inherit the permissions applied to that group.
-* Using groups to assign permissions is a best practice.
-	* instead of making the same change to 10 individual user objects, make the change once to the policy
-	  permissions of the group which the 10 users are a part of.
-* Groups are not used in the authentication process but are used to authorize access through AWS policies.
-* Groups are usually defined by job role or specific requirements.
-* Creating a Group has 3 steps:
-	1. Set up the Group name
-	2. Assign permissions to the group via policies.
-	3. Review and create.
-* Once a group is created, users can be assigned to said group.
-* **There is a default maximum of 100 groups per AWS account.** To increase, the user will need to contact AWS.
-* **A User can only be associated with 10 groups.**
-
-### Roles 
-
-* "An IAM role is similar to an IAM user, in that it is an AWS identity with permission policies that determine what the
-  identity can and cannot do in AWS. However, instead of being uniquely associated with one individual, a role is
-  intended to be assumable by anyone who needs it."
-  [Documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html)
-* Allow users (*which could be an application*) to adopt a set of temporary set of IAM permissions to access specific
-  resources.
-	* For example:
-		* If an application is hosted on an EC2 instance and needs to access some objects in an S3 bucket, you
-		  could either keep the keys needed to access the S3 bucket on the EC2 instance, which is not only a bad
-		  practice but a managerial burdern. Instead, you should associated an IAM role with the EC2 instance,
-		  which accomplishes the same goal.
-* Roles don't have access keys or credentials assigned to them; the credentials are dynamically assigned by AWS.
-* Roles can be assigned to multiple EC2 instances, and thus changes to the role will apply to all those instances.
-* There are 4 different types of Roles:
-	1. Service Role
-		* This Role will be assumed by computational resources in order to communicate with other resources in
-		  your cloud infrastructure.
-	2. Service-Linked Role
-		* Predefined to specific services by AWS (can't be altered by the user).
-		* Example services: Amazon Lex - Bots, Amazon Lex - Channels
-	3. Cross-Account Access Role
-		* Allows one AWS account to communicate and configure select options of a different AWS account
-		* 2 Components:
-			1. The 'Trusting' Account - This is the account that has the resources that need to be accessed.
-			2. The 'Trusted' Account - This is the account that contains Users that need to access resources
-			   in the 'Trusting' account.
-		* To create a Cross-Account Access Role:
-			1. The role must be created in the Trusting account.
-			2. A 'Trust' is established with the Role by the AWS account number of the Trusted account.
-			3. Permissions are applied to the Role via policies.
-			4. The Users in the trusted account have a policy attached.
-	4. Identity Provider Access Role
-		* 3 different options:
-			1. Grant access to web identity providers 
-				* Creates a trust for Users using Amazon Cognito, Amazon, Facebook, Google or another
-				  provider.
-			2. Grant Web Single Sign on to SAML Providers 
-				* Allows access for users coming from a Security Assertion Markup Language (SAML)
-				  provider.
-			3. Grant API access to SAML Providers 
-				* Allows access from SAML providers via the AWS CLI, SDK or API calls.
-
-### Policies 
-
-* Policies are used to assign permissions to Users, Groups and Roles.
-* Formatted as JSON, policies will have the following names:
-	1. Version
-		* Specifies the policy language version (looks like/is a date - most likely a convention on AWS' part to
-		  keep things easy to track).
-	2. Statement 
-		* Is an array (i.e. multiple policies can be within the same statement)
-		* Defines the main element of the policy.  2.1. Sid
-			* Statement ID - unique identifier (which will be needed when there are multiple policies per
-			  statement).  2.2. Action
-			* The action that will either be allowed or denied. **Actions are effectively API calls for
-			  different services. This means that there will **not** be a uniform structure of actions for
-			  all policies (different services have different use cases and therefore have different API
-			  calls).  2.3. Effect
-			* This element can either be set to "Allow" or "Deny" and determines whether the Action element
-			  will be allowed or denied.
-			* **The default is Deny** 2.4. Resource
-			* This element specifies the actual resource you wish the 'Action' and 'Effect' to be applied
-			  to.
-			* AWS uses ARNs (Amazon Resource Name)s to specify resources. These follow the below syntax:
-				* `arn:partition:service:region:account-id:resource`
-				* The value of the `resource` in the above code will depend on the Action you are using.
-				  2.5. Condition
-			* Optional element 
-			* Allows you to control when the permission will be effective (i.e. if these conditions are met
-			  then the permission is allowed/denied).
-
-```JSON
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "FirstStatement",
-      "Effect": "Allow",
-      "Action": ["iam:ChangePassword"],
-      "Resource": "*"
-    },
-    {
-      "Sid": "SecondStatement",
-      "Effect": "Allow",
-      "Action": "s3:ListAllMyBuckets",
-      "Resource": "*"
-    },
-    {
-      "Sid": "ThirdStatement",
-      "Effect": "Allow",
-      "Action": [
-        "s3:List*",
-        "s3:Get*"
-      ],
-      "Resource": [
-        "arn:aws:s3:::confidential-data",
-        "arn:aws:s3:::confidential-data/*"
-      ],
-      "Condition": {"Bool": {"aws:MultiFactorAuthPresent": "true"}}
-    }
-  ]
-}
-```
-
-There are 2 IAM Policy Types:
-* Managed Policies
-	* Can be attached to multiple Users, Groups & Roles
-	* 2 subtypes:
-		* AWS Managed Policies
-			* These are preconfigured by AWS and cover most permissions
-			* Examples: AmazonS3FullAccess, AmazonS3ReadOnlyAccess
-		* Customer Managed Policies
-			* Configured by the customer.
-			* 3 ways to create a Customer Managed Policy:
-				1. Copy any AWS Managed Policy and edit as needed.
-				2. Policy Generator: create a policy by choosing options from dropdown boxes.
-				3. Create your own policy: write your own JSON policy from scratch.
-			* All policies should be validated using the "Validate Policy" button (in all of the 3 steps
-			  above).
-* Inline Policies
-	* Can **not** be attached to multiple Users, Groups & Roles; these are directly embedded into a specific User,
-	  Group or Role.
-	* To create an inline policy, you will have to select the "Permission Tab" within the Users/Group/Role tab, and
-	  click the button to add an inline policy (keep point is it is performed *through* the IAM object it will be
-	  applied to).
-	* This policy, once created, will not show up in a drop down list of AWS Managed or Customer Managed dropdown
-	  list.
-* If there are conflicting permissions for any IAM object (User, Group or Role), **any "Deny" permission will override
-  any number of "Allow" permissions.**
-
-## MFA - Multi-Factor Authentication 
-
-* Add another layer of security
-	* Perhaps useful for users of an AWS account that have a lot of powerful permissions.
-* Uses a 6 digit random sequence of numbers
-* Prior to MFA working, it must be configured for a given User through the IAM console:
-	1. Select the User 
-	2. Go to the 'security credentials' tab
-	3. Change 'Assigned MFA Device' from 'No' by editing it.
-		* Google Authenticator is a good virtual MFA option to use and is supported by AWS.
-
-## Identity Federation (IdP)
-
-* Allows you to access and manage AWS resources even if you don't have a user account within IAM.
-* Effectively allows users to "bootstrap" a User IAM object using an account from another provider.
-	* Allows a Single Sign On (SSO) solution for users.
-	* Think "Would you like to sign in using your Google/Gmail Account?" type of thing.
-* Prior to users being able to do this, a trust relationship must be setup between the IdP and your AWS account. There
-  are 2 types of IdP supported by AWS:
-	1. OpenID
-		* Examples: Facebook, Google, Amazon
-	2. SAML
-		* Example: Microsoft Active Directory
-
-## KMS - Key Management Service 
-
-* AWS managed service that allows management of encryption keys to securely encrypt/decrypt data.
-* **KMS only encrypts data at rest (i.e. S3 buckets). KMS does not encrypt data in transit/motion.**
-	* To encrypt data in transit, another method would need to be used (such as an SSL)
-* Administrators at AWS do NOT have access to your keys within KMS and they cannot recover these keys should you lose
-  the keys themselves, or access to these keys.
-	* It is the reponsibility of the user to designate a KMS administrator and that administrators responsibility to
-	  manage the encryption keys.
-* Works seamlessly with CloudTrail (makes compliance and potential audits easier).
-* KMS is region specific. This means if your solution/system spans multiple regions, you would need to setup KMS in each
-  region where data encryption is needed.
-* There are 4 main components of KMS:
-	1. Customer Master Keys (CMKs)
-		* Main key type in KMS.
-		* 3 subtypes of CMKs:
-			1. Customer Managed
-				* Cost extra, but other the greatest control/flexibility.
-				* The user is able to create/delete/disable the key, configure key policies & Grants, as
-				  well as adjust the key rotation periods.
-			2. AWS Managed
-				* The user is unable to modify these keys, although you can still track their usage.
-				* These keys are created and used by the services that integrate with KMS directly.
-			3. AWS Owned
-				* The user can't view or track these keys; they are abstracted away from your AWS account.
-				* Examples of services that use these are DynamoDB and S3 Master Key.
-	2. Data Encryption Keys (DEKs)
-		* Created by CMKs, however they can be used outside of KMS to perform encryption, either in non-AWS
-		  applications or by other AWS services.
-	3. Key Policies
-		* Key policies determine who can do what with the key (e.g. who can use the key encrypt data, who can
-		  administer the CMK to perform functions such as deleting and revoking the key).
-	4. Grants
-		* Grants allow you to programmatically delegate your permissions to another principal or user.
-* **KMS is priced per CMK and the number of requests received per month.**
-
-
-## Inspector
-
-* Inspector helps you detect security risks in your applications, as well as on the EC2 instances your applications run
-  on.
-* Inspector is agent based, and this agent must be installed on the EC2 instances you want it to run on. Once installed,
-  you can choose which security checks are run for that particular instance, and this can vary from instance to instance.
-* Inspector has built in libraries of known best practices that are run against your system.
-* There are 9 main components of Inspector:
-	1. Amazon Inspector Role
-		* The Inspector role needs to be created to allow Inspector access to the EC2 instance you want to
-		  inspect for security vulnerabilities.
-		* This role can be created in IAM and will need read only access to all EC2 instances (or all those that
-		  you want checked).
-	2. Assessment Target
-		* These are groupings of EC2 instances that you want to run a security evaluation on.
-		* Can be managed and organized via tags.
-	3. AWS Agents
-		* AWS Agents must be installed on the instances that you want to run security checks on.
-		* Since Inspector is an AWS managed service, the user doesn't need to worry about keeping the agent
-		  software up to date; this will be performed automatically.
-		* Note that AWS Agents have a minimal impact on the performance of the instance during the Assessment
-		  Run process.
-	4. Assessment Templates
-		* Assessment templates are a blueprint for how you want an assessment to be run. They can include:
-			* The rule packages you want to use.
-			* The duration you want the assessment to run (AWS recommends 1 hour).
-			* Whether SNS (Simple Notification Servce) should notify you under certain conditions (e.g. when
-			  the assessment starts/finishes).
-	5. Rule Packages
-		* Rule packages are predefined security best practices that Inspector stores in a pre-built library.
-		  When creating an assessment plan, you can choose which rule packages you want to use.
-		* **Not all rule packages can be run on all OS'**. There are some rule packages that can only be run on
-		  Linux distributions.
-		* There are a few different rule packages:
-			* Common Vulnerabilities and Exposures
-				* publically known referenced list of security threats (think open source "check for
-				  this security risk" list).
-				* This list is constantly updated.
-			* Center for Internet Security (CIS) Benchmarks
-			* Security Best Practices
-				* Looks for weaknesses in common security best practices.
-				* **Only for Linux distributions.**
-		* Each rule within a rule package will have an associated severity:
-			1. High: High risk security vulnerabilities that should be addressed immediately.
-			2. Medium: Medium risk security vulnerabilities that should be addressed after all High risk
-			   Findings are addressed.
-			3. Low: Low risk security vulnerabilities that should only be addressed after all High and
-			   Medium risk vulnerabilities are addressed.
-			4. Informational: Not a security risk, but information related to your EC2 instance/application
-			   that is of interest.
-	6. Assessment Run
-		* This is the action of assessing the EC2 instance(s); you can configure how long you want the
-		  assessment to run, however, again, AWS recommends 1 hour.
-		* This is when Telemetry data is sent back to Inspector.
-		* Multiple assessment runs can occur at the same time, so long as there isn't any overlap in the targets
-		  of the two (or more) assessment runs.
-	7. Telemetry
-		* Telemetry refers to the data that the agent collects during the assessment run; this is data that is
-		  checked against the rule packages you defined to determine which (if any) security vulnerabilities
-		  your EC2 instance/application is susceptible to.
-		* Telemetry is sent from the agent back to Inspector, which then encrypts the Telemetry and stores it
-		  temporarily in an S3 bucket. To create an assessment report, Inspector retrieves this data from the S3
-		  bucket and decrypts it.
-		* This data is sent over a Transport Layer Security (TLS) protected channel.
-		* Telemetry data is deleted after 30 days.
-	8. Assessment Report
-		* This is the output of an assessment run; there are two types of assessment reports:
-			1. Findings Report: For when you are only interested in any security concerns.
-				* lists  which targets were assessed, which rule packages were used, and a detailed
-				  report of the findings.
-			2. Full Report: For when you want a more comprehensive list of what was performed in the
-			   assessment run, including things that aren't a security concern.
-	9. Findings
-		* Findings are security vulnerabilities.
-		* For each finding, an explanation is given as well as guidance on how to solve the problem.
-
-
-## Other IAM Services 
-
-* In the "Account Settings" you can set the password policy for all users of the AWS account.
-* Credential Report:
-	* A CSV file containing a list of all IAM users and credentials with self-explanatory columns.
-* You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
-  password, that can access your AWS resources. 
 
 # "Not-Cleanly-Classifiable" Fundamentals for AWS 
 
