@@ -310,15 +310,15 @@ management system, known as the control plane. The AWS account owner only need t
 nodes if using EKS.
 
 Kubernetes:
-	* The control plane contains API's, the kubelet processes and the Kubernetes Master.
-	* The control plane allocates containers onto nodes (according to CPU needs)
-	* The control plane tracks the state of all Kubernetes objects, continually monitoring them.
+* The control plane contains API's, the kubelet processes and the Kubernetes Master.
+* The control plane allocates containers onto nodes (according to CPU needs)
+* The control plane tracks the state of all Kubernetes objects, continually monitoring them.
 EKS takes care of all the above processes for the AWS users
 
 Worker nodes:
-	* Kubernetes clusters are composed of nodes (worker machine - One-Demand EC2 instance on AWS)
-	* Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
-	* Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
+* Kubernetes clusters are composed of nodes (worker machine - One-Demand EC2 instance on AWS)
+* Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
+* Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
 
 ### Setting up EKS
 
@@ -1122,6 +1122,70 @@ There are two subtypes:
 The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
 documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
 
+
+## AWS Route 53
+
+* DNS = Domain Name System
+	* Responsible for the translation of domain names (e.g. amazon.com) to correct IP addresses (machines).
+* Route 53 = AWS's DNS
+* Hosted Zones 
+	* hosted zones are containers that hold information about how you want to route traffic for a given domain name.
+	* 2 Types:
+		* Public Hosted Zone: Determines how traffic is routed on the internet and can be created when you
+		  register your domain with route 53.
+		* Private Hosted Zone: For an AWS VPC, determines how traffic is routed within the VPC.
+* Domain Types:
+	* TLDs - Generic Top-Level Domains
+		* Used to determine what type of information a user might find on the website.
+	* Geographic Domains 
+		* Used to determine the geographic location of the site itself (e.g. '.uk', '.com.au')
+* [ Resource Record Types ](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
+* Routing Policies - When you create a resource record set, you must choose a routing policy that will be applied to
+  it, and this then determines how route 53 will respond to these queries.
+	* Simple Routing Policy 
+		* Used for single resources that perform a single function.
+		* Think a small, static website where performance doesn't really matter.
+	* Failover Routing Policy
+		* Allows you to route traffic based on the health of the targets.
+		* Specify a primary and secondary resource, and traffic will only be directed to the secondary resource
+		  if the primary resource is unresponsive.
+	* Geo-Location Routing Policy
+		* Allows you to route traffic based on the location of the request.
+		* Example: if a request comes from an IP in India, you might wan to route that differently than traffic
+		  that comes from Russia.
+	* Geoproximity Routing Policy
+		* Similary to Geo-Location routing, however this routing policy is based on both the location of the
+		  requesting IP (the client), and the responding IP (the server).
+	* Latency Routing Policy
+		* Used for situations where there are multiple instances of a resource, and you want route 53 to route
+		  traffic based on which server will provide the lowest latency.
+	* Multivalue Answer Routing Policy
+		* Allows you to get a response from a DNS request from up to 8 records that are picked at random.
+		* Can help with load balancing.
+	* Weighted Routing Policy
+		* Used when there are multiple resources that perform the same purpose.
+		* Allows you to route traffic based on weights; send it to resource A 20% of the time, resource B 40% of
+		  the time, etc.
+
+## AWS CloudFront 
+
+* AWS' fault-tolerant and globally scalable content delivery network service.
+	* The whole goal of this service is to reduce latency; if some data that your application serves is relatively
+	  unchanging, then CloudFront will cache that data in different places around the world so that requests from
+	  Asia don't have to travel all the way to Ohio (where your AWS hosted resource is located) to retrieve said
+	  data. It can simply go to the closest "Edge Location", where the data is cached.
+* Distributes requests to the closest "edge" (are they referring to graph theory edges here?) based on the users
+  location. This ends up having the lowest latency using cached data.
+* Edge Locations = sites deployed in major cities around the world.
+* Distributions:
+	* CloudFront uses distributions to control which source data it needs to redistribute and to where
+	* OAI = Origin Access Identity. An OAI is a cloudfront user that can serve as a intermediary between outside
+	  requests and your server **if your server is an S3 bucket**. The reason you might want to do this is for
+	  security reason; giving the world access to the object URL in your S3 bucket might be undesired based on use
+	  case.
+	* The user will need to configure which edge locations they want their cached data to be stored at.
+* Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
+
 ## VPC
 
 * VPCs are **isolated** segments of the AWS cloud; they can be thought of as distinct 'computational universes' that
@@ -1450,6 +1514,91 @@ Customer Support services provided by AWS are:
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
 
+## Well Architected Framework
+
+![](images/aws_well_architected_framework.png)
+
+The AWS "Well Architected Framework" is a set of best practices that have been refined over the years across different
+problem domains that typically lead to well architected systems.
+
+There are 5 pillars of the well architected framework:
+
+1. [Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
+	* Definition: Creating, running and maintaining systems to help solve a problem.
+	* Based on 3 best practices:
+		1. Organization
+		2. Prepare 
+		3. Operate 
+		4. Evolve
+	* 6 Design Principles:
+		1. Perform operations as code
+			* AKA you can/should define your environment/system/solution with code wherever you can; remove
+			  as much possibility for human error as possible.
+		2. Annotate documentation
+		3. Make frequent, small, reversible changes
+		4. Refine operations procedures frequently 
+		5. Anticipate failure 
+		6. Learn from operational failure 
+2. [Security](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
+	* Definition: Managing and securing your infrastructure by protecting your data.
+	* Based on 5 best practices:
+		1. Identity & Access Management
+		2. Detective Controls
+		3. Infrastructure Protection
+		4. Data Protection
+		5. Incident Response
+	* 6 Design Principles:
+		1. Implement a strong identity foundation
+			* Implement the principle of "least privilege" for highly sensitive data.
+		2. Enable traceability
+		3. Apply security at all layers
+			* i.e. VPCs, subnets, security groups.
+		4. Automate security best practices
+		5. Protect data in transit and at rest
+		6. Prepare for security events
+	
+3. [Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
+	* Definition: The ability of a system to perform its intended function correctly and consistently. 
+	* Based on 4 best practices:
+		1. Foundations
+		2. Workload architecture 
+		3. Change management
+		4. Failure management
+	* 5 Design Principles:
+		1. Test recovery procedure
+		2. Automatically recover from failure
+		3. Scale horizontally to increase aggregate system availability
+		4. Stop guessing capacity
+		5. Manage change in automation
+4. [Performance Efficiency](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
+	* Definition: The efficient use of computational resources to meet requirements.
+	* Based on 4 best practices:
+		1. Selection
+		2. Review
+		3. Monitoring
+		4. Tradeoffs
+	* 5 Design Principles:
+		1. Democratize advanced technologies
+			* Make advanced technology implementation easy.
+		2. Go global in minutes
+		3. User serverless architectures
+		4. Experiment more often
+		5. Consider mechanical sympathy
+5. [Cost Optimization](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
+	* Definition: (it's in the name) - Minimize cloud computation costs.
+	* Based on 4 best practices:
+		1. Practice cloud financial management
+		2. Expenditure and Usage Awareness
+		3. Cost effective resources
+		4. Manage demand and supply resources
+	* 5 Design Principles:
+		1. Implement cloud financial management
+		2. Adopt a consumption model
+		3. Measure overall efficiency
+		4. Stop spending money on undifferentiated heavy lifting
+			* i.e. don't use traditional data centers unless you have a good reason.
+		5. Analyze and attribute expediture.
+
 ## AWS Global Infrastructure
 
 The AWS global infrastructure is composed of 4 key elements:
@@ -1646,89 +1795,6 @@ There are a few options available:
 * Lowest RTO/RPO, at the highest cost.
 
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
-
-## Well Architected Framework
-
-The AWS "Well Architected Framework" is a set of best practices that have been refined over the years across different
-problem domains that typically lead to well architected systems.
-
-There are 5 pillars of the well architected framework:
-
-1. [Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
-	* Definition: Creating, running and maintaining systems to help solve a problem.
-	* Based on 3 best practices:
-		1. Organization
-		2. Prepare 
-		3. Operate 
-		4. Evolve
-	* 6 Design Principles:
-		1. Perform operations as code
-			* AKA you can/should define your environment/system/solution with code wherever you can; remove
-			  as much possibility for human error as possible.
-		2. Annotate documentation
-		3. Make frequent, small, reversible changes
-		4. Refine operations procedures frequently 
-		5. Anticipate failure 
-		6. Learn from operational failure 
-2. [Security](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html)
-	* Definition: Managing and securing your infrastructure by protecting your data.
-	* Based on 5 best practices:
-		1. Identity & Access Management
-		2. Detective Controls
-		3. Infrastructure Protection
-		4. Data Protection
-		5. Incident Response
-	* 6 Design Principles:
-		1. Implement a strong identity foundation
-			* Implement the principle of "least privilege" for highly sensitive data.
-		2. Enable traceability
-		3. Apply security at all layers
-			* i.e. VPCs, subnets, security groups.
-		4. Automate security best practices
-		5. Protect data in transit and at rest
-		6. Prepare for security events
-	
-3. [Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
-	* Definition: The ability of a system to perform its intended function correctly and consistently. 
-	* Based on 4 best practices:
-		1. Foundations
-		2. Workload architecture 
-		3. Change management
-		4. Failure management
-	* 5 Design Principles:
-		1. Test recovery procedure
-		2. Automatically recover from failure
-		3. Scale horizontally to increase aggregate system availability
-		4. Stop guessing capacity
-		5. Manage change in automation
-4. [Performance Efficiency](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/welcome.html)
-	* Definition: The efficient use of computational resources to meet requirements.
-	* Based on 4 best practices:
-		1. Selection
-		2. Review
-		3. Monitoring
-		4. Tradeoffs
-	* 5 Design Principles:
-		1. Democratize advanced technologies
-			* Make advanced technology implementation easy.
-		2. Go global in minutes
-		3. User serverless architectures
-		4. Experiment more often
-		5. Consider mechanical sympathy
-5. [Cost Optimization](https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html)
-	* Definition: (it's in the name) - Minimize cloud computation costs.
-	* Based on 4 best practices:
-		1. Practice cloud financial management
-		2. Expenditure and Usage Awareness
-		3. Cost effective resources
-		4. Manage demand and supply resources
-	* 5 Design Principles:
-		1. Implement cloud financial management
-		2. Adopt a consumption model
-		3. Measure overall efficiency
-		4. Stop spending money on undifferentiated heavy lifting
-			* i.e. don't use traditional data centers unless you have a good reason.
-		5. Analyze and attribute expediture.
 
 # Security Fundamentals for AWS
 
@@ -2096,70 +2162,6 @@ There are 2 IAM Policy Types:
   the benefit of not changing when you stop and start an EC2 instance, whereas the default public IP that comes with an
   EC2 instance may change. This gives you the benefit of a reliable IP address to associate with your EC2 instance.
 
-## Introduction to DNS & Content Delivery on AWS
-
-### AWS Route 53
-
-* DNS = Domain Name System
-	* Responsible for the translation of domain names (e.g. amazon.com) to correct IP addresses (machines).
-* Route 53 = AWS's DNS
-* Hosted Zones 
-	* hosted zones are containers that hold information about how you want to route traffic for a given domain name.
-	* 2 Types:
-		* Public Hosted Zone: Determines how traffic is routed on the internet and can be created when you
-		  register your domain with route 53.
-		* Private Hosted Zone: For an AWS VPC, determines how traffic is routed within the VPC.
-* Domain Types:
-	* TLDs - Generic Top-Level Domains
-		* Used to determine what type of information a user might find on the website.
-	* Geographic Domains 
-		* Used to determine the geographic location of the site itself (e.g. '.uk', '.com.au')
-* [ Resource Record Types ](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
-* Routing Policies - When you create a resource record set, you must choose a routing policy that will be applied to
-  it, and this then determines how route 53 will respond to these queries.
-	* Simple Routing Policy 
-		* Used for single resources that perform a single function.
-		* Think a small, static website where performance doesn't really matter.
-	* Failover Routing Policy
-		* Allows you to route traffic based on the health of the targets.
-		* Specify a primary and secondary resource, and traffic will only be directed to the secondary resource
-		  if the primary resource is unresponsive.
-	* Geo-Location Routing Policy
-		* Allows you to route traffic based on the location of the request.
-		* Example: if a request comes from an IP in India, you might wan to route that differently than traffic
-		  that comes from Russia.
-	* Geoproximity Routing Policy
-		* Similary to Geo-Location routing, however this routing policy is based on both the location of the
-		  requesting IP (the client), and the responding IP (the server).
-	* Latency Routing Policy
-		* Used for situations where there are multiple instances of a resource, and you want route 53 to route
-		  traffic based on which server will provide the lowest latency.
-	* Multivalue Answer Routing Policy
-		* Allows you to get a response from a DNS request from up to 8 records that are picked at random.
-		* Can help with load balancing.
-	* Weighted Routing Policy
-		* Used when there are multiple resources that perform the same purpose.
-		* Allows you to route traffic based on weights; send it to resource A 20% of the time, resource B 40% of
-		  the time, etc.
-### AWS CloudFront 
-
-* AWS' fault-tolerant and globally scalable content delivery network service.
-	* The whole goal of this service is to reduce latency; if some data that your application serves is relatively
-	  unchanging, then CloudFront will cache that data in different places around the world so that requests from
-	  Asia don't have to travel all the way to Ohio (where your AWS hosted resource is located) to retrieve said
-	  data. It can simply go to the closest "Edge Location", where the data is cached.
-* Distributes requests to the closest "edge" (are they referring to graph theory edges here?) based on the users
-  location. This ends up having the lowest latency using cached data.
-* Edge Locations = sites deployed in major cities around the world.
-* Distributions:
-	* CloudFront uses distributions to control which source data it needs to redistribute and to where
-	* OAI = Origin Access Identity. An OAI is a cloudfront user that can serve as a intermediary between outside
-	  requests and your server **if your server is an S3 bucket**. The reason you might want to do this is for
-	  security reason; giving the world access to the object URL in your S3 bucket might be undesired based on use
-	  case.
-	* The user will need to configure which edge locations they want their cached data to be stored at.
-* Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
-
 ## Securing AWS Organizations with Service Control Policies (SCPs)
 
 * All of the below can be configured via the *AWS Organizations* "portal" (for lack of a better word), which is under
@@ -2310,4 +2312,3 @@ There are 2 IAM Policy Types:
 	* Advanced 
 		* Costs extra.
 		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
-
