@@ -58,13 +58,21 @@ are:
 
 # Dockerfile 
 
+* Images are created from the Dockerfile.
+* Dockerfiles are texts files with commands that are used to create images.
+* A Dockerfile is called just that; no extenstion, just `Dockerfile`.
+* The `CMD` instruction in the Dockerfile is the default command to run when a container first starts. **There should be
+  one `CMD` instruction per Dockerfile.**
 
 # Docker Command List
 
 * `$ docker run` - run a docker containter.
-* `$ docker build` - build a container from an image.
+* `$ docker build -t <desired_repo_name> <path_to_directory_where_dockerfile_is_located>` - build a container from an
+  image as outlined in the Docker file.
 * `$ docker pull` - pull a container from a registry.
 * `$ docker images` - list the images stored locally (stored in `/var/lib/docker/`).
 * `$ docker start <container_name>` - started a container named <container_name>.
 * `$ docker attach <container_name>` - make an already running container (named <container_name>) interactive.
 * `$ docker ps` - list running containers.
+* `$ docker prune` - **permanently delete** all local, non-running containers.
+* `$ docker rm <container_name>` - **permanently delete** the container named <container_name>.
