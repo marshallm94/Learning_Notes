@@ -3,6 +3,24 @@ Cloud Academy
 
 [TOC]
 
+# Installing Docker
+
+## Windows
+
+Surprise surprise, installing something on Windows is a pain in the ass.....
+
+1. Download Docker Desktop for Windows [here](https://hub.docker.com/editions/community/docker-ce-desktop-windows/)
+2. Run the installer - click close when prompted.
+3. From the start menu (or using the Desktop Icon), start Docker Desktop.
+4. **At this point, you will be prompted to install WSL2 Linux Kernel update**. You can download this
+   [here](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+	* Side note: WSL = Windows Subsystem for Linux
+5. Once the update is downloaded, run the installer - click close when prompted.
+6. Run `wsl --set-default-version 2` from a PowerShell window.
+7. Start Docker Desktop again - you should be prompted with a 'Get Started with Docker in a few easy steps!'.
+   Alternatively, you can check the icons (might be hidden, click the '^' button) for the docker whale icon - it should
+   be white in color and when you hover over it with the cursor is should say, 'Docker Desktop is running'.
+
 # What is Docker?
 
 * Docker is a container platform that allows you to package everything that your code needs to run (the source code
