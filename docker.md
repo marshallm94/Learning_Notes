@@ -15,7 +15,7 @@ Cloud Academy
 * Docker can be installed on the 3 top OS' from [this link](https://docs.docker.com/get-docker/).
 * Note that Docker is not the only container technology, and containers existed prior to docker.
 
-# Docker Architecture
+## Docker Architecture
 
 * Uses a client-server architecture:
 	* Server = Docker daemon
@@ -46,7 +46,9 @@ are:
 * Merging: overlay filesystem branches to merge changes.
 * Read/Write: brances can be read-only or read-write.
 
-# Images vs. Containers
+# Images & Containers
+
+## Images vs. Containers
 
 * Containers are instances of images; another way of saying that is, "images are templates from which containers are
   built."
@@ -56,23 +58,51 @@ are:
 	  looks **at the moment the container is created.**"
 * Images are based on "layers" - all layers together contain everything that is necessary to run your application.
 
-# Dockerfile 
+## Images From the Dockerfile 
 
+* **Creating images from a Dockerfile should be your default method for creating images.**
 * Images are created from the Dockerfile.
 * Dockerfiles are texts files with commands that are used to create images.
 * A Dockerfile is called just that; no extenstion, just `Dockerfile`.
 * The `CMD` instruction in the Dockerfile is the default command to run when a container first starts. **There should be
   one `CMD` instruction per Dockerfile.**
 
+## Images From Containers 
+
+* Although creating an image from a Dockerfile, and then creating a container from said image is the default way of
+  creating a container, it isn't the only way.
+* Images can be created from containers using the `$ docker commit` command:
+	1. Start a container that will serve as the "base" for your new image. 
+	2. Once you are "inside" the running container, make any changes you would like.
+	3. Exit the running container.
+	4. Run `$ docker commit <CONTAINER_ID> <NEW_IMAGE_NAME>`, which will create a new image <NEW_IMAGE_NAME> based
+	   off the container <CONTAINER_ID>.
+* Note that if you want to change the CMD of the container, you can do so while running the `$ docker commit` command by
+  running `$ docker commit --change='CMD <whatever_you_want_the_CMD_to_be>'`
+
+# Port Mapping 
+
+* Port mapping, as it sounds, maps exposed ports on the container to available ports of the host machine on which the
+  container is running.
+* Port mapping can be done dynamically with the publish all flag,  `$ docker run -P`. When this is run, the exposed ports
+  of the container are mapped to available ports of the host randomly.
+* Port mapping can be done manually with the publish flag `$ docker run --p <host_port>:<container_port>`. When this is
+  run, <container_port> is explicitly mapped to <host_port> of the host.
+
 # Docker Command List
 
 * `$ docker run` - run a docker containter.
+	* `$ docker run -d` - run a docker containter *in detached mode* (allows the use of the terminal).
+	* `$ docker run -d -P` - run a docker containter *in detached mode* (allows the use of the terminal) and maps the
+	  container ports to ports of the host machine.
 * `$ docker build -t <desired_repo_name> <path_to_directory_where_dockerfile_is_located>` - build a container from an
   image as outlined in the Docker file.
 * `$ docker pull` - pull a container from a registry.
 * `$ docker images` - list the images stored locally (stored in `/var/lib/docker/`).
 * `$ docker start <container_name>` - started a container named <container_name>.
 * `$ docker attach <container_name>` - make an already running container (named <container_name>) interactive.
-* `$ docker ps` - list running containers.
+* `$ docker ps` - list all containers.
+* `$ docker ps -a` - list all *running* containers.
 * `$ docker prune` - **permanently delete** all local, non-running containers.
 * `$ docker rm <container_name>` - **permanently delete** the container named <container_name>.
+* `$ docker commit `- Used to commit a conatiner's file changes or settings into a new images.
