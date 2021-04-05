@@ -107,6 +107,41 @@ are:
 * Port mapping can be done manually with the publish flag `$ docker run --p <host_port>:<container_port>`. When this is
   run, <container_port> is explicitly mapped to <host_port> of the host.
 
+# Networking 
+
+* The `bridge` network is the default - when a container is started without a network specified, it will use the
+  `bridge` network.
+
+# Persistent Storage in Docker
+
+There are 3 options for persistent storage of data that is within a container, all of which can be created by passing
+the `--mount` parameter to the `$ docker run` command.
+
+The three storage types are:
+1. Bind Mounts
+	* Bind mounts are not new to Docker.
+	* Bind mounts are a "portal" from the container to the host: a bind mount "mount" a specific file/directory from
+	  the host to the container, which give the containter (and any systems within the container) access to that
+	  file or directory of files.
+	* When creating bind mounts, **the user is in charge of specifying the destination and source filepath.**
+	* `$ docker run <IMAGE_NAME> --mount type=bind, source="<path_to_file_or_dir_on_host>", destination=<path_to_file_or_dir_in_container>`
+2. Volumes
+	* Volumes are similar to Bind Mounts, however **Docker manages the file system location of the volume on the host.**
+	*
+	* `$ docker run <IMAGE_NAME> --mount type=bind, source="<volume_name>", destination=<path_to_file_or_dir_in_container>`
+3. tmpfs ( Temporary File Systems )
+	* In-memory storage (**data in tmpfs will be deleted when the container is stopped**)
+
+# Tagging 
+
+* Tagging allows the identification of specific versions of an image.
+* Images can have more than one tag
+	* For example, there are different tags associated with various OS images that specify different OS versions.
+* Any time you reference an images without specifying a tag, Docker will look for the image version with the tag
+  "latest".
+* **If you want to push your image to dockerhub, your image must be tagged with your account name.**
+	`$ docker tag <dockerhub_account>/<image_name>:<tag>`
+
 # Docker Command List
 
 * `$ docker run` - run a docker containter.
@@ -119,8 +154,13 @@ are:
 * `$ docker images` - list the images stored locally (stored in `/var/lib/docker/`).
 * `$ docker start <container_name>` - started a container named <container_name>.
 * `$ docker attach <container_name>` - make an already running container (named <container_name>) interactive.
-* `$ docker ps` - list all containers.
-* `$ docker ps -a` - list all *running* containers.
+* `$ docker ps` - list all *running* containers.
+* `$ docker ps -a` - list all containers.
 * `$ docker prune` - **permanently delete** all local, non-running containers.
 * `$ docker rm <container_name>` - **permanently delete** the container named <container_name>.
 * `$ docker commit `- Used to commit a conatiner's file changes or settings into a new images.
+* `$ docker network ls`- List docker networks.
+* `$ <CTRL+p><CTRL+q>`- Detach from a running container without stopping that container.
+* `$ docker login`- Log in to your dockerhub account via the command line (allows pushing/pulling docker images).
+* `$ docker push <image_name>`- Push <image_name> to dockerhub (unless a different).
+* `$ docker tag <image_name>:<tag>` - Tag an already created image.
