@@ -249,13 +249,13 @@ Two types:
 ## ECS - EC2 Container Service
 
 ECS allows the user to run Docker-enabled applications packaged as containers across a cluster of EC2 instances,
-**without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate**
+**without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate
 manages this system for you.
 
 Docker is software that allows everything an application needs to run to be put into a logical container, and that
 container can then be run on any operating system.
 
-Two different ECS Cluster deployement models:
+Two different ECS Cluster deployment models:
 1. Fargate Launch
 	* the user is only required to specify CPU, memory and networking policies (in addition to having your
 	  applications packaged in containers)
@@ -266,7 +266,7 @@ Two different ECS Cluster deployement models:
 	  applications should be in a cluster.
 
 * Monitoring of your ECS cluster and containers is provided by AWS CloudWatch
-* An ECS Cluster is comprimised of multiple EC2 instances
+* An ECS Cluster is comprised of multiple EC2 instances.
 * Security Groups, Elastic Load and Autoscaling can be applied.
 * The cluster can be comprised of different EC2 instance types.
 * **Clusters can only scale in a single region** (this is different from availability zones; clusters can span multiple
@@ -284,9 +284,9 @@ There are a few components used in ECR:
 	* The component that hosts/stores docker images as well as create image repo's	
 	* The default URL for the registry is:
 	`https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com`
-2. Autorization Token 
+2. Authorization Token 
 	* **Before your docker client can access the registry (push & pull), it needs to be authenticated with an
-	  Autorization token
+	  Authorization token**
 	* To start the authorization process, run the following command using the AWS CLI (might need to be installed):
 	`$ aws ecr get-login --region <region> --no-include-email`
 	* The above command's output will be a docker login command:
