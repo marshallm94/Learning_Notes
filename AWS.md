@@ -249,7 +249,7 @@ Two types:
 ## ECS - EC2 Container Service
 
 ECS allows the user to run Docker-enabled applications packaged as containers across a cluster of EC2 instances,
-**without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate
+**without requiring the user to manage a complex and administratively heavy cluster management system.** AWS Fargate
 manages this system for you.
 
 Docker is software that allows everything an application needs to run to be put into a logical container, and that
