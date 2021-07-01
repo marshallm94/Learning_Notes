@@ -1,9 +1,19 @@
-The below notes were taken while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
-Cloud Academy
+The below notes were started while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
+Cloud Academy (and added to after the completion of the CPP Cert)
 
 [TOC]
 
-# What is Cloud Computing? 
+# Problem Domain View
+
+## Problem: I want to deploy a Docker Container on AWS.
+
+Within ECS:
+* A cluster is a set grouping of tasks or services.
+* [Task Definition Configuration](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html)
+
+# Solution Domain View
+
+## What is Cloud Computing? 
 
 Cloud computing is a remote virtual pool of on-demand shared resources offering Compute, Storage, Database and Network
 services that can be rapidly deployed at scale.
@@ -24,7 +34,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 
 **It makes sense to host your cloud as close to the users of the cloud as possible, to cut down on latency**
 
-## Cloud Deployment Models
+### Cloud Deployment Models
 
 1. Public Cloud
 * Shared responsibility between the user (business/individual) and the provider (AWS, Microsoft ( Azure ), Google (Cloud
@@ -43,7 +53,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 3. Hybrid Cloud
 * Blend of both of the above (note that this does mean you get the *worst* of both in addition to the best of both)
 
-## Key Cloud Concepts
+### Key Cloud Concepts
 
 * On-Demand Resourcing
 	* When you want a resource (larger EC2 instance, another DB, etc.) it is *almost* always available.
@@ -68,7 +78,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Security
 	* Cloud providers are usually more secure since they have to comply with worldwide regulations.
 
-## Cloud Service Models
+### Cloud Service Models
 
 1. Software as a Service (SaaS)
 	* (Most applications fit this model) - allows some customization, however that customization is within the
@@ -78,7 +88,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 3. Infrastructure as a Service (IaaS)
 	* Allows customization at the OS level and up (including virtual clouds). The hardware is typically managed by the provider.
 
-## Common Use Cases of Cloud Computing 
+### Common Use Cases of Cloud Computing 
 
 * Migration of production services to the cloud (as opposed to on premises services)
 * Peak season might but a strain on standard infrastructure; being based in the cloud would allow seasonal scaling
@@ -89,7 +99,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Low cost Proof of Concept
 * Big Data & Data manipulation
 
-## Data Center Architecture in the Cloud
+### Data Center Architecture in the Cloud
 
 * Location
 	* public cloud providers will have regions worldwide, each region with multiple data centers
@@ -109,15 +119,15 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Storage (NAS/SAN/Block Storage/Backup)
 	* In the cloud, storage is effectively unlimited and highly scalable.
 
-# Compute Fundamentals for AWS
+## Compute Fundamentals for AWS
 
 * There are different types of compute resources on AWS - not only EC2
 
-## EC2 - Elastic Cloud Compute
+### EC2 - Elastic Cloud Compute
 
 * EC2 is the "meat and potatoes" of AWS' compute infrastructure.
 
-### AMIs - Amazon Machine Images
+#### AMIs - Amazon Machine Images
 
 * An AMI is a template for a VM; this can include the OS, specific applications for your use case, custom
   configurations, etc.
@@ -129,7 +139,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 	* This custom AMI can then be launched with all the configurations & installations already setup.
 * AMI's are also available through the "Community AMIs" page and the "AWS Marketplace"
 
-### Instance Types 
+#### Instance Types 
 
 The key parameters of an instance type to pay attention to when launching are:
 * vCPUs
@@ -160,7 +170,7 @@ The key parameters of an instance type to pay attention to when launching are:
 	* Storage optimized
 		* Use SSD backed instance storage, which offers high I/O thoughput.
 
-### Instance Purchasing Options 
+#### Instance Purchasing Options 
 
 Different payment plans available:
 
@@ -195,7 +205,7 @@ Different payment plans available:
 	* allows you to reserve capacity (whether that is compute, memory, storage or network) within a particular
 	  availability zone for any period of time.
 
-### Tenancy 
+#### Tenancy 
 
 "Tenancy" refers to the actual physical computer your VM is hosted on in the AWS data center.
 
@@ -212,12 +222,12 @@ Different payment plans available:
 		* more visibility/control of the physical host than even the "Dedicated Instances" option.
 		* again - may be required by problem domain compliance requirements
 
-### User Data 
+#### User Data 
 
 * commands that will run during the first boot cycle of the instance
 * used to update software or OS'
 
-### Storage Options
+#### Storage Options
 
 Two types:
 1. Persistent Storage
@@ -232,7 +242,7 @@ Two types:
 	* if instance is rebooted (think "continue instance use") - data is maintained
 	* non-detachable
 
-### Security
+#### Security
 
 * Security group = "instance level firewall"
 	* allows you to specify what traffic communicate with your instance (can be specified via IP range, protocol,
@@ -246,7 +256,7 @@ Two types:
 * It is the user's responsibility to maintain and install latest OS updates & security patches released by the OS vendor
   - this is part of the shared responsibility model
 
-## ECS - EC2 Container Service
+### ECS - EC2 Container Service
 
 ECS allows the user to run Docker-enabled applications packaged as containers across a cluster of EC2 instances,
 **without requiring the user to manage a complex and administratively heavy cluster management system. **AWS Fargate**
@@ -273,7 +283,7 @@ Two different ECS Cluster deployement models:
   zones).
 * Containers can be scheduled to be deployed across the cluster.
 
-## ECR - Elastic Container Registry
+### ECR - Elastic Container Registry
 
 ECR provides a secure location to store and manage your docker images. This service allows developers to push, pull and
 manage their library of docker images in a central and secure location
@@ -300,7 +310,7 @@ There are a few components used in ECR:
 5. Image 
 	* Once all the above has been completed, you/the user can push/pull docker images from your ECR.
 
-## EKS - Elastic Container Service for Kubernetes
+### EKS - Elastic Container Service for Kubernetes
 
 Kubernetes is an open source container orchestration tool designed to automate deploying, scaling and operating
 containerized applications.
@@ -320,7 +330,7 @@ Worker nodes:
 * Every node that is created uses a specific AMI (in order for Docker & Kubernetes to run on it)
 * Once the worker nodes are setup by the user, they can be connected to EKS with an endpoint
 
-### Setting up EKS
+#### Setting up EKS
 
 1. Create an EKS Service Role
 	* Create an IAM (Identity & Access Management) service role that allows EKS to provision and configure specific
@@ -336,7 +346,7 @@ Worker nodes:
 6. Provision and configure worker nodes
 7. Configure worker nodes to join EKS Cluster
 
-## Elastic Beanstalk Service 
+### Elastic Beanstalk Service 
 
 **Elastic Beanstalk Service is free to use. However, any resources that Beanstalk sets up for your application (Compute,
 Storage, Database or Network) are charged using the standard pricing of those resources.**
@@ -384,7 +394,7 @@ The typical Elastic Beanstalk workflow looks like the following:
 
 ![](images/elastic_beanstalk_workflow.png)
 
-## Lambda 
+### Lambda 
 
 "AWS Lambda is a serverless compute service that allows you to run your application code without having to manage EC2
 instances."
@@ -408,7 +418,7 @@ resources you need for you solution to run.
 2. Configure Lambda Functions to execute upon specific triggers from supported event sources.
 3. Once the trigger is initiated, Lambda will run your using only the required resources.
 
-## AWS Batch
+### AWS Batch
 
 Used to manage and run batch computing workloads in AWS (mostly used for high specificity cases that require large
 amounts of compute power). 
@@ -436,7 +446,7 @@ Components:
 As one would expect, this service lends itself to solutions that require/depend on parallel processing (in the Data
 Science world, this could take the form of bagged models (GLM's, random forests, etc.))
 
-## Lightsail
+### Lightsail
 
 Similar to EC2, Lightsail is an VPS (Virtual Private Server), similar to EC2, however there are fewer configurable steps
 during its creation.
@@ -463,7 +473,7 @@ Choose:
 
 * **Deleting your instance and shutting down are different.**
 
-## ELB - Elastic Load Balancer
+### ELB - Elastic Load Balancer
 
 The main function of an ELB is to help manage and control the flow of inboud requests destined to a group of targets by
 distributing these requests evenly across the targeted resource group
@@ -530,7 +540,7 @@ distributing these requests evenly across the targeted resource group
 * An ELB can contain 1 or more listeners, each listener can contain 1 or more rules, each rule can contain 1 or more
   conditions. **All conditions result in a single action.**
 
-### SSL Server Certificates 
+#### SSL Server Certificates 
 
 SSL = Secure Sockets Layer
 	* SSL is a cryptographic protocol, similar to TLS (Transport Layer Security)
@@ -546,7 +556,7 @@ SSL = Secure Sockets Layer
 * ACM allows you to provision and configure any SSL certifcates that will be used inside your AWS solution (most AZ's
   are supported). If the AZ you are in isn't supported, you will have to configure a certificate using IAM.
 
-## EC2 Auto Scaling 
+### EC2 Auto Scaling 
 
 As the name suggests, EC2 Auto Scaling means that a solution can scale its compute resources up or down, based on
 demand, so that the user doesn't have to worry about overloading any resources, and also doesn't have to worry about
@@ -575,7 +585,7 @@ spending money on resources they aren't using.
 	* Set up the conditions that need to be met for "Scaling Down" (i.e. Average CPU usage <= 30% for 3 minutes).
 	* Set up AZs in which new instances will be created.
 
-### Combining ELB & EC2 Auto Scaling 
+#### Combining ELB & EC2 Auto Scaling 
 
 Although ELBs and EC2 Auto Scaling *can* be used independently, they work best together.
 	* If you have a fixed number of instances/compute resources in a target group of an ELB, if you need more, the
@@ -592,7 +602,7 @@ Although ELBs and EC2 Auto Scaling *can* be used independently, they work best t
 	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
 	  be used for all newly created ALBs or NLBs.
 
-# Storage Fundamentals for AWS
+## Storage Fundamentals for AWS
 
 There are more storage options provided by AWS than those listed here, however the "big three" if you will are:
 
@@ -604,7 +614,7 @@ There are more storage options provided by AWS than those listed here, however t
 * EFS - Elastic File Storage
 	* "Traditional" file system
 
-## EBS - Elastic Block Storage
+### EBS - Elastic Block Storage
 
 Provides storage to EC2 instances via 'EBS Volume'
 
@@ -621,7 +631,7 @@ Provides storage to EC2 instances via 'EBS Volume'
 * Every write to an EBS volume is repeated multiple times to protect against a complete loss of data.
 * **Volumes can only be attached to an EC2 instance in the same availability zone**
 
-### Volume Types
+#### Volume Types
 
 * Having two volume options (below) allow the user to trade performance for cost in the best manner for their solution.
 * Different volume types have different IOPS (Input/Output per Second) thresholds
@@ -655,7 +665,7 @@ During the creation of the volume, the user can choose:
 * **What happens to the volume when the EC2 instance terminates**
 * To encrypt or not to encrypt
 
-## S3 - Simple Storage Service 
+### S3 - Simple Storage Service 
 
 * Most common storage service in AWS (applicable to many use cases).
 * Theoretically unlimited storage.
@@ -681,7 +691,7 @@ To save an object in S3 (manually):
 	* This means that your bucket name has to be unique **across all of AWS** (can't just be unique *to you*).
 	* by default, your account has a soft limit of 100 buckets, however this can be increased by contacting AWS.
 
-### Storage Classes
+#### Storage Classes
 
 Different storage classes allows the user to choose the tradeoffs between cost and accessibility that best suits the
 problem they are working on. There are 6 different storage classes:
@@ -753,7 +763,7 @@ Glacier Classes:
 	* If the user needs to access their data across region, they will need to configure *Cross Region Replication*,
 	  which, as the name implies, replicates data across regions.
 
-## EFS - Elastic File System
+### EFS - Elastic File System
 
 * **Can be concurrently accessed by multiple (up to thousands...) of EC2 instances**
 * Uses a "traditional" hierarchical structure
@@ -767,7 +777,7 @@ Glacier Classes:
 Once the EFS is created, the user can create "mount points" within their VPC; once this is performed, any EC2 instance
 can read and write data to the EFS.
 
-## AWS Snowball & Snowmobile
+### AWS Snowball & Snowmobile
 
 * If the user needs to transfer a large amount of data to be the cloud (or from the cloud to on-premises in the case of
   a DR plan), AWS offers two options:
@@ -789,7 +799,7 @@ can read and write data to the EFS.
 		  can be uploaded and then sent back to AWS.
 		* Can transfer up to 100PB per snowmobile.
 
-# Database Fundamentals for AWS
+## Database Fundamentals for AWS
 
 * Database: Any mechanism for storing, managing and retrieving information
 * **"Databases are the foundation of modern application development. A database's implementation and how data is
@@ -911,7 +921,7 @@ There are two "meta types" of databases:
 		* NoSQL = less consistency, higher scalability/performance.
 		* SQL = more consistency, more difficult/less scalability.
 
-## RDS - Relational Database Service
+### RDS - Relational Database Service
 
 AWS's grouping of relational database engines. There are 6 options:
 
@@ -952,7 +962,7 @@ AWS's grouping of relational database engines. There are 6 options:
 	  updates itself from the main DB on an asyncronous interval).
 * Snapshots can be setup on a recurring interval.
 
-### Creating a RDS DB
+#### Creating a RDS DB
 
 1. Click on 'RDS' from the AWS Management Console
 2. Create a DB.
@@ -974,9 +984,9 @@ AWS's grouping of relational database engines. There are 6 options:
 * Note that at the end of the RDS DB setup, there will be a section that has the estimate of the monthly cost of running
   your DB.
 
-## Nonrelational Databases
+### Nonrelational Databases
 
-### DynamoDB 
+#### DynamoDB 
 
 * AWS's Key-Value (NoSQL) Database 
 * Associative array == dictionary == hash table/array (all very similar JSON)
@@ -1005,7 +1015,7 @@ AWS's grouping of relational database engines. There are 6 options:
 	* Provisioned throughput
 		* IOPS must be set in advance; therefore if the user exceeds this threshold, the query will fail.
 
-#### Creating a DynamoDB
+##### Creating a DynamoDB
 
 Since DynamoDB is a NoSQL DB, there are fewer specifications required to get things up and running.
 
@@ -1035,7 +1045,7 @@ if you don't want to accept all the defaults, there are a few more options:
 5. Set Encryption protocols
 	* By default, data is encrypted at rest.
 
-### DocumentDB 
+#### DocumentDB 
 
 * Designed to store, query and index JSON data.
 * Scale horizontally
@@ -1046,7 +1056,7 @@ if you don't want to accept all the defaults, there are a few more options:
 * Use cases:
 	* commonly used for storing sensor data from IoT devices.
 
-### Keyspaces (Apache Cassandra) 
+#### Keyspaces (Apache Cassandra) 
 
 * AWS's Column Store database
 * Uses a "keyspace" to define the data it contains.
@@ -1061,7 +1071,7 @@ if you don't want to accept all the defaults, there are a few more options:
 			  the data was inserted (in order to find the more recent version of that data).
 * Efficient for data compression and partitioning, as well as applications ther rely heavily on parallel processing.
 
-### ElastiCache
+#### ElastiCache
 
 * AWS's In-Memory data store options (best for real-time data access applications)
 	* **Not technically a database**; since it is a "data storage" option, it is included here.
@@ -1075,7 +1085,7 @@ There are two subtypes:
 1. ElastiCache for Redis
 2. ElastiCache for Memcached
 
-### Neptune
+#### Neptune
 
 * AWS's Graph Database
 * Used for storing graphical data (e.g. networking applications)
@@ -1087,12 +1097,12 @@ There are two subtypes:
 	* Network based applications
 	* Problems whose data can be modeled via a graph.
 
-### Timestream
+#### Timestream
 
 * AWS's Time Series database
 * Timestamps are almost always the key in a time series databases
 
-### Quantum Ledger 
+#### Quantum Ledger 
 
 * AWS's ledger database
 * Useful for recording transactions of an application
@@ -1109,7 +1119,7 @@ There are two subtypes:
 	* Banking
 	* Insurance applications (to track the history of claims)
 
-### Elasticsearch Service
+#### Elasticsearch Service
 
 * AWS's search database
 * Search databases often work with highly unstructured data that is far from consistent.
@@ -1117,12 +1127,12 @@ There are two subtypes:
 * Uses an inverted index for fast full text searches.
 	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
 
-# Network Fundamentals for AWS
+## Network Fundamentals for AWS
 
 The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
 documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
 
-## AWS Route 53
+### AWS Route 53
 
 * DNS = Domain Name System
 	* Responsible for the translation of domain names (e.g. amazon.com) to correct IP addresses (machines).
@@ -1166,7 +1176,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 		* Allows you to route traffic based on weights; send it to resource A 20% of the time, resource B 40% of
 		  the time, etc.
 
-## AWS CloudFront 
+### AWS CloudFront 
 
 * AWS' fault-tolerant and globally scalable content delivery network service.
 	* The whole goal of this service is to reduce latency; if some data that your application serves is relatively
@@ -1185,7 +1195,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 	* The user will need to configure which edge locations they want their cached data to be stored at.
 * Note that RDS instances can **not** be used as endpoints/servers for CloudFront.
 
-## VPC
+### VPC
 
 * VPCs are **isolated** segments of the AWS cloud; they can be thought of as distinct 'computational universes' that
   aren't connected to other VPCs (or the internet) by default.
@@ -1195,7 +1205,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 	1. Give your VPC a name.
 	2. Define an IP address range the VPC can use - in the form of a CIDR block (Classless Inter-Domain Routing).
 
-## Subnets
+### Subnets
 
 * "A VPC subnet is a range of IP addresses in your VPC. You can add one or more subnets in each Availability Zone, but
   **each subnet must reside entirely within one Availability Zone and cannot span zones**"
@@ -1217,7 +1227,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 * Note that not all IP addresses in a subnet's CIDR block are available to be assigned to various hosts:
 	* Certain IPs are reserved for AWS networking, DNS, and other routing services.
 
-## NACLs - Network Access Control Lists 
+### NACLs - Network Access Control Lists 
 
 * [AWS Documentation](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html)
 	* "A network access control list (NACL) is an optional layer of security for your VPC that acts as a firewall
@@ -1232,7 +1242,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 	  accordingly. **No conditions are checked after one is met.**
 * **Stateless**
 
-## Security Groups
+### Security Groups
 
 * **Control traffic at the instance level ( as opposed to the network level (NACLs) )**.
 * Different setup from NACLs in that there isn't a "Allow/Deny" field in the setup table; with Security Groups, if there
@@ -1243,7 +1253,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
   effect.
 * **Stateful**
 
-## NAT Gateway 
+### NAT Gateway 
 
 * NAT = Network Access Translation
 * "A NAT Gateway allows intances within a private subnet to access the internet while blocking all traffic that
@@ -1253,7 +1263,7 @@ documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 * NAT Gateways are logically located within a public subnet (and therefore access the internet the same way any other
   resource in the public subnet does - through the IGW).
 
-## Bastion Hosts
+### Bastion Hosts
 
 * Since instances within a private subnet are, by designe, not able to be accessed via the internet, there needs to be a
   way to access these instance for developers/engineers to work; enter Bastion Hosts.
@@ -1273,7 +1283,7 @@ In the image below:
 
 ![](images/bastion_host_networking.png)
 
-## VPN & Direct Connect
+### VPN & Direct Connect
 
 **VPN**
 * In order for a VPN to work your VPC in AWS, your VPC needs to be configured with a virtual gateway.
@@ -1290,14 +1300,14 @@ In the image below:
 	* This router connects to a virtual gateway associated with the users AWS infrastucture.
 * You can still use a VPN over Direct Connect, although it isn't necessary since your traffic is on a private network.
 
-## VPC Peering
+### VPC Peering
 
 * Connects two VPC's together.
 	* 1:1 connections only - so if you want to connect 3 or more VPC peers, they will have to be pairwise.
 * Can connect VPCs in the same region or in different regions.
 * The CIDR blocks can't have **any** overlap of two connected VPC's.
 
-## Transit Gateway 
+### Transit Gateway 
 
 * Similar to VPC Peering, although the AWS Transit Gateway allows the user to connect a VPC to more than one other VPCs.
 * Can be thought of as a 'central hub' for VPC connections - it drastically reduces the number of connections the user
@@ -1305,9 +1315,9 @@ In the image below:
 	* If X is connected to a Transit Gateway, it can access everything else that is connected to the Transit
 	  Gateway.
 
-## WAF, Firewall Manager & Shield
+### WAF, Firewall Manager & Shield
 
-### WAF - Web Application Firewall
+#### WAF - Web Application Firewall
 
 * "AWS WAF helps prevent web sites and web applications from being maliciously attacked by common web attack patters
   (such as SQL injection)"
@@ -1346,14 +1356,14 @@ In the image below:
 	2. Explicitly block requests from "blacklisted" IPs; IPs that you know are malicious.
 	3. Finally, list the various rules composed of WAF conditions to identify bad requests.
 
-### Firewall Manager 
+#### Firewall Manager 
 
 * Firewall Manager is designed to help the user manage WAF in a multi-account setting - the AWS Organization.
 * In order to make use of the Firewall Manager, the AWS Organization must have been enable with all features (not just
   consolidated billing)
 * [Full documentation here](https://aws.amazon.com/firewall-manager/)
 
-## Shield 
+### Shield 
 
 * Closely related to WAF and Firewall Manager
 * Designed to protect your infrastructure against Distributed Denial of Service (DDoS) attacks. A DDoS attack sends a
@@ -1372,12 +1382,12 @@ In the image below:
 		* Costs extra.
 		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
 
-## AWS Global Accelerator
+### AWS Global Accelerator
 
 * Allows you to have users access your application(s) through the AWS Global network instead of the public internet.
 * Allows the user to setup static IP addresses that act as fixed entry points to your application.
 
-# Security Fundamentals for AWS
+## Security Fundamentals for AWS
 
 At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
 
@@ -1387,7 +1397,7 @@ Overview:
 
 ![](images/Shared_Responsibility_Model.jpg)
 
-## IAM - Identity & Access Management
+### IAM - Identity & Access Management
 
 * **IAM is a global service - it applies to all regions in AWS.**
 * Identity Management: Authenticating who has has access to your AWS account.
@@ -1417,7 +1427,7 @@ Overview:
 	* A summmary of the IAM resources (e.g. how many users, groups, policies that are currently active).
 	* A list of AWS IAM best practices and whether your account has met them.
 
-### Users
+#### Users
 
 * A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
   account that represents an application that needs permissions to access certain resources in your AWS environment
@@ -1443,7 +1453,7 @@ Overview:
 * Once the user is created, it will be assigned an ARN (Amazon Resource Name), which is a unique identifier of the
   object.
 
-### Groups 
+#### Groups 
 
 * Any users within a group inherit the permissions applied to that group.
 * Using groups to assign permissions is a best practice.
@@ -1459,7 +1469,7 @@ Overview:
 * **There is a default maximum of 100 groups per AWS account.** To increase, the user will need to contact AWS.
 * **A User can only be associated with 10 groups.**
 
-### Roles 
+#### Roles 
 
 * "An IAM role is similar to an IAM user, in that it is an AWS identity with permission policies that determine what the
   identity can and cannot do in AWS. However, instead of being uniquely associated with one individual, a role is
@@ -1503,7 +1513,7 @@ Overview:
 			3. Grant API access to SAML Providers 
 				* Allows access from SAML providers via the AWS CLI, SDK or API calls.
 
-### Policies 
+#### Policies 
 
 * Policies are used to assign permissions to Users, Groups and Roles.
 * Formatted as JSON, policies will have the following names:
@@ -1591,7 +1601,7 @@ There are 2 IAM Policy Types:
 * If there are conflicting permissions for any IAM object (User, Group or Role), **any "Deny" permission will override
   any number of "Allow" permissions.**
 
-## MFA - Multi-Factor Authentication 
+### MFA - Multi-Factor Authentication 
 
 * Add another layer of security
 	* Perhaps useful for users of an AWS account that have a lot of powerful permissions.
@@ -1602,7 +1612,7 @@ There are 2 IAM Policy Types:
 	3. Change 'Assigned MFA Device' from 'No' by editing it.
 		* Google Authenticator is a good virtual MFA option to use and is supported by AWS.
 
-## Identity Federation (IdP)
+### Identity Federation (IdP)
 
 * Allows you to access and manage AWS resources even if you don't have a user account within IAM.
 * Effectively allows users to "bootstrap" a User IAM object using an account from another provider.
@@ -1615,7 +1625,7 @@ There are 2 IAM Policy Types:
 	2. SAML
 		* Example: Microsoft Active Directory
 
-## KMS - Key Management Service 
+### KMS - Key Management Service 
 
 * AWS managed service that allows management of encryption keys to securely encrypt/decrypt data.
 * **KMS only encrypts data at rest (i.e. S3 buckets). KMS does not encrypt data in transit/motion.**
@@ -1652,7 +1662,7 @@ There are 2 IAM Policy Types:
 * **KMS is priced per CMK and the number of requests received per month.**
 
 
-## Inspector
+### Inspector
 
 * Inspector helps you detect security risks in your applications, as well as on the EC2 instances your applications run
   on.
@@ -1728,7 +1738,7 @@ There are 2 IAM Policy Types:
 		* Findings are security vulnerabilities.
 		* For each finding, an explanation is given as well as guidance on how to solve the problem.
 
-## Other IAM Services 
+### Other IAM Services 
 
 * In the "Account Settings" you can set the password policy for all users of the AWS account.
 * Credential Report:
@@ -1736,11 +1746,11 @@ There are 2 IAM Policy Types:
 * You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
   password, that can access your AWS resources. 
 
-# Management Fundamentals for AWS 
+## Management Fundamentals for AWS 
 
 * All of the tools below can be found from the AWS Management Console, under the "Management Tools" header.
 
-## AWS Organizations
+### AWS Organizations
 
 * All of the below can be configured via the *AWS Organizations* "portal" (for lack of a better word), which is under
   the "Governance" tab within the AWS Management Console.
@@ -1793,7 +1803,7 @@ There are 2 IAM Policy Types:
 		* If you want to use SCPs (which is kind of the point), you will need to select 'Enable All Features'
 	3. Create OUs and invite/create AWs Accounts to join the Org.
 
-## SCPs 
+### SCPs 
 
 * SCPs do **not** grant a user access to AWS resources, they set the boundaries around which services can even have
   access granted to them. Permissions will still need to be configured at the User/Group/Role level via IAM within an
@@ -1821,7 +1831,7 @@ There are 2 IAM Policy Types:
 	* SCPs do not affect service-linked roles.
 	* SCPs do not affect managing CloudFront keys.
 
-## Config
+### Config
 
 * With cloud based architectures having the ability to adapt to problem domain changes, the architecture can constantly
   be changing (as it is designed too), and therefore hard to keep track of. Config is AWS' tool to make managing your
@@ -1851,7 +1861,7 @@ There are 2 IAM Policy Types:
 	* You can choose to track all resources within a region or, you can choose to track all resources that apply to
 	  this region (best for resources such as IAM that are 'region-agnostic').
 
-## CloudTrail
+### CloudTrail
 
 * CloudTrail is the "verion control" for AWS' cloud architecture.
 * CloudTrail records and tracks all API requests in the user's AWS account. These requests could come from a number of
@@ -1868,7 +1878,7 @@ There are 2 IAM Policy Types:
   was made, as well as the IP that initiated it.)
 * CloudTrail logs can also serve as evidence that domain specific compliance standards are being met.
 
-## Trusted Advisor
+### Trusted Advisor
 
 * Trusted Advisor recommends improvements to your solution across all resources based on best practices. These could
   include:
@@ -1905,7 +1915,7 @@ There are 2 IAM Policy Types:
 	* Refresh:
 		* Determines the rate that checks are "re-checked" (default is every 24 hours).
 
-## CloudWatch
+### CloudWatch
 
 * CloudWatch is designed to create & monitor service specific metrics. The main uses cases are:
 	* Help maintain a good user experience.
@@ -1936,7 +1946,7 @@ There are 2 IAM Policy Types:
 		  associated with that event in one place, as opposed to going to each individual host once it is back
 		  up and finding out what happened on an individual basis.
 	
-## Health Dashboards
+### Health Dashboards
 
 Two types of dashboard, both of which are used to identify potential problems that would affect your cloud-based solution.
 
@@ -1954,7 +1964,7 @@ Two types of dashboard, both of which are used to identify potential problems th
 	  your AWS account. [link here](http://phd.aws.amazon.com/)
 	* Provides a simple overview of the health of AWS services that might affect resources running from your account.
 
-## Cost Management & Customer Support 
+### Cost Management & Customer Support 
 
 Cost Management services provided by AWS are:
 
@@ -2023,11 +2033,11 @@ Customer Support services provided by AWS are:
 * There are differences in the level/promptness of support you will receive from AWS, depending on which plan you
   choose. You can [check the documenation to see how this plays out](https://aws.amazon.com/premiumsupport/plans/)
 
-# Architecture Fundamentals for AWS
+## Architecture Fundamentals for AWS
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
 
-## Well Architected Framework
+### Well Architected Framework
 
 ![](images/aws_well_architected_framework.png)
 
@@ -2112,7 +2122,7 @@ There are 5 pillars of the well architected framework:
 			* i.e. don't use traditional data centers unless you have a good reason.
 		5. Analyze and attribute expediture.
 
-## AWS Global Infrastructure
+### AWS Global Infrastructure
 
 The AWS global infrastructure is composed of 4 key elements:
 1. Availability Zones (AZs)
@@ -2147,7 +2157,7 @@ The AWS global infrastructure is composed of 4 key elements:
 	* Edge locations can retrieve data from Regional Edge Caches (assuming it is still valid/there) instead of going
 	  all the way to the origin server(hardware).
 
-## DR - Disaster Recovery
+### DR - Disaster Recovery
 
 **Cloud Storage and DR**
 
@@ -2193,7 +2203,7 @@ The values of the below two concepts will largely determine the path your DR pla
 		  input the necessary inputs (or the available inputs e.g. AWS Glacier IOPS and how much data you might
 		  need to transfer from your Glacier.)
 
-### Using S3 as a Data Backup Solution
+#### Using S3 as a Data Backup Solution
 
 * Easily scalable and customizable (user can optimize the Durability, Availability & Cost for their needs)
 * Remember that the user gets 99.999999999% data durability by replicating the data across multiple AZ's within a single
@@ -2227,7 +2237,7 @@ The values of the below two concepts will largely determine the path your DR pla
 	* Versioning - "git for data" does what one would think; saves the object **each time a change is made**. This
 	  obviously requires more space than if it were not configured.
 
-### AWS Artifact
+#### AWS Artifact
 
 AWS Artifact allows the user of AWS services to see how those services align with compliance requirements of a specific
 industry.
@@ -2235,7 +2245,7 @@ industry.
 * Can be accessed from the AWS Management Console
 * Specifies the scope of compliance for the combinations of AWS services and the regions/AZ's they reside in.
 
-### AWS Storage Gateway 
+#### AWS Storage Gateway 
 
 * Sits between the users on-premises data storage and a backup to AWS S3
 
@@ -2260,13 +2270,13 @@ There are a few options available:
 		* Archive: Equivalent to an off-site storage facility, giving you the ability to archive tapes from your
 		  VTL to AWS Glacier.
 
-### Strategies 
+#### Strategies 
 
 * [4 Strategies Overview](https://www.ecloudgate.com/Doc/DisasterRecovery_Overview)
 * [4 Strategies
   Overview(AWS)](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html)
 
-#### Backup & Restore
+##### Backup & Restore
 
 * For on-premises or cloud based solutions, data is backed up to S3 using Storage Gateway, should a disaster occur,
   restored from the appropriate S3 bucket(s).
@@ -2275,7 +2285,7 @@ There are a few options available:
 * RTO in 24 hours or less.
 * RPO in hours.
 
-#### Pilot Light
+##### Pilot Light
 
 * Similar to its namesake, the Pilot Strategy is to have the core components of a system duplicated. From this small
   "pilot light" of components, the rest of the system can be rapidly provisioned and be up and running.
@@ -2287,7 +2297,7 @@ There are a few options available:
 * Environments can be scripted using CloudFormation.
 * Any DNS can be updated to point at front end servers once they are up and running in AWS.
 
-#### Warm Standby
+##### Warm Standby
 
 * Similar to the pilot light strategy, although expended; in addition to the "core components"/"pilot light" always
   running, additional services are duplicated and always running as well.
@@ -2297,7 +2307,7 @@ There are a few options available:
   horizontally).
 * Any DNS can be updated to point at cloud based front end servers if a disaster occurs.
 
-#### Multi Site
+##### Multi Site
 
 * Two, production throughput capable systems are run side by side. Route 53 can be used to route the majority (or 100%)
   of the traffic to the on-premises solution by default.
