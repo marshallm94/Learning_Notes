@@ -10,6 +10,8 @@ Cloud Academy (and added to after the completion of the CPP Cert)
 Within ECS:
 * A cluster is a set grouping of tasks or services.
 * [Task Definition Configuration](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html)
+* Check the `container-definition` parameters of [this link](https://docs.aws.amazon.com/cli/latest/reference/ecs/register-task-definition.html)
+for scripting with the `awscli`.
 
 # Solution Domain View
 
@@ -1429,6 +1431,11 @@ Overview:
 
 #### Users
 
+* When a human goes to sign into the AWS Management Console, they can choose to sign in as the Root User or as an IAM
+  User. **You should almost always have people (including yourself) sign using the IAM User button.**
+	* Signing in as the Root User allows you to do everything, and in addition to the obvious concerns with this, it
+	  shows that you (the AWS Account Owner/Developer) haven't taken the time to setup an IAM User for the person
+	  logging in. Don't be a lazy bum, just do it.
 * A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
   account that represents an application that needs permissions to access certain resources in your AWS environment
   programmatically.
