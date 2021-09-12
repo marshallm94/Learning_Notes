@@ -6,9 +6,14 @@
 which in turn is based on two mathematical branches: set theory and predicate logic" - *T-SQL Fundamentals | Itzik
 Ben-Gan*
 
-## Overview
+# Useful Links
 
-[Entity-Relationship (ER) Diagram visualization tool](https://erdplus.com/#/)
+* [DBML](https://www.dbml.org/home/#intro)
+* Entity-Relationship (ER) Diagram Tools:
+    * [Option 1](https://dbdiagram.io/home)
+    * [Option 2](https://erdplus.com/#/)
+
+## Overview
 
 ER diagrams allows one to visualize how a concept might map into a  RDBMS layout, or visualize an existing RDBMS layout.
 
