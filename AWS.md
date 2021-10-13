@@ -1,5 +1,6 @@
 The below notes were started while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
-Cloud Academy (and added to after the completion of the CPP Cert)
+Cloud Academy (and added to after the completion of the CPP Cert). Once this test was passed, I continued to use this as
+a 'catch-all' for any AWS notes.
 
 [TOC]
 
@@ -121,7 +122,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Storage (NAS/SAN/Block Storage/Backup)
 	* In the cloud, storage is effectively unlimited and highly scalable.
 
-## Compute Fundamentals for AWS
+## Compute Fundamentals in AWS
 
 * There are different types of compute resources on AWS - not only EC2
 
@@ -604,7 +605,7 @@ Although ELBs and EC2 Auto Scaling *can* be used independently, they work best t
 	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
 	  be used for all newly created ALBs or NLBs.
 
-## Storage Fundamentals for AWS
+## Storage Fundamentals in AWS
 
 There are more storage options provided by AWS than those listed here, however the "big three" if you will are:
 
@@ -801,7 +802,7 @@ can read and write data to the EFS.
 		  can be uploaded and then sent back to AWS.
 		* Can transfer up to 100PB per snowmobile.
 
-## Database Fundamentals for AWS
+## Database Fundamentals in AWS
 
 * Database: Any mechanism for storing, managing and retrieving information
 * **"Databases are the foundation of modern application development. A database's implementation and how data is
@@ -1129,7 +1130,7 @@ There are two subtypes:
 * Uses an inverted index for fast full text searches.
 	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
 
-## Network Fundamentals for AWS
+## Network Fundamentals in AWS
 
 The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
 documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
@@ -1389,7 +1390,7 @@ In the image below:
 * Allows you to have users access your application(s) through the AWS Global network instead of the public internet.
 * Allows the user to setup static IP addresses that act as fixed entry points to your application.
 
-## Security Fundamentals for AWS
+## Security Fundamentals in AWS
 
 At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
 
@@ -1753,7 +1754,7 @@ There are 2 IAM Policy Types:
 * You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
   password, that can access your AWS resources. 
 
-## Management Fundamentals for AWS 
+## Management Fundamentals in AWS 
 
 * All of the tools below can be found from the AWS Management Console, under the "Management Tools" header.
 
@@ -2040,7 +2041,7 @@ Customer Support services provided by AWS are:
 * There are differences in the level/promptness of support you will receive from AWS, depending on which plan you
   choose. You can [check the documenation to see how this plays out](https://aws.amazon.com/premiumsupport/plans/)
 
-## Architecture Fundamentals for AWS
+## Architecture Fundamentals in AWS
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
 
@@ -2325,3 +2326,13 @@ There are a few options available:
 * Lowest RTO/RPO, at the highest cost.
 
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
+
+## DevOps/Software Development Tools in AWS
+
+Things to learn:
+* CodeCommit
+* CodeBuild
+* CodeDeploy
+* CodePipeline
+
+
