@@ -6,7 +6,7 @@ There will obviously be some overlap with concepts outside of the "Technology" c
 technology), but....whatever man....
 
 This repo will intentionally have a very flat structure, which is to say notes will not be organized into
-sub-directories. The idea here is to enable the user (namely myself) to be able to search fore files from the command
+sub-directories. The idea here is to enable the user (namely myself) to be able to search for files from the command
 line and locate all files where an answer might be located.
 
 There are some files that have LaTex in them, and therefore should be read using an application that supports the
