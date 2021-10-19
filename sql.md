@@ -2,11 +2,18 @@
 
 # SQL (Structured Query Language)
 
-"An RDBMS (Relational Database Management System) is a database management system based on the relational model..., which in turn is based on two mathematical branches: set theory and predicate logic" - *T-SQL Fundamentals | Itzik Ben-Gan*
+"An RDBMS (Relational Database Management System) is a database management system based on the relational model...,
+which in turn is based on two mathematical branches: set theory and predicate logic" - *T-SQL Fundamentals | Itzik
+Ben-Gan*
+
+# Useful Links
+
+* [DBML](https://www.dbml.org/home/#intro)
+* Entity-Relationship (ER) Diagram Tools:
+    * [Option 1](https://dbdiagram.io/home)
+    * [Option 2](https://erdplus.com/#/)
 
 ## Overview
-
-[Entity-Relationship (ER) Diagram visualization tool](https://erdplus.com/#/)
 
 ER diagrams allows one to visualize how a concept might map into a  RDBMS layout, or visualize an existing RDBMS layout.
 
@@ -16,7 +23,8 @@ ER diagrams allows one to visualize how a concept might map into a  RDBMS layout
     * Examples: `INSERT, UPDATE, DELETE` (sometimes SELECT)
 * DDL = Data Definition Language
     * Examples: `CREATE, DROP, ALTER`
-* When referencing an object in SQL, proper convention is to **explicitly** call the entire object (i.e. database_name.schema_name.table_name, etc)
+* When referencing an object in SQL, proper convention is to **explicitly** call the entire object (i.e.
+  database_name.schema_name.table_name, etc)
 
 ## Querying
 
@@ -91,9 +99,12 @@ WHERE <COLUMN> LIKE '%b%'
 
 ## Stored Procedures
 
-At its most basic, stored procedures are chunks of code that are saved (hence "stored") as objects in a SQL database. They allow a user to execute that code without having to retype it every time they want to use it. (analogous to writing functions in Python vs writing a script that can't be generalized to other tasks).
+At its most basic, stored procedures are chunks of code that are saved (hence "stored") as objects in a SQL database.
+They allow a user to execute that code without having to retype it every time they want to use it. (analogous to writing
+functions in Python vs writing a script that can't be generalized to other tasks).
 
-Stored procedures can be used to `INSERT, UPDATE, DELETE, SELECT` and are called with the `EXEC` statement (short for execute):
+Stored procedures can be used to `INSERT, UPDATE, DELETE, SELECT` and are called with the `EXEC` statement (short for
+execute):
 
 ```SQL
 EXEC <stored_procedure_name>
@@ -121,8 +132,10 @@ GO
 * Using a `TOP` clause (synonymous to `LIMIT` in PostgreSQL) allows you to not overload the system
 * use `NOLOCK`
   * Ensures your queries have as little impact on other processes as possible.
-  * The risk of running your query with `NOLOCK` is that you might get "dirty/phantom" reads (observations that are not yet *committed* to the database, but is in an indeterminate state of being inserted, updated or deleted)
-  * Should be used primarily for ad-hoc queries, but not in development (NEVER use when updating or deleting observations from a table).
+  * The risk of running your query with `NOLOCK` is that you might get "dirty/phantom" reads (observations that are not
+    yet *committed* to the database, but is in an indeterminate state of being inserted, updated or deleted)
+  * Should be used primarily for ad-hoc queries, but not in development (NEVER use when updating or deleting
+    observations from a table).
 * Check the estimated query plan before executing your query
 * Knowing the indexes a table has can be helpful in determining what columns to efficiently filter and sort on
 * `ORDER BY` clauses restrict the performance of queries
@@ -139,7 +152,9 @@ if you are connected the command prompt will change to:
 
 ### Execution Plans
 
-**Execution Plan**: The result of the query optimizer's attempt to calculate the most efficient way to implement the request represented by the T-SQL query you submitted. Execution plans are the **primary** means of troubleshooting an inefficient query.
+**Execution Plan**: The result of the query optimizer's attempt to calculate the most efficient way to implement the
+request represented by the T-SQL query you submitted. Execution plans are the **primary** means of troubleshooting an
+inefficient query.
 
 * The Query Optimizer parses your query and generates an execution plan (in binary) that is sent to the storage engine.
 * Highlight a query and press CTRL + L (Windows) to view the execution plan

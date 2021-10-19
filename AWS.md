@@ -1,5 +1,6 @@
-The below notes were taken while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
-Cloud Academy
+The below notes were started while going through the AWS Cloud Practitioner Certification Preparation Learning Path on
+Cloud Academy (and added to after the completion of the CPP Cert). Once this test was passed, I continued to use this as
+a 'catch-all' for any AWS notes.
 
 [TOC]
 
@@ -109,7 +110,7 @@ The 4 main services offered by a cloud infrastructure provider are:
 * Storage (NAS/SAN/Block Storage/Backup)
 	* In the cloud, storage is effectively unlimited and highly scalable.
 
-# Compute Fundamentals for AWS
+# Compute Fundamentals in AWS
 
 * There are different types of compute resources on AWS - not only EC2
 
@@ -221,7 +222,7 @@ Different payment plans available:
 
 Two types:
 1. Persistent Storage
-	* attaching EPS (Elastic Block Storage) volumes
+	* attaching EBS (Elastic Block Storage) volumes
 	* attached via AWS network - physically separated
 	* can be detached from EC2 instances and maintain data 
 	* data saved on EBS volumes are automatically copied to other volumes within the same availability zone for
@@ -592,7 +593,7 @@ Although ELBs and EC2 Auto Scaling *can* be used independently, they work best t
 	  Groups" field. The former is for the legacy ELB version (see above), and the latter ('Target Groups') should
 	  be used for all newly created ALBs or NLBs.
 
-# Storage Fundamentals for AWS
+# Storage Fundamentals in AWS
 
 There are more storage options provided by AWS than those listed here, however the "big three" if you will are:
 
@@ -670,7 +671,7 @@ During the creation of the volume, the user can choose:
 * S3 is a regional service; to ensure data persistence, AWS makes multiple copies of your data within different AZs
   within the region you selected. This provides "Eleven 9's" worth of data integrity (99.999999999% durability = very
   low likelihood of losing data).
-* Availability is **not** the same as Durability; AWS provides 99.5% - 99.99% data *Availability*, which means you will
+* Availability is **not** the same as Durability; AWS provides **99.5% - 99.99% data *Availability***, which means you will
   be able to access your saved data 99.5% - 99.99% of the time. *Durability* refers to the the likelihood your data
   isn't lost or corrupted.
 * **Data versioning is an option.**
@@ -789,7 +790,7 @@ can read and write data to the EFS.
 		  can be uploaded and then sent back to AWS.
 		* Can transfer up to 100PB per snowmobile.
 
-# Database Fundamentals for AWS
+# Database Fundamentals in AWS
 
 * Database: Any mechanism for storing, managing and retrieving information
 * **"Databases are the foundation of modern application development. A database's implementation and how data is
@@ -1117,11 +1118,10 @@ There are two subtypes:
 * Uses an inverted index for fast full text searches.
 	* Inverted Index: Lists every unique word in a document and identifies all documents where each word occurs.
 
-# Network Fundamentals for AWS
+# Network Fundamentals in AWS
 
 The pillar of the networking on AWS is the VPC - Virtual Private Cloud. For a comprehensive tutorial, check [the
 documentation](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html)
-
 
 ## AWS Route 53
 
@@ -1306,7 +1306,79 @@ In the image below:
 	* If X is connected to a Transit Gateway, it can access everything else that is connected to the Transit
 	  Gateway.
 
-# Security Fundamentals for AWS
+## WAF, Firewall Manager & Shield
+
+### WAF - Web Application Firewall
+
+* "AWS WAF helps prevent web sites and web applications from being maliciously attacked by common web attack patters
+  (such as SQL injection)"
+* WAF Components:
+	* Conditions 
+		* Conditions allow you to specify what elements of the incoming HTTP or HTTPS request you want WAF to be
+		  monitoring for.
+		* Some WAF conditions include:
+			* Cross-site scripting
+				* **One of the largest vulnerabilities found in web applications today**
+				* Scripts that have been written to maliciously gain access to client side data via a
+				  normally trusted web page/application.
+			* Geo match
+				* Allow/Block requests from specific geographies.
+				* Note that geography based request filtering will first pass through CloudFront. So if
+				  you are using the CloudFront service in your solution, setting up Geo match conditions
+				  in WAF is redundant and a waste of time.
+			* IP addreses
+				* Allow/Block requests from specific IP ranges.
+			* Size constraints
+				* Allow/Block requests based on the size of various parts of the request.
+			* SQL injection attacks
+			* String and regex matching
+	* Rules 
+		* Rules are composed of more than one condition. In order for the action associated with a rule to be
+		  carried out, **all conditions associated with that rule must be met (it is an `AND` conditional)**.
+			* For example, if you have a rule that says "Allow requests if 1) the request originates from
+			  Oklahoma AND 2) the request is from X list of IP addresses", and a request comes in that is
+			  from Oklahoma but not in the specified IP list, the request will be denied.
+	* Web ACLs (Access Control Lists)
+		* ACLs have three possible actions: Allow, Block or Count.
+* Similar to NACLs, Web ACLs rules are executed in the order that they are listed within the web ACL. This means that a
+  request will take the action of the first rule that it matches, even if there is another rule further down the list
+  that the request would also match. Given this, a good structure for a Web ACL is:
+	1. Explicitly allow requests from "whitelisted" IPs; IPs that you know aren't malicious.
+	2. Explicitly block requests from "blacklisted" IPs; IPs that you know are malicious.
+	3. Finally, list the various rules composed of WAF conditions to identify bad requests.
+
+### Firewall Manager 
+
+* Firewall Manager is designed to help the user manage WAF in a multi-account setting - the AWS Organization.
+* In order to make use of the Firewall Manager, the AWS Organization must have been enable with all features (not just
+  consolidated billing)
+* [Full documentation here](https://aws.amazon.com/firewall-manager/)
+
+## Shield 
+
+* Closely related to WAF and Firewall Manager
+* Designed to protect your infrastructure against Distributed Denial of Service (DDoS) attacks. A DDoS attack sends a
+  high volume of requests to a server from multiple distributed services, preventing legitimate requests from getting
+  through as well as severely limiting the performance of the server.
+* There are multiple types of DDoS attacks:
+	* SYN Flood
+	* DNS query Flood
+	* HTTP flood/Cache-busting
+* AWS Shield has two options:
+	* Standard
+		* Free to AWS account holders.
+		* Offers DDoS protection against common layer 3 (Network) and layer 4 (Transport) DDoS attacks.
+		* Integrated with CloudFront and Route 53.
+	* Advanced 
+		* Costs extra.
+		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
+
+## AWS Global Accelerator
+
+* Allows you to have users access your application(s) through the AWS Global network instead of the public internet.
+* Allows the user to setup static IP addresses that act as fixed entry points to your application.
+
+# Security Fundamentals in AWS
 
 At the heart of security for AWS is the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
 
@@ -1348,6 +1420,11 @@ Overview:
 
 ### Users
 
+* When a human goes to sign into the AWS Management Console, they can choose to sign in as the Root User or as an IAM
+  User. **You should almost always have people (including yourself) sign using the IAM User button.**
+	* Signing in as the Root User allows you to do everything, and in addition to the obvious concerns with this, it
+	  shows that you (the AWS Account Owner/Developer) haven't taken the time to setup an IAM User for the person
+	  logging in. Don't be a lazy bum, just do it.
 * A *User* can represent a human who requires access to operate and maintain your AWS environment **or** it can be an
   account that represents an application that needs permissions to access certain resources in your AWS environment
   programmatically.
@@ -1665,9 +1742,90 @@ There are 2 IAM Policy Types:
 * You can use AWS Security Token Service to give trusted users temporary credentials, in place of a username and
   password, that can access your AWS resources. 
 
-# Management Fundamentals for AWS 
+# Management Fundamentals in AWS 
 
 * All of the tools below can be found from the AWS Management Console, under the "Management Tools" header.
+
+## AWS Organizations
+
+* All of the below can be configured via the *AWS Organizations* "portal" (for lack of a better word), which is under
+  the "Governance" tab within the AWS Management Console.
+* Check out the [full documentation here](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)
+* For a sufficiently large system, there may come a time when more than one AWS account is needed to partition different
+  access levels, roles, and organizational units. For example:
+	* There might be an entire team dedicated to security and compliance of the system, each member of the team
+	  under the umbrella of one AWS account.
+	* Another team might be in charge of billing, each member of the team under the umbrella of that AWS account.
+	* et cetera.
+* "The more accounts you have the more distributed your environment becomes and the associated security risks and
+  exposure increase and multiply". 
+* **AWS organizations are designed to bring multiple accounts under one umbrella.**
+* AWS organizations have a few key components:
+	1. Organizations 
+		* An Organization is an element that serves to form a hierarchical structure of multiple AWS accounts.
+		* Can be thought of as a hierarchical graphical tree of your entire AWS account structure.
+	2. Root
+		* The Root object is at the top of the hierarchy - all accounts will fall under this object and within
+		  any AWS Organization, there can only be one Root object.
+	3. Organizational Units (OUs)
+		* Organizational Units are objects/concepts that provided the means of categorizing different AWS
+		  accounts within an Organization.
+		* Used to group together different AWS accounts.
+	4. Accounts
+		* The different AWS accounts (ID by a 12 digit account number) associated with your AWS Organization
+		  that are used to provision and manage resources.
+	5. Service Control Policies (SCPs)
+		* Allow you to control what Services and Features are available from a given AWS account within and
+		  Organization.
+		* SCPs can be applied at any level of the Organization hierarchy, and will be applied to all child
+		  objects: For example:
+			* You could create an SCP that only allows access to RDS services. You could then apply this SCP
+			  to your "Database" Organizational Unit, and any AWS accounts (and therefore users associated
+			  with those accounts), would only be able to access Amazon RDS services.
+* The primary benefit of AWs Organizations is the ability to manage multiple accounts from a single account, known as
+  the Master Account. Additionally, this can help consolidate billing efforts.
+* Steps to set up an AWS Organization:
+	1. Choose an AWS Account that will be the Master Account.
+		* It is best practice that this Master account does **not** actually provision/manage any AWS resources;
+		  it simply manages the Organization.
+		* This Master account has various responibilities:
+			1. Create additional AWS accounts within the Org.
+			2. Invite other accounts to join the Org.
+			3. Remove AWS accounts from the Org.
+			4. Apply security features via SCPs to different levels of the Org.
+	2. Choose an Org Type:
+		1. Enable All Features 
+		2. Enable Only Consolidated Billing
+		* If you want to use SCPs (which is kind of the point), you will need to select 'Enable All Features'
+	3. Create OUs and invite/create AWs Accounts to join the Org.
+
+## SCPs 
+
+* SCPs do **not** grant a user access to AWS resources, they set the boundaries around which services can even have
+  access granted to them. Permissions will still need to be configured at the User/Group/Role level via IAM within an
+  AWS account.
+	* In the same way that IAM "Deny" policies will always override an "Allow" policy, the same applies for SCPs; if
+	  a Group has a policy that grants them access to a policy defined by the AWS account the Group is associated
+	  with, but the Master Account sets up and SCP that denies access this same service, the Group will be denied
+	  access to this service.
+	* ""Additionally, if a User/Group/Role within an AWS account is allowed access to service X *before a , 
+* In order to create SCPs, the Master Account will need the following permission enabled:
+	`organizations:EnablePolicyType`
+	`organizations:DescribeOrganization`
+* Since multiple SCPs can be created and attached to individual accounts or OUs, it is important to understand the
+  inheritance of SCP resembles that of set intersections (see the below image). You can also
+  [check the documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_inheritance_auth.html)
+
+![](images/scps.png)
+
+* SCPs do not affect resource based policies, they only affect principals managed by your accounts in your Org.
+* SCPs affectt all users and roles in an AWS account, including the root user (of that account).
+* If you disable SCPs for any reason, all SCPs will be deleted. If you want to reconfigure the same SCPs, you will have
+  to do so manually as **the default is to grant FullAWSAccess.**
+* The following elements are not affected by SCPs:
+	* Any actions performed by the Master Account.
+	* SCPs do not affect service-linked roles.
+	* SCPs do not affect managing CloudFront keys.
 
 ## Config
 
@@ -1847,13 +2005,13 @@ Customer Support services provided by AWS are:
 	* Default support tier for all users.
 	* Features offered:
 		* Customer service and Communities (documentation, white papers, open-source stuff).
-		* Trusted Advisor's six core checks.
+		* Trusted Advisor's 7 core checks.
 		* Access to Personal Dashboard.
 2. Developer
 	* ideal for individual users experimenting with AWS.
 	* Features offered:
 		* Customer service and Communities (documentation, white papers, open-source stuff).
-		* Trusted Advisor's six core checks.
+		* Trusted Advisor's 7 core checks.
 		* Access to Personal Dashboard.
 3. Business
 	* ideal for multiple accounts, supporting a production environment on AWS, and using 1-2 services heavily.
@@ -1871,7 +2029,7 @@ Customer Support services provided by AWS are:
 * There are differences in the level/promptness of support you will receive from AWS, depending on which plan you
   choose. You can [check the documenation to see how this plays out](https://aws.amazon.com/premiumsupport/plans/)
 
-# Architecture Fundamentals for AWS
+# Architecture Fundamentals in AWS
 
 * Note that these notes are Architecture Fundamentals for AWS *at the Cloud Practitioner level*.
 
@@ -2157,159 +2315,10 @@ There are a few options available:
 
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
 
-# "Not-Cleanly-Classifiable" Fundamentals for AWS 
+# DevOps/Software Development Tools in AWS
 
-* An Elastic IP address (EIP) is a static and public IP address that you can associate with an EC2 instance. EIPs have
-  the benefit of not changing when you stop and start an EC2 instance, whereas the default public IP that comes with an
-  EC2 instance may change. This gives you the benefit of a reliable IP address to associate with your EC2 instance.
-
-## Securing AWS Organizations with Service Control Policies (SCPs)
-
-* All of the below can be configured via the *AWS Organizations* "portal" (for lack of a better word), which is under
-  the "Governance" tab within the AWS Management Console.
-* Check out the [full documentation here](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)
-
-### AWS Organizations
-
-* For a sufficiently large system, there may come a time when more than one AWS account is needed to partition different
-  access levels, roles, and organizational units. For example:
-	* There might be an entire team dedicated to security and compliance of the system, each member of the team
-	  under the umbrella of one AWS account.
-	* Another team might be in charge of billing, each member of the team under the umbrella of that AWS account.
-	* et cetera.
-* "The more accounts you have the more distributed your environment becomes and the associated security risks and
-  exposure increase and multiply". 
-* **AWS organizations are designed to bring multiple accounts under one umbrella.**
-* AWS organizations have a few key components:
-	1. Organizations 
-		* An Organization is an element that serves to form a hierarchical structure of multiple AWS accounts.
-		* Can be thought of as a hierarchical graphical tree of your entire AWS account structure.
-	2. Root
-		* The Root object is at the top of the hierarchy - all accounts will fall under this object and within
-		  any AWS Organization, there can only be one Root object.
-	3. Organizational Units (OUs)
-		* Organizational Units are objects/concepts that provided the means of categorizing different AWS
-		  accounts within an Organization.
-		* Used to group together different AWS accounts.
-	4. Accounts
-		* The different AWS accounts (ID by a 12 digit account number) associated with your AWS Organization
-		  that are used to provision and manage resources.
-	5. Service Control Policies (SCPs)
-		* Allow you to control what Services and Features are available from a given AWS account within and
-		  Organization.
-		* SCPs can be applied at any level of the Organization hierarchy, and will be applied to all child
-		  objects: For example:
-			* You could create an SCP that only allows access to RDS services. You could then apply this SCP
-			  to your "Database" Organizational Unit, and any AWS accounts (and therefore users associated
-			  with those accounts), would only be able to access Amazon RDS services.
-* The primary benefit of AWs Organizations is the ability to manage multiple accounts from a single account, known as
-  the Master Account. Additionally, this can help consolidate billing efforts.
-* Steps to set up an AWS Organization:
-	1. Choose an AWS Account that will be the Master Account.
-		* It is best practice that this Master account does **not** actually provision/manage any AWS resources;
-		  it simply manages the Organization.
-		* This Master account has various responibilities:
-			1. Create additional AWS accounts within the Org.
-			2. Invite other accounts to join the Org.
-			3. Remove AWS accounts from the Org.
-			4. Apply security features via SCPs to different levels of the Org.
-	2. Choose an Org Type:
-		1. Enable All Features 
-		2. Enable Only Consolidated Billing
-		* If you want to use SCPs (which is kind of the point), you will need to select 'Enable All Features'
-	3. Create OUs and invite/create AWs Accounts to join the Org.
-
-### SCPs 
-
-* SCPs do **not** grant a user access to AWS resources, they set the boundaries around which services can even have
-  access granted to them. Permissions will still need to be configured at the User/Group/Role level via IAM within an
-  AWS account.
-	* In the same way that IAM "Deny" policies will always override an "Allow" policy, the same applies for SCPs; if
-	  a Group has a policy that grants them access to a policy defined by the AWS account the Group is associated
-	  with, but the Master Account sets up and SCP that denies access this same service, the Group will be denied
-	  access to this service.
-	* ""Additionally, if a User/Group/Role within an AWS account is allowed access to service X *before a , 
-* In order to create SCPs, the Master Account will need the following permission enabled:
-	`organizations:EnablePolicyType`
-	`organizations:DescribeOrganization`
-* Since multiple SCPs can be created and attached to individual accounts or OUs, it is important to understand the
-  inheritance of SCP resembles that of set intersections (see the below image). You can also
-  [check the documentation](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_inheritance_auth.html)
-
-![](images/scps.png)
-
-* SCPs do not affect resource based policies, they only affect principals managed by your accounts in your Org.
-* SCPs affectt all users and roles in an AWS account, including the root user (of that account).
-* If you disable SCPs for any reason, all SCPs will be deleted. If you want to reconfigure the same SCPs, you will have
-  to do so manually as **the default is to grant FullAWSAccess.**
-* The following elements are not affected by SCPs:
-	* Any actions performed by the Master Account.
-	* SCPs do not affect service-linked roles.
-	* SCPs do not affect managing CloudFront keys.
-
-## WAF, Firewall Manager & Shield
-
-### WAF - Web Application Firewall
-
-* "AWS WAF helps prevent web sites and web applications from being maliciously attacked by common web attack patters
-  (such as SQL injection)"
-* WAF Components:
-	* Conditions 
-		* Conditions allow you to specify what elements of the incoming HTTP or HTTPS request you want WAF to be
-		  monitoring for.
-		* Some WAF conditions include:
-			* Cross-site scripting
-				* **One of the largest vulnerabilities found in web applications today**
-				* Scripts that have been written to maliciously gain access to client side data via a
-				  normally trusted web page/application.
-			* Geo match
-				* Allow/Block requests from specific geographies.
-				* Note that geography based request filtering will first pass through CloudFront. So if
-				  you are using the CloudFront service in your solution, setting up Geo match conditions
-				  in WAF is redundant and a waste of time.
-			* IP addreses
-				* Allow/Block requests from specific IP ranges.
-			* Size constraints
-				* Allow/Block requests based on the size of various parts of the request.
-			* SQL injection attacks
-			* String and regex matching
-	* Rules 
-		* Rules are composed of more than one condition. In order for the action associated with a rule to be
-		  carried out, **all conditions associated with that rule must be met (it is an `AND` conditional).
-			* For example, if you have a rule that says "Allow requests if 1) the request originates from
-			  Oklahoma AND 2) the request is from X list of IP addresses", and a request comes in that is
-			  from Oklahoma but not in the specified IP list, the request will be denied.
-	* Web ACLs (Access Control Lists)
-		* ACLs have three possible actions: Allow, Block or Count.
-* Similar to NACLs, Web ACLs rules are executed in the order that they are listed within the web ACL. This means that a
-  request will take the action of the first rule that it matches, even if there is another rule further down the list
-  that the request would also match. Given this, a good structure for a Web ACL is:
-	1. Explicitly allow requests from "whitelisted" IPs; IPs that you know aren't malicious.
-	2. Explicitly block requests from "blacklisted" IPs; IPs that you know are malicious.
-	3. Finally, list the various rules composed of WAF conditions to identify bad requests.
-
-### Firewall Manager 
-
-* Firewall Manager is designed to help the user manage WAF in a multi-account setting - the AWS Organization.
-* In order to make use of the Firewall Manager, the AWS Organization must have been enable with all features (not just
-  consolidated billing)
-* [Full documentation here](https://aws.amazon.com/firewall-manager/)
-
-### Shield 
-
-* Closely related to WAF and Firewall Manager
-* Designed to protect your infrastructure against Distributed Denial of Service (DDoS) attacks. A DDoS attack sends a
-  high volume of requests to a server from multiple distributed services, preventing legitimate requests from getting
-  through as well as severely limiting the performance of the server.
-* There are multiple types of DDoS attacks:
-	* SYN Flood
-	* DNS query Flood
-	* HTTP flood/Cache-busting
-* AWS Shield has two options:
-	* Standard
-		* Free to AWS account holders.
-		* Offers DDoS protection against common layer 3 (Network) and layer 4 (Transport) DDoS attacks.
-		* Integrated with CloudFront and Route 53.
-	* Advanced 
-		* Costs extra.
-		* Offers DDoS protection at layer 3, layer 4 and layer 7 of the OSI model.
+Things to learn:
+* CodeCommit
+* CodeBuild
+* CodeDeploy
+* CodePipeline
