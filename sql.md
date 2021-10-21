@@ -1,5 +1,13 @@
 [TOC]
 
+# Data Storage
+
+* [row-stores vs columnar-stores](https://medium.com/bluecore-engineering/deciding-between-row-and-columnar-stores-why-we-chose-both-3a675dab4087)
+
+OLTP (online transactional processing)
+
+OLAP (online analytical processing)
+
 # SQL (Structured Query Language)
 
 "An RDBMS (Relational Database Management System) is a database management system based on the relational model...,
