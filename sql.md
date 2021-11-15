@@ -14,6 +14,15 @@ OLAP (online analytical processing)
 which in turn is based on two mathematical branches: set theory and predicate logic" - *T-SQL Fundamentals | Itzik
 Ben-Gan*
 
+# Dialects
+
+## MySQL
+
+* In most SQL languages, schemas are "conceptually within" databases. **In MySQL, "...physically, a schema is synonymous
+  with a database"** - [Documentation](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_schema)
+
+##
+
 # Useful Links
 
 * [DBML](https://www.dbml.org/home/#intro)
