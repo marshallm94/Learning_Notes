@@ -337,54 +337,6 @@ Worker nodes:
 6. Provision and configure worker nodes
 7. Configure worker nodes to join EKS Cluster
 
-## Elastic Beanstalk Service 
-
-**Elastic Beanstalk Service is free to use. However, any resources that Beanstalk sets up for your application (Compute,
-Storage, Database or Network) are charged using the standard pricing of those resources.**
-
-Elastick Beanstalk is a service that takes your uploaded code and automatically provisions and deployes the resources
-needed to make the application operational.
-* This service is likely the most useful for engineers who may not have the familiarity, skills or desire to
-  manage the deployment, provisioning and monitoring of developed applications.
-
-* Able to operate with a variety of platforms and programming languages, some examples being:
-	* Single Container Docker
-	* Multicontainer Docker
-	* Preconfigured Docker
-	* Python
-
-Key Components:
-* Application Version
-	* reference to a specific version of the code/application that typically resides in S3
-* Environment 
-	* The Environment refers to the entire system of your deployed application (EC2 and S3 for example)
-	* At this stage, the application has been deployed as a solution and is operational within the environment 
-* Environment Configurations 
-	* Parameters that dictate how the environment will have its resources provisioned by Beanstalk.
-* Environment Tier
-	* Applications that are communicating with other servers (usually via HTTP requests using port 80) are run in a
-	  *web server environment*. AWS infrastructure usually used includes:
-		* Route 53
-		* Elastic Load Balancer
-		* Auto Scaling
-		* EC2
-		* Security Groups
-	* Applications that are doing backend jobs/processing of some kind are run in a *worker environment*. AWS
-	  infrastructure usually used includes:
-		* SQS Queue
-		* IAM Service Role
-		* Auto Scaling
-		* EC2
-* Configuration Template 
-	* A template that provides the framework for creating a new, unique, environment.
-* Platform
-	* The set of components that can build your application when using Elastic Beanstalk (OS, server type,
-	  programming language)
-
-The typical Elastic Beanstalk workflow looks like the following:
-
-![](images/elastic_beanstalk_workflow.png)
-
 ## Lambda 
 
 "AWS Lambda is a serverless compute service that allows you to run your application code without having to manage EC2
@@ -2316,6 +2268,56 @@ There are a few options available:
 Regardless of the strategy that fits your needs/cost, DR plans should be rigorously tested.
 
 # DevOps/Software Development Tools in AWS
+
+## Elastic Beanstalk Service 
+
+**Elastic Beanstalk Service is free to use. However, any resources that Beanstalk sets up for your application (Compute,
+Storage, Database or Network) are charged using the standard pricing of those resources.**
+
+Elastick Beanstalk is a service that takes your uploaded code and automatically provisions and deployes the resources
+needed to make the application operational.
+* This service is likely the most useful for engineers who may not have the familiarity, skills or desire to
+  manage the deployment, provisioning and monitoring of developed applications.
+
+* Able to operate with a variety of platforms and programming languages, some examples being:
+	* Single Container Docker
+	* Multicontainer Docker
+	* Preconfigured Docker
+	* Python
+
+Key Components:
+* Application Version
+	* reference to a specific version of the code/application that typically resides in S3
+* Environment 
+	* The Environment refers to the entire system of your deployed application (EC2 and S3 for example)
+	* At this stage, the application has been deployed as a solution and is operational within the environment 
+* Environment Configurations 
+	* Parameters that dictate how the environment will have its resources provisioned by Beanstalk.
+* Environment Tier
+	* Applications that are communicating with other servers (usually via HTTP requests using port 80) are run in a
+	  *web server environment*. AWS infrastructure usually used includes:
+		* Route 53
+		* Elastic Load Balancer
+		* Auto Scaling
+		* EC2
+		* Security Groups
+	* Applications that are doing backend jobs/processing of some kind are run in a *worker environment*. AWS
+	  infrastructure usually used includes:
+		* SQS Queue
+		* IAM Service Role
+		* Auto Scaling
+		* EC2
+* Configuration Template 
+	* A template that provides the framework for creating a new, unique, environment.
+* Platform
+	* The set of components that can build your application when using Elastic Beanstalk (OS, server type,
+	  programming language)
+
+The typical Elastic Beanstalk workflow looks like the following:
+
+![](images/elastic_beanstalk_workflow.png)
+
+* [Deploy an app via the EB CLI](https://aws.amazon.com/getting-started/hands-on/deploy-app-command-line-elastic-beanstalk/)
 
 Things to learn:
 * CodeCommit
