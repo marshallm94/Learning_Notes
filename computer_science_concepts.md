@@ -71,3 +71,22 @@ This process can be represented with the following structure:
 **Question to self (2021-08-31)**:
 * Is the number of base conditions/axioms **always** equal to the number of times the procedure references itself in the
   function/procedure definition?
+
+# Ramblings...
+
+Take the following program:
+
+```python
+user_input = int( input('What is your favorite number? ') )
+print(f"{user_input**2} is the square of your favorite number.")
+```
+this program is run by running:
+
+```bash
+$ python tmp.py 
+What is your favorite number? 23
+529 is the square of your favorite number.
+```
+* The number `23` is the user input to the programmer-defined `tmp.py` program...
+    * The program `tmp.py` is the input to the higher-order programmer defined program `python`...
+        * The higher-order programmer defined program `python tmp.py` is the input to...what

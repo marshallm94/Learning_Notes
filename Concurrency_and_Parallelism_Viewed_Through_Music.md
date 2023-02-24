@@ -8,19 +8,6 @@
 
 # Concurrency, Parallelism, Synchronous, Asynchronous and all that Jazz
 
-Terms that will be covered and differentiated in this document:
-
-- concurrency
-- parallelism
-- asynchronous
-- synchronous
-  - In this context, `synchronous == sequential`
-- threading
-- multiprocessing
-- processes
-- threads
-- multithreading
-
 ## What is typically _missing_ from "asynchronous vs synchronous" explanations?
 
 I was introduced to all these terms _through the lens of_ building a REST API.
@@ -33,10 +20,22 @@ It would make such little sense to have an API be synchronous that it is glossed
 
 so lets zoom out, remove this lens, define some terms, and get a handle on what is going on...
 
+- Terms:
+  - concurrency
+  - parallelism
+  - asynchronous
+  - synchronous
+  -   * In this context, `synchronous == sequential`
+  - threading
+  - multiprocessing
+  - processes
+  - threads
+  - multithreading
+
 ## Problem Domain & Solution Domain
 
 | Layer Level | Layer Description       |
-| ----------- | ----------------------- |
+| ---         | ---                     |
 | 2           | Solution Implementation |
 | 1           | Solution Structure      |
 | 0           | Problem Definition      |
@@ -119,7 +118,6 @@ usually results in an inefficiency with respect to a particular _dimension_ of t
 ## Examples
 
 A problem gets broken down into tasks A, B, C and D, each of which must be completed for the problem to be completed.
-
 1. If...
 
 $$
@@ -145,7 +143,6 @@ $$
     - This doesn't feel like a fair comparison
 
 **Results**
-
 ```bash
 # Synchronous technology used to implement a synchronous solution
 Average runtime (nanoseconds): 1242.164
@@ -173,6 +170,7 @@ The question is not:
 
 The question is:
 
+<<<<<<< HEAD
 > _Which_ parts of the solution can/should be asynchronous and _which_ parts _must_ be synchronous?
 
 IT IS ABOUT UNDERSTANDING THE STRUCTURE OF THE SUBSOLUTION.....
@@ -209,6 +207,7 @@ When programming synchronously,
 Concurrency & Parallelism are concepts that exist outside the domain of software and computer science. A good way of
 separating these two concepts is asking the question:
 
+<<<<<<< HEAD
 > Is waiting _on external events_ an unavoidable part of the solution to a problem you are trying to solve?
 
 The answer to this is **"yes" in a lot of situations**:
@@ -259,7 +258,6 @@ There are two perspectives/lenses through with we look at these terms:
     - Threads are paths of execution _within_ a process.
 
 - Processes setup the resources need
-
 
 # Concurrency & Parallelism Through the Lens of Music
 
