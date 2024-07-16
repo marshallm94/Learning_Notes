@@ -1,10 +1,27 @@
 [TOC]
 
+# Data Storage
+
+* [row-stores vs columnar-stores](https://medium.com/bluecore-engineering/deciding-between-row-and-columnar-stores-why-we-chose-both-3a675dab4087)
+
+OLTP (online transactional processing)
+
+OLAP (online analytical processing)
+
 # SQL (Structured Query Language)
 
 "An RDBMS (Relational Database Management System) is a database management system based on the relational model...,
 which in turn is based on two mathematical branches: set theory and predicate logic" - *T-SQL Fundamentals | Itzik
 Ben-Gan*
+
+# Dialects
+
+## MySQL
+
+* In most SQL languages, schemas are "conceptually within" databases. **In MySQL, "...physically, a schema is synonymous
+  with a database"** - [Documentation](https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_schema)
+
+##
 
 # Useful Links
 
