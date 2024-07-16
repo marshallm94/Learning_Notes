@@ -260,7 +260,6 @@ There are two perspectives/lenses through with we look at these terms:
 
 - Processes setup the resources need
 
-> > > > > > > 4f9fa59 (move elastic beanstalk to devops section)
 
 # Concurrency & Parallelism Through the Lens of Music
 
