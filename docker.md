@@ -127,8 +127,10 @@ The three storage types are:
 	* `$ docker run <IMAGE_NAME> --mount type=bind, source="<path_to_file_or_dir_on_host>", destination=<path_to_file_or_dir_in_container>`
 2. Volumes
 	* Volumes are similar to Bind Mounts, however **Docker manages the file system location of the volume on the host.**
-	*
-	* `$ docker run <IMAGE_NAME> --mount type=bind, source="<volume_name>", destination=<path_to_file_or_dir_in_container>`
+	* `$ docker run <IMAGE_NAME> --mount type=volume, source="<volume_name>", destination=<path_to_file_or_dir_in_container>`
+        * Note that the `<volume_name>` in `$ ...source=<volume_name>...` is **not** a filepath (and therefore shouldn't
+          includes slashes `/`). This should have a human readable name (e.g. `app-volume`) and docker will handle the
+          filepath of this volume in the VM.
 3. tmpfs ( Temporary File Systems )
 	* In-memory storage (**data in tmpfs will be deleted when the container is stopped**)
 
@@ -164,3 +166,4 @@ The three storage types are:
 * `$ docker login`- Log in to your dockerhub account via the command line (allows pushing/pulling docker images).
 * `$ docker push <image_name>`- Push <image_name> to dockerhub (unless a different).
 * `$ docker tag <image_name>:<tag>` - Tag an already created image.
+* `$ docker rm $(docker ps -aq)` - **remove all containers**

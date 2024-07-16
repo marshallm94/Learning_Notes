@@ -61,7 +61,7 @@ ORDER BY ...;
 Logical processing order of a SQL query:
 
 ```SQL
-FROM ...
+FROM/JOIN ...
 ON ...
 WHERE ...
 GROUP BY ...
@@ -184,3 +184,45 @@ inefficient query.
 [PostgreSQL Practice](https://pgexercises.com/)
 
 ![PostgreSQL Commands](images/psql_commands.png)
+
+# DB Backup
+
+1. Dump the contents of any DB's you want backed up to a file.
+
+```bash
+# the `-p` stands for password so you will be prompted for the password of the <username> you use
+
+# framework
+$ mysqldump -u <username> -p -x -B < DB names you would like copied separated by spaces > <filename_of_your_choice>.sql
+
+# example
+$ mysqldump -u Dev1 -p -x -B Stocks Options > ~/data_backup_2022_03_27.sql
+```
+
+2. SCP that file to your backup server.
+
+```bash
+# from the backup server
+$ scp <username>@<original_server_name/ip>:/path/to/filename_of_your_choice .
+```
+
+3. Start `mariadb` on the backup server (the one you just copied the dump file to) and run `source <filename_of_your_choice>.sql`
+
+# Troubleshooting 
+
+This section exists because, at some point, I spent enough time banging my head against the wall with one of the
+problems that I thought it would be worth putting the solution somewhere on the off chance that I run into the same
+thing again at some point.
+
+1. **Problem: MariaDB won't start/I can't login to the the MariaDB/MySQL REPL**
+* After installing MariaDB with `$ brew install mariadb`, try running `$ brew services ls`. You should see the following
+  (as it relates to mariadb - you may have other output present as well):
+    ```
+    $ brew services ls
+    Name       Status  User              File
+    mariadb    started marshallmcquillen ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+    ```
+* If for some reason `$ brew services start mariadb` isn't working (**YOU HAVE TO RESTART YOUR COMPUTER AFTER RUNNING
+  THIS FOR THE CHANGES TO TAKE EFFECT**), try removing any log files (as well as any \*.err files) in the
+  `/usr/local/var/mysql/` directory (see [this SO answer](https://stackoverflow.com/a/50636732/7735189)) and then
+  re-trying `$ brew services start mariadb` (again, **you will have to restart you computer**).

@@ -1,0 +1,6 @@
+This is line 1 from file B.
+This is line 2 from file B.
+This is line 3 from file B. 
+This is line 4 from file B. 
+This is line 5 from file B. 
+This is line 6 from file B. 
