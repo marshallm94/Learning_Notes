@@ -170,7 +170,6 @@ The question is not:
 
 The question is:
 
-<<<<<<< HEAD
 > _Which_ parts of the solution can/should be asynchronous and _which_ parts _must_ be synchronous?
 
 IT IS ABOUT UNDERSTANDING THE STRUCTURE OF THE SUBSOLUTION.....
@@ -207,7 +206,6 @@ When programming synchronously,
 Concurrency & Parallelism are concepts that exist outside the domain of software and computer science. A good way of
 separating these two concepts is asking the question:
 
-<<<<<<< HEAD
 > Is waiting _on external events_ an unavoidable part of the solution to a problem you are trying to solve?
 
 The answer to this is **"yes" in a lot of situations**:
