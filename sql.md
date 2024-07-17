@@ -226,3 +226,7 @@ thing again at some point.
   THIS FOR THE CHANGES TO TAKE EFFECT**), try removing any log files (as well as any \*.err files) in the
   `/usr/local/var/mysql/` directory (see [this SO answer](https://stackoverflow.com/a/50636732/7735189)) and then
   re-trying `$ brew services start mariadb` (again, **you will have to restart you computer**).
+
+# TODO
+
+* ( 2022-09-19 ): Look into the execution order of joins in order to better understand them... 

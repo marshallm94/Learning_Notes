@@ -1,26 +1,24 @@
-# Bandwidth vs. Throughput
+# Physical Domain
 
-# Means of Communication
-* Copper
-* Fiber Optic
-* Radiowaves
+## Means of Communication
 
+- Wired:
+  - Copper
+  - Fiber Optic
+- Wireless:
+  - Radiowaves
+
+## Bandwidth vs. Throughput
 
 Bandwidth = Capacity aka "Theoretical Transfer Rate"
 Throughput = Actual aka "Observed Transfer Rate"
 
-# Wired vs Wireless
-
-This can be branched out to 
-* Wireless vs 
-
-Currently:
-* wireless: ~450 Mbps download
-* wireless: ~400 Mbps upload
-
+# Powered vs Unpowered
 
 USB-3.0 vs USB-2.0
 
+## Powered vs Unpowered
 
+# Digital Domain
 
-# Powered vs Unpowered
+## CIDR Block
