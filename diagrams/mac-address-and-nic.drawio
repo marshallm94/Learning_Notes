@@ -1,0 +1,86 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
+  <diagram name="Page-1" id="h0UeuShrHUXaA7r7o1OJ">
+    <mxGraphModel dx="1428" dy="859" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-46" value="Hardware: &lt;span style=&quot;font-weight: normal;&quot;&gt;Physical machine&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=1;verticalAlign=bottom;strokeWidth=4;" vertex="1" parent="1">
+          <mxGeometry x="520" y="240" width="1000" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-47" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;Hardware: &lt;/b&gt;NIC&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=bottom;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="560" y="320" width="240" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-52" value="&lt;span style=&quot;font-size: 18px;&quot;&gt;&lt;b&gt;Hardware: &lt;/b&gt;NIC&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=bottom;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="840" y="320" width="640" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" edge="1" parent="1" source="mMZ_gLs3aCgj_92zPxtd-55" target="mMZ_gLs3aCgj_92zPxtd-59">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="200" />
+              <mxPoint x="960" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-67" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;IP Address: 10.0.0.3&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="mMZ_gLs3aCgj_92zPxtd-63">
+          <mxGeometry x="0.0727" y="3" relative="1" as="geometry">
+            <mxPoint x="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-64" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" edge="1" parent="1" source="mMZ_gLs3aCgj_92zPxtd-55" target="mMZ_gLs3aCgj_92zPxtd-52">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="200" />
+              <mxPoint x="1160" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-68" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;IP Address: 10.0.0.4&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="mMZ_gLs3aCgj_92zPxtd-64">
+          <mxGeometry x="0.34" y="-1" relative="1" as="geometry">
+            <mxPoint x="1" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" edge="1" parent="1" source="mMZ_gLs3aCgj_92zPxtd-55" target="mMZ_gLs3aCgj_92zPxtd-61">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1230" y="200" />
+              <mxPoint x="1360" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-69" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;IP Address: 10.0.0.5&lt;/font&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="mMZ_gLs3aCgj_92zPxtd-65">
+          <mxGeometry x="0.2828" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-55" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Router&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="80" width="840" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;strokeWidth=3;" edge="1" parent="1" source="mMZ_gLs3aCgj_92zPxtd-58" target="mMZ_gLs3aCgj_92zPxtd-55">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="680" y="200" />
+              <mxPoint x="810" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-66" value="IP Address: 10.0.0.2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" vertex="1" connectable="0" parent="mMZ_gLs3aCgj_92zPxtd-62">
+          <mxGeometry x="0.3034" y="1" relative="1" as="geometry">
+            <mxPoint x="-69" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-58" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;wifi port&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Unique ID: &lt;i style=&quot;&quot;&gt;MAC Address 1&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=middle;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="320" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-59" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Ethernet port 1&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Unique ID: &lt;i style=&quot;&quot;&gt;MAC Address 2&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=middle;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="320" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-60" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Ethernet port 2&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Unique ID: &lt;i style=&quot;&quot;&gt;MAC Address 3&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=middle;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="320" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mMZ_gLs3aCgj_92zPxtd-61" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;Ethernet port &lt;i&gt;N&lt;/i&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 12px;&quot;&gt;Unique ID: &lt;i style=&quot;&quot;&gt;MAC Address N&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;fontSize=24;fontStyle=0;verticalAlign=middle;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="320" width="160" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

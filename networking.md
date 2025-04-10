@@ -23,6 +23,13 @@ USB-3.0 vs USB-2.0
 
 ## Understanding IP Addresses
 
+### Network Interfaces
+
+- IP addresses *seemingly* point to a specific network interface on a machine (can be more than 1 - e.g. wifi and ethernet)
+
+- Questions:
+  - Do IP addresses point to a specific machine, or do they point to a specific *network interface on a specific machine*?
+
 ### CIDR Blocks
 
 - Examples:
@@ -85,3 +92,15 @@ USB-3.0 vs USB-2.0
             - *technically `65,534`; 2 host addresses are subtracted from the total available addresses, and they are reserved for the network address
               and the broadcast address - beyond the scope of this explanation.*
           - This creates wasted IP addresses; you're company only needs 350 of the 65,534 addresses, leaving `65,534 - 350 = 65,184` addresses unused
+
+### NICs and MAC addresses
+
+- A Network Interface Controller (NIC) (aka Network Interface Card or Network Adapter) is a hardware components that allow a computer (or computing device) to communicate with a network.
+  - This applies if the means of communication is wired (e.g. Ethernet) or wireless (e.g. WiFi).
+- A NIC can have 1-N ports that allow it to communicate with a network (for example, a NIC can have multiple Ethernet ports)
+- A Media Access Control (MAC) address is a unique address associated with a specific port on a NIC.
+
+![](./images/mac-address-and-nic.drawio.png)
+
+- When a router assigns an IP address to a computer/computing device, it is really assigning an IP address *to a specifc MAC address.*
+- So, if you change how your computer/computing device connects to a network, the router will recognize a new MAC address, and assign that MAC address a different IP address.
