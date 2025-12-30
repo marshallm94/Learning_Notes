@@ -12,9 +12,7 @@
 
 I was introduced to all these terms _through the lens of_ building a REST API.
 
-My belief is that the reason I don't feel as though I have a firm understanding of these concepts is because I am trying to differentiate/"create some
-space between" these terms **through that same lens**, and this is difficult to do because the structure of a RESTful API _is inherently
-asynchronous_.
+My belief is that the reason I don't feel as though I have a firm understanding of these concepts is because I am trying to differentiate/"create some space between" these terms **through that same lens**, and this is difficult to do because the structure of a RESTful API _is inherently asynchronous_.
 
 It would make such little sense to have an API be synchronous that it is glossed over
 

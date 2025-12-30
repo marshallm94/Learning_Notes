@@ -1,5 +1,7 @@
 ### Neural Networks
 
+[toc]
+
 [Tuning Neural Networks Post](https://machinelearningmastery.com/grid-search-hyperparameters-deep-learning-models-python-keras/#comment-436150)
 
 For each type of NN, an image is provided and repeated throughout the explanation. Although it is the same image, this is done in order to prevent unnecessary scrolling.

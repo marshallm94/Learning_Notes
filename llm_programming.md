@@ -1,6 +1,15 @@
 # Thoughts, Musings and (often rhetorical) Questions on LLM-Assisted Programming
 
 
+- Were the things that were previously categorized as "focused" never really focused, but were rather focused on outer layers of the problem?
+- Is this technology just a very harsh intellectual mirror?
+  - More explicitly, is my problem with LLM-Assisted programming not *really* a problem with LLM's, but rather a lack of intellectual discipline?
+    - Do I have the ability to differentiate between concepts where I only care about the output, and concepts where I care about the "how"?
+- Is this technology reshaping the "Thought x Action" space in programming?
+  - Is my previous statement...
+  > Programming and Thinking are so tightly coupled that I don't believe you can use LLM's purely for code substitution without losing some "thought substitution"
+
+  ...just straight up wrong? 
 - Are you really using LLMs as a substitute for thinking, *or*...
   - ...are LLMs allowing you to automate tasks that *were always* "low-thought" tasks, allowing you
   - ...are they allowing you to automate "low compute" thought to the point where "high compute" thought is right in your face all the time
@@ -8,7 +17,7 @@
 - How does LLM programming differ from normal programming?
 - Where is the line between “I’m delegating a task I’ve thought about” and “I’m delegating the thinking itself”?
   - 2 meta questions:
-      - What is the line between thinking and doing?
+      - **What is the line between thinking and doing?**
       - Does it matter where that line is?
   - Where is my line?
       - When I clearly know the output I’m looking for, I have no moral issue with it; example being “create a JSON object that is an array of arrays, each with…”. This feels like I’m simply saving myself some typing. 
