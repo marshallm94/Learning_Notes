@@ -1,5 +1,7 @@
 # What is Kubernetes?
 
+See also: [[docker]] for containerization basics, [[AWS]] for EKS (managed Kubernetes)
+
 ## From the "Within the Abstraction" Perspective:
 
 ### Components

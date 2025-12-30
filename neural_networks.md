@@ -1,5 +1,7 @@
 ### Neural Networks
 
+See also: [[machine_learning]] for traditional ML approaches, [[llm_programming]] for LLM-specific concepts
+
 [toc]
 
 [Tuning Neural Networks Post](https://machinelearningmastery.com/grid-search-hyperparameters-deep-learning-models-python-keras/#comment-436150)

@@ -1,3 +1,10 @@
+# Machine Learning
+
+See also:
+- [[neural_networks]] for deep learning approaches
+- [[tree_based_methods]] for decision trees and CART
+- [[general_linear_models]] for regression approaches
+
 # Boosting
 
 The general principal behind boosting is to train an ensemble of models *sequentially*, each model 

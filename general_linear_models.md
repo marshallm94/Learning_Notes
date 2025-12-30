@@ -1,4 +1,6 @@
-# General Linear Models 
+# General Linear Models
+
+See also: [[machine_learning]], [[classical_statistics]]
 
 [TOC]
 

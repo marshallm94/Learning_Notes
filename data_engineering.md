@@ -1,6 +1,10 @@
+# Data Engineering
+
+See also: [[AWS]] for cloud database and storage services, [[sql]]
+
 # DBT
 
-"dbt’s only function is to take code, compile it to SQL, and then run against your database" - [documentation](https://www.getdbt.com/blog/what-exactly-is-dbt/)
+"dbt's only function is to take code, compile it to SQL, and then run against your database" - [documentation](https://www.getdbt.com/blog/what-exactly-is-dbt/)
 
 * Every model (model: a data transformation, expressed as a single `SELECT` statement)
 

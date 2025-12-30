@@ -1,5 +1,7 @@
 [TOC]
 
+See also: [[data_engineering]] for data warehousing and ETL concepts
+
 # Data Storage
 
 * [row-stores vs columnar-stores](https://medium.com/bluecore-engineering/deciding-between-row-and-columnar-stores-why-we-chose-both-3a675dab4087)

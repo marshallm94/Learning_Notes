@@ -1,3 +1,7 @@
+# Computer Science Concepts
+
+See also: [[software_development_concepts]]
+
 # From Bits to Bytes to Data Types
 
 * A bit can have 2 states ("off" and "on") and therefore can store 2 values (0 and 1).

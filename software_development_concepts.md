@@ -1,3 +1,7 @@
+# Software Development Concepts
+
+See also: [[docker]] for containerization in CI/CD, [[computer_science_concepts]]
+
 # What is CI/CD and how does it work?
 
 Check out [this article](https://semaphoreci.com/blog/cicd-pipeline)

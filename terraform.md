@@ -1,6 +1,7 @@
 # What is Terraform?
 
 - Terraform is a tool that facilitates "Infrastructure as Code" (aka "IaC")
+- See also: [[AWS]] for cloud infrastructure provisioning examples
 
 # How do I use Terraform?
 

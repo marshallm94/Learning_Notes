@@ -1,6 +1,8 @@
 The below notes were taken while going through the Introduction to Docker Learning Path on
 Cloud Academy
 
+See also: [[kubernetes]] for container orchestration
+
 [TOC]
 
 # Installing Docker
